@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block body %}
+    <br>
+    <br>
+    <br>
+    <div class="container">
+        <div class="row">
+            {% if "Ticket.can_view_ticket" in perms %}
+                <div class="col-md-3 col-sm-6 col-12">
+                    <a href="{% url 'Ticket:list' %}" class="btn p-0">
+
+                        <div class="card shadow-sm p-5 rounded text-center">
+                            <div class="row">
+                                <div class="col-12">
+                                    <img class="img-fluid w-100" src="{% static 'imgs/issue.svg' %}" alt="">
+                                </div>
+                                <div class="col-12 border-top mt-3 pt-2">
+                                    البلاغات
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endif %}
+
+            <div class="col-md-3 col-sm-6 col-12">
+                <a href="{% url 'Contract:home' %}" class="btn p-0">
+
+                    <div class="card shadow-sm p-5 rounded text-center">
+                        <div class="row">
+                            <div class="col-12">
+                                <img class="img-fluid" src="{% static 'imgs/contract.svg' %}" alt="">
+                            </div>
+                            <div class="col-12 border-top mt-3 pt-2">
+                                العقود
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% if "VIPAlert.can_view_users" in perms %}
+                <div class="col-md-3 col-sm-6 col-12">
+                    <a href="{% url 'VIP:home' %}" class="btn p-0">
+
+                        <div class="card shadow-sm p-5 rounded text-center">
+                            <div class="row">
+                                <div class="col-12">
+                                    <img class="img-fluid" src="{% static 'imgs/vip.svg' %}" alt="">
+                                </div>
+                                <div class="col-12 border-top mt-3 pt-2">
+                                    كبار الزبائن
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endif %}
+            {% if "Attendance.can_view_employees" in perms %}
+                <div class="col-md-3 col-sm-6 col-12">
+                    <a href="{% url 'Attendance:list' %}" class="btn p-0">
+
+                        <div class="card shadow-sm p-5 rounded text-center">
+                            <div class="row">
+                                <div class="col-12">
+                                    <img class="img-fluid" src="{% static 'imgs/attendance.svg' %}" alt="">
+                                </div>
+                                <div class="col-12 border-top mt-3 pt-2">
+                                    الحضور والانصراف
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endif %}
+            {% if "VIPAlert.can_view_users" in perms %}
+                <div class="col-3">
+                    <a href="{% url 'Store:home' %}" class="btn p-0">
+
+                        <div class="card shadow-sm p-5 rounded text-center">
+                            <div class="row">
+                                <div class="col-12 px-4 py-3">
+                                    <img class="img-fluid" src="{% static 'imgs/store.svg' %}" alt="">
+                                </div>
+                                <div class="col-12 border-top mt-3 pt-2">
+                                    المخزن
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endif %}
+            
+            {% if "VIPAlert.can_view_users" in perms %}
+                <div class="col-3">
+                    <a href="{% url 'Reports:home' %}" class="btn p-0">
+
+                        <div class="card shadow-sm p-5 rounded text-center">
+                            <div class="row">
+                                <div class="col-12 px-4 py-3">
+                                    <img class="img-fluid" src="{% static 'imgs/report.svg' %}" alt="">
+                                </div>
+                                <div class="col-12 border-top mt-3 pt-2">
+                                    تقرير
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endif %}
+            <div class="col-md-3 col-sm-6 col-12">
+                <a href="{% url 'ClientStatus:home' %}" class="btn p-0">
+
+                    <div class="card shadow-sm p-5 rounded text-center">
+                        <div class="row">
+                            <div class="col-12">
+                                <img class="img-fluid" src="{% static 'imgs/clients_status.svg' %}" alt="">
+                            </div>
+                            <div class="col-12 border-top mt-3 pt-2">
+                                تقرير الزبائن
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% comment %} {% if "VIPAlert.can_view_users" in perms %} {% endcomment %}
+                <div class="col-3">
+                    <a href="{% url 'SectorTracking:home' %}" class="btn p-0">
+
+                        <div class="card shadow-sm p-5 rounded text-center">
+                            <div class="row">
+                                <div class="col-12 px-4 py-3">
+                                    <img class="img-fluid" src="{% static 'imgs/antenna.svg' %}" alt="">
+                                </div>
+                                <div class="col-12 border-top mt-3 pt-2">
+                                    الابراج
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% comment %} {% endif %} {% endcomment %}
+            {% if "VIPAlert.can_view_users" in perms %}
+                <div class="col-3">
+                    <a href="{% url 'VIP:users_list' %}" class="btn p-0">
+
+                        <div class="card shadow-sm p-5 rounded text-center">
+                            <div class="row">
+                                <div class="col-12 px-5 py-3">
+                                    <img class="img-fluid" src="{% static 'imgs/user.svg' %}" alt="">
+                                </div>
+                                <div class="col-12 border-top mt-3 pt-2">
+                                    المستخدمين
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

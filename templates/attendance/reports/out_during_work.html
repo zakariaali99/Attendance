@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block body %}
+    <p class="text-center h3">تقرير خلال الفترة</p>
+    {% if device.out_during_work %}
+    <p class="text-center h6">تقرير خروج وعودة خلال الدوام</p>
+    {% endif %}
+    <form>
+        <div class="container-fluid mt-1">
+            <div class="row">
+                <div class="col-auto p-0">
+                    <p class="p-0 m-0">-</p>
+                    <a href="{% url 'Attendance:export_report' %}?{{ old_q }}"
+                       class="btn btn-light bg-white border-0 rounded-pill">تصدير</a>
+                    <button type="submit" class="btn btn-secondary border-0  rounded-pill"
+                            id="inputGroup-sizing-lg">تصفية
+                    </button>
+
+                </div>
+                <div class="col-4">
+                    <div class="row">
+                        <div class="col-6">
+                            من
+                            {{ form.from_date }}
+                        </div>
+                        <div class="col-6">
+                            الي
+                            {{ form.to_date }}
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="col">
+
+
+                </div>
+                <div class="col-2 p-0">
+                    الجهاز
+                    {{ form.device }}
+                </div>
+
+            </div>
+        </div>
+    </form>
+    <br>
+    <br>
+
+    <div class="col-12 text-center fs-6">
+        <div class="container bg-hti rounded-pill">
+            <div class="row">
+                <div class="col text-start">الموظف</div>
+                
+                
+                <div class="col-2 d-none d-md-block">اجمالي خروج وعودة</div>
+                <div class="col-3 d-none d-md-block">-</div>
+            </div>
+        </div>
+
+        {% for employee in object_list %}
+            <div class="container bg-light mt-1 rounded-pill">
+
+                <div class="row">
+                    <div class="col text-start">{{ employee.attendance_id }} - {{ employee.name }}</div>
+                    <div class="col-2 d-none d-md-block">{{ employee.count_out }}</div>
+                    {% comment %} <div class="col-2 d-none d-md-block">{{ employee.count_overwork }}</div>
+                    <div class="col-2 d-none d-md-block">{{ employee.count_out }}</div> {% endcomment %}
+                    <div class="col-3 d-none d-md-block">
+
+                        <div class="btn-group w-100" role="group">
+                            {% comment %} <a href="{% url 'Attendance:edit' employee.id %}"
+                               class="btn btn-link p-0 btn-lg w-100 fs-6">تعديل</a> {% endcomment %}
+                            <a href="{% url 'Attendance:records' employee.id %}?{% if from_date %}form_date={{ from_date }}{% endif %}{% if to_date %}&to_date={{ to_date }}{% endif %}{% if to_date %}&device={{ device.id }}{% endif %}"
+                               class="btn btn-link p-0 btn-lg w-100 fs-6"> سجل الحضور</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <br>
+    <br>
+{% endblock %}

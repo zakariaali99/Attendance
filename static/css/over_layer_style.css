@@ -1,0 +1,27 @@
+.over-layer {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #0909099c;
+}
+
+.over-layer.show {
+    display: block;
+    z-index: 99;
+}
+
+.over-layer>.content {
+    width: 90%;
+    background: whitesmoke;
+    position: relative;
+    top: 5%;
+    border-radius: 10px;
+    left: 5%;
+    padding: 20px;
+    max-height: 90vh;
+    overflow-y: scroll;
+    z-index: 100;
+}

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+    <br>
+    <br>
+    <br>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col"></div>
+            <div class="col-4">
+                <div class="card text-center py-5">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12 border-bottom">
+                                <img height="100" src="{% static 'imgs/user.svg' %}" alt="">
+                                <p>Login</p>
+                            </div>
+                            <div class="col-12">
+                                <br>
+                                {% if form.errors %}
+                                <h6 class="text-danger">خطا في البريد الالكتروني او كلمة المرور</h4>
+                                {% endif %}
+                                <br>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <div class="input-group mb-3">
+{#                                        <span class="input-group-text" id="basic-addon1">Email</span>#}
+                                        {{ form.email }}
+{#                                        <input type="email" class="form-control rounded-pill" placeholder="Email"#}
+{#                                               aria-label="Email"#}
+{#                                               aria-describedby="basic-addon1">#}
+                                    </div>
+
+                                     <div class="input-group mb-3">
+{#                                        <span class="input-group-text" id="basic-addon1">Password</span>#}
+                                         {{ form.password }}
+{#                                        <input type="password" class="form-control rounded-pill" placeholder="Password"#}
+{#                                               aria-label="Email"#}
+{#                                               aria-describedby="basic-addon1">#}
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary">دخول</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col"></div>
+        </div>
+    </div>
+{% endblock %}

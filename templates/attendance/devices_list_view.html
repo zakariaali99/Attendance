@@ -1,0 +1,33 @@
+{% extends 'list_search_base.html' %}
+
+{% block add_url %}
+    {% url 'Attendance:add_devices' %}
+{% endblock %}
+
+{% block tabel %}
+
+    <div class="col-12 text-center fs-6">
+        <div class="container bg-hti rounded-pill">
+            <div class="row">
+                <div class="col-1">رقم</div>
+                <div class="col">الاسم</div>
+                <div class="col-4 d-none d-md-block">العنوان</div>
+                <div class="col-2 d-none d-md-block">المنفذ</div>
+            </div>
+        </div>
+
+        {% for device in object_list %}
+            <a href="{% url 'Attendance:edit_devices' device.id %}" class="btn p-0 btn-lg w-100 fs-6">
+                <div class="container bg-light mt-1 rounded-pill">
+                    <div class="row">
+                        <div class="col-1">{{ device.id }}</div>
+                        <div class="col">{{ device.name }}</div>
+                        <div class="col-4 d-none d-md-block">{{ device.ip }}</div>
+                        <div class="col-2 d-none d-md-block">{{ device.port }}</div>
+                    </div>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+
+{% endblock %}

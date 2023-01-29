@@ -1,0 +1,33 @@
+{% extends 'list_search_base.html' %}
+
+{% block add_url %}{% url 'VIP:add_user' %}{% endblock %}
+{% block tabel %}
+
+    <div class="col-12 text-center fs-5">
+        <div class="container bg-hti rounded-pill">
+            <div class="row">
+                <div class="col-1">ID</div>
+                <div class="col">Name</div>
+                <div class="col-2">Level</div>
+                <div class="col-2">Operation</div>
+            </div>
+        </div>
+
+        {% for user in object_list %}
+
+
+            <a href="{% url 'VIP:edit_user' user.id %}" class="btn btn-lg p-0 w-100">
+
+                <div class="container bg-light mt-1 rounded-pill">
+                    <div class="row">
+                        <div class="col-1">{{ user.id }}</div>
+                        <div class="col">{{ user.name }}</div>
+                        <div class="col-2">{{ user.email }}</div>
+                        <div class="col-2">{{ user.is_admin }}</div>
+                    </div>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+
+{% endblock %}

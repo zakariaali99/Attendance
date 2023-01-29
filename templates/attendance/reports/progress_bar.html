@@ -1,0 +1,11 @@
+<div class="">
+    {{ day.date }}
+</div>
+<div class="progress mb-1 border ">
+    {% for shift in day.shifts %}
+        <div class="progress-bar  {{ shift.style }} {{ shift.state_style }}"
+             role="progressbar" style="width: {{ shift.width_percent }}%" aria-valuenow="{{ shift.width_percent }}"
+             aria-valuemin="0"
+             aria-valuemax="100">{{ shift.name }}</div>
+    {% endfor %}
+</div>

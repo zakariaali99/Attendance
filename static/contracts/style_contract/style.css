@@ -1,0 +1,134 @@
+@charset "utf-8";
+/* CSS Document */
+body{ margin:0; padding:0; font-family:Arial, Helvetica, sans-serif;  font-size:13px;    }
+.cls{ clear:both;}
+
+.wrapper{ margin:5px auto; padding:0; width: 90%; height: 270mm; border:7px solid #077cb9; position: relative;}
+.header{ margin:0 0 3px 0; padding:0; width:100%; border-bottom:3px solid #2fb2de;}
+.header .logo{ margin:0; padding:0; float:left; }
+.header .logo a{ margin:0; padding:0; outline:none;}
+
+.header .contact{ margin:0; padding:0; float:right; width:464px;}
+.container{ width:98%; margin:0 auto; padding:0; border-top:0px solid #077cb9; }
+.container h2{ margin:0; padding:0 8px; background:#2fb2de; font:20px/35px Arial, Helvetica, sans-serif; color:#fff;}
+.container h2 span{ float:right;}
+.container h3{ margin:0; padding:0 8px; background:#31bbd4; font:20px/35px Arial, Helvetica, sans-serif; color:#fff;}
+.container h3 span{ float:right;}
+.newSubs{margin:0; padding:0 0 0 0; text-align: center; font-size:15px;}
+.newSubs p{margin:0; padding:0; text-align:right;line-height:30px;}
+.newSubs p span{margin:0; padding:0 0 0 3px; float:right !important; text-align:center;}
+.subs1{ width:310px; float:right; text-align: center}
+.subs2{width:300px; float:right;}
+.subs3{width:300px; float:right;}
+
+.newSubs ul{ margin:0px; padding:0px; line-height:30px;  list-style:none; text-align:right; float:right}
+.newSubs ul li{ float:left; margin:12px 10px 5px 10px; width:247px; text-align:right;}
+.newSubs ul li:last-child{margin-right:0;}
+.p_detail{margin:0; padding:5px 0 15px 0; text-align: center; font-size:15px;}
+.p_detail p{ margin:0 20px 0 0; padding:0; line-height:30px; float:right; text-align:right;}
+.p_detail p span{margin:0; padding:0; float:right !important; text-align:center;}
+
+.p_detail ul{ margin:0px; padding:0px; list-style:none; font-size:15px; text-align:right; float:right; width:100%;}
+.p_detail ul li{ float:left; width:26%; margin:0; text-align:center;}
+.p_detail ul li:last-child{margin-right:0; float:right;}
+
+.service{margin:0; padding:5px 0 15px 0;font-size:15px;  width:99%;}
+.service .s_details{ margin:0; padding:0;}
+.service .s_details textarea{ width:98%; height:80px; padding:2px; float:right;}
+.service p{ width:48%; float:right; margin: 0 0 0 18px; line-height:30px; text-align:right; }
+.service span{ float:right; text-align:right; padding:0 0 0 5px;}
+.service ul{ margin:0px; padding:0px; line-height:30px; list-style:none; text-align:right; float:right}
+.service ul li{ float:right; margin:12px 10px 5px 10px; text-align:right;}
+.service ul li.last{ width:300px;}
+.service ul li  label{ width:100%; margin:0; padding:0; text-align:right; float:right; }
+.service ul li input[type="checkbox"]{ margin:0 5px; padding:5px; border-right:1px solid #999;}
+.largecheck{width:20px; height:20px; border:1px solid #999;  -moz-appearance: none;}
+
+.service .signature { width:48%; margin:0; padding:0; float:left;}
+.service .signature span{ width:100%; margin:0; padding:5px 0; text-align:center;}
+.service .signature  p{ width:100%; margin:0; padding:5px 0; text-align:left; line-height:24px;}
+.service .signature1 { width:48%; margin:0 5px 0 0;  padding:0; float:right;}
+.service .signature1 span{ width:100%; margin:0; padding:5px 0; text-align:right;}
+.service .signature1  p{ width:100%; margin:0; padding:5px 0; line-height:24px;}
+
+.textfield1{ width:26%; margin:0; padding:0;}
+.textfield1 span{ margin:0; padding:0; width:100%; text-align:center;}
+.textfield1 textarea{ width:100%; margin:0; font-size:16px; padding:0; height:70px;}
+.textfield2 { width:41%; margin:0; padding:0;}
+.textfield2 span{ margin:0; padding:0; width:100%; text-align:left;}
+.textfield2 textarea { width:100%; margin:0; font-size:16px; padding:2px; height:70px;}
+
+.footer{ padding:0;left: 5mm; margin: 0 0mm 0 0mm !important;}
+.wrapper .footer{
+	position: absolute;
+	bottom: 5mm;
+}
+.footer .small_logo{ margin:0; padding:0; float:left; width:7%;}
+.footer .small_logo img{width:65px; height:58px;}
+.footer .contact_details{ margin:12px 0 0 0; padding:0; font-size:12px; float:left; background:#2285ba; width:92%;}
+.footer .contact_details span{ margin:0; padding:0 5px; line-height:35px; font-size:24px; float:left; color:#fff;}
+.footer .contact_details ul{ margin:0; padding:3px 0 0 0; float:left; list-style-type:none;}
+.footer .contact_details ul li{ margin:0; padding:0 1px; float:left;border-left:3px solid #000000;}
+.footer .contact_details ul li:first-child{border-left:none;}
+
+.common{margin:0; padding:5px 0 0px 0;font-size:15px;  width:96%;}
+.common .box{ margin:8px 0; padding:0; display:inline-block; width:100%; text-align:right;}
+.common .box span{ margin:0 0 0 30px;background:url(images/dot.png) 0 10px repeat-x; width:65%;}
+.common .box label {margin:0; padding:0 0 0 5px; text-align:right; float:right; }
+
+.common .largefield{ float:right; width:60%; display:block;}
+.common .smallfield{ float:right; width:40%;display:block;}
+.common .equalfield{ float:right; width:50%; display:block;}
+.common .equalfield span{ width:46%; float:right; margin:0 0 0 30px; }
+.common .equalfield label {margin:0; padding:0 0 0 5px; text-align:right; float:right; }
+
+.field_pnl{ width: 53% !important; float:right !important;}
+.field_pnl1{ width: 41% !important;}
+.field_pnl2{ width: 80% !important;}
+.field_pnl3{ width: 72% !important;}
+
+.label_pnl{ width: 27% !important;}
+.label_pnl1{ width: 20% !important;}
+.label_pnl2{width: 35% !important;}
+.label_pnl3{ width: 45% !important;}
+.label_pnl4{ width: 50% !important;}
+
+
+@media only screen and (min-width :769px) and (max-width:1024px){
+	img{max-width:100%; height:auto;}
+	.wrapper{
+		width: 210mm;
+    	height: 297mm;
+	}
+	.header .contact{width:40%;}
+	.header .logo{width:40%}
+	.textfield1 span{ font-size:12px;}
+	}
+	
+@media only screen and (min-width:481px) and (max-width:768px) {
+	img{max-width:100%; height:auto;}
+	.wrapper{width:96%;}
+	.header .contact{width:40%;}
+	.header .logo{width:40%}
+	.service p{ width:90%}
+	.service .signature{ width:100%; float:none}
+	.service .signature1 {width: 100%;margin: 0;padding: 0;loat: none;}
+	.textfield2 textarea, .textfield1 textarea {width: 100%;margin: 0;padding: 0;height: 40px;}
+	.textfield1 span{ font-size:12px;}
+	.service ul li {
+float: right;
+margin: 12px 2px 5px 10px;
+text-align: left;
+}
+/*.p_detail ul li{ width:48%}*/
+.footer .contact_details ul li {margin: 0;padding: 0 10px;float: left;border-left: 1px solid #000000;font-size:11px;}
+	}
+@media only screen and (min-width:200px) and (max-width:480px) {
+	img{max-width:100%; height:auto;}
+	.wrapper{width:96%;}
+	.header .contact{width:40%;}
+	.header .logo{width:40%}
+	.service .signature{ width:100%; float:none}
+	.service .signature1 {width: 100%;margin: 0;padding: 0;loat: none;}
+	.footer .contact_details ul li {margin: 0;padding: 0 2px;float: left;border-left: 1px solid #000000;font-size: 9px;}
+	}

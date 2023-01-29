@@ -1,0 +1,110 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HTI system</title>
+    
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link rel="icon" href="{% static 'imgs/logo.png' %}">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'bootstrap-icons-1.9.0/bootstrap-icons.css' %}">
+    <link href="{% static 'css/main_style.css' %}" rel="stylesheet">
+    <link href="{% static 'css/over_layer_style.css' %}" rel="stylesheet">
+    {% block css %}
+
+    {% endblock %}
+
+    {#    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">#}
+
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark" style="height: 50px;">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'Attendance:list' %}">
+            <img src="{% static 'imgs/logo.png' %}" alt="HIT Logo" height="60" style="margin-bottom: -10px">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            
+
+            <ul class="ms-auto navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="login" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <img style="height: 40px;width: 40px;"
+                             class="img-fluid rounded-pill bg-white p-1"
+                             src="{% static 'imgs/user.svg' %}" alt="HTI">
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="login">
+                        <li><a class="dropdown-item"
+                               href="{% url 'VIP:logout' %}?next={% url 'VIP:home' %}">{% trans 'Sign Out' %}</a></li>
+                    </ul>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+</nav>
+
+
+{% block body %}
+
+{% endblock %}
+
+<div class="container-fluid footer border-top">
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-auto">
+            HTI - System
+        </div>
+        <div class="col"></div>
+    </div>
+</div>
+
+<script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'js/settings/userinfo.js' %}"></script>
+<script src="{% static 'js/popper.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.bundle.js' %}"></script>
+{#<script src="{% static 'js/bootstrap.js' %}"></script>#}
+
+<link rel="stylesheet" type="text/css"
+      href="https://cdn.datatables.net/v/bs5/jq-3.3.1/dt-1.10.25/r-2.2.9/sc-2.0.4/datatables.min.css"/>
+
+<script type="text/javascript"
+        src="https://cdn.datatables.net/v/bs5/jq-3.3.1/dt-1.10.25/r-2.2.9/sc-2.0.4/datatables.min.js"></script>
+<script type="text/javascript" src="{% static 'js/xlsx/shim.min.js' %}"></script>
+<script lang="javascript" src="{% static 'js/xlsx/xlsx.full.min.js' %}"></script>
+
+{% comment %} React Library {% endcomment %}
+{% comment %} <script src="https://unpkg.com/react@latest/umd/react.development.js" crossorigin="anonymous"></script> {% endcomment %}
+<script src="{% static 'js/react.development.js' %}" crossorigin="anonymous"></script>
+{% comment %} <script src="https://unpkg.com/react-dom@latest/umd/react-dom.development.js"></script> {% endcomment %}
+<script src="{% static 'js/react-dom.development.js' %} "></script>
+<script type="text/javascript" src="{% static 'js/xlsx/shim.min.js' %}"></script>
+<script lang="javascript" src="{% static 'js/xlsx/dist/xlsx.bundle.js' %}"></script>
+<script type="text/babel" src="{% static 'js/report/api_reader.js' %}"></script>
+<script type="text/babel" src="{% static 'js/utils.js' %}"></script>
+{% comment %} <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script> {% endcomment %}
+{% comment %} <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script> {% endcomment %}
+{% comment %} <script src="https://unpkg.com/@mui/material@5.0.0-rc.0/umd/material-ui.development.js" crossorigin="anonymous"></script> {% endcomment %}
+
+
+<!-- Don't use this in production: -->
+<script src="{% static 'js/babel.min.js' %}"></script>
+{% comment %} <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script> {% endcomment %}
+
+
+
+{% block scripts %}
+
+{% endblock %}
+
+</body>
+</html>

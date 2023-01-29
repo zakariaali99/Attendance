@@ -1,0 +1,39 @@
+{% extends 'list_search_base.html' %}
+
+{% block add_url %}
+    {% url 'Attendance:add' %}
+{% endblock %}
+
+{% block tabel %}
+
+    <div class="col-12 text-center fs-6">
+        <div class="container bg-hti rounded-pill">
+            <div class="row">
+                <div class="col-1">رقم</div>
+                <div class="col">الاسم</div>
+                <div class="col-2 d-none d-md-block">رقم الموظف</div>
+            </div>
+        </div>
+
+        {% for employee in object_list %}
+            <div class="container bg-light mt-1 rounded-pill">
+{#                <a href="{% url 'Attendance:edit' employee.id %}" class="btn p-0 btn-lg w-100 fs-6">#}
+                    <div class="row">
+                        <div class="col-1">{{ employee.id }}</div>
+                        <div class="col">{{ employee.name }}</div>
+                        <div class="col-2 d-none d-md-block">{{ employee.attendance_id }}</div>
+                        <div class="col-3 d-none d-md-block">
+                            <div class="btn-group w-100"  role="group">
+                                <a href="{% url 'Attendance:edit' employee.id %}" class="btn btn-link p-0 btn-lg w-100 fs-6">تعديل</a>
+                                <a href="{% url 'Attendance:records' employee.id %}" class="btn btn-link p-0 btn-lg w-100 fs-6"> سجل الحضور</a>
+{#                                <a href="{% url 'Attendance:edit' employee.id %}" class="btn btn-link p-0 btn-lg w-100 fs-6"> سجل الحضور</a>#}
+                            </div>
+
+                        </div>
+                    </div>
+{#                </a>#}
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}

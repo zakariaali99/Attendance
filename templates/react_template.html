@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+{% block body %}
+    <div class="container-fluid">
+        {% csrf_token %}
+        <div id="container"></div>
+    </div>
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+{% endblock %}
+
+{% block scripts %}
+    {% comment %} <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script> {% endcomment %}
+    {% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.0/chart.min.js" integrity="sha512-GMGzUEevhWh8Tc/njS0bDpwgxdCJLQBWG3Z2Ct+JGOpVnEmjvNx6ts4v6A2XJf1HOrtOsfhv3hBKpK9kE5z8AQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> {% endcomment %}
+    <!-- MDB -->
+    
+    <script type="text/babel" src="{% static js_file %}"></script>
+    
+    
+    
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css">
+
+{% endblock %}

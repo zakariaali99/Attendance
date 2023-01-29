@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+
+{% block body %}
+    <br>
+    <br>
+    <br>
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h3>اضافة اجازة</h3>
+            </div>
+            <div class="col"></div>
+            <div class="col-8">
+
+                <form method="post">
+                    {#                    {{ form.as_p }}#}
+                    {% csrf_token %}
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12">
+                                {{ form.errors }}
+                            </div>
+                            <div class="col-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.date.id_for_label }}" class="form-label"> من</label>
+                                    {{ form.date }}
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.to_date.id_for_label }}" class="form-label">الي</label>
+                                    {{ form.to_date }}
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label for="{{ form.type.id_for_label }}" class="form-label">نوع الاجازة</label>
+                                    {{ form.type }}
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label for="{{ form.note.id_for_label }}" class="form-label">ملاحظات</label>
+                                    {{ form.note }}
+                                </div>
+                            </div>
+                            
+                            
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label for="{{ form.employees.id_for_label }}" class="form-label">الموظف</label>
+                                {% comment %} {{ form.employees }} {% endcomment %}
+                                <div class="w-100 border p-2" style="max-height: 200px; overflow-y: scroll;">
+                                    <input type="checkbox" class="custom-control-input" id="employee_all">
+                                    <label class="custom-control-label" for="employee_all">تحديد الكل</label>
+                                    <br/>
+                                {% for e in form.employees.field.queryset.all %}
+                                    <input name="employees" value="{{ e.id }}" type="checkbox" class="custom-control-input" id="employee_{{ e.id }}">
+                                    <label class="custom-control-label" for="employee_{{ e.id }}">{{ e.name }}</label>
+                                    <br/>
+                                {% endfor %}
+                                </div>
+                                    
+                                </div>
+                            </div>
+                            
+                            
+                            
+                            <div class='row'>
+                            <div class="col"></div>
+                            <div class="col-3 mt-2">
+                                <button type="submit" class="btn btn-primary w-100 rounded-pill">حفظ</button>
+                            </div>
+                            <div class="col"></div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col"></div>
+        </div>
+    </div>
+
+
+
+    <br>
+    <br>
+    <br>
+
+
+
+
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+    $("#employee_all").click(function () {
+        $("input[name='employees']").prop('checked', $(this).prop('checked'));
+    });
+    
+</script>
+{% endblock %}

@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% block body %}
+    <div class="row text-center mt-2 mb-1 text-success">
+        <div class="col"></div>
+        <div class="col-7" dir="rtl">
+            {{ object.attendance_id }} - {{ object.name }} - {{ object.phone }}
+        </div>
+        <div class="col"></div>
+
+    </div>
+    <div class="row text-center mt-2 mb-1 text-success">
+    {% if device.out_during_work %}
+    <div class="col"></div>
+        <div class="col-4 text-dark">
+        خروج اثناء الدوام
+        </div>
+        <div class="col"></div>
+    {% else %}
+    <div class="col"></div>
+        <div class="col-4">
+        <div class="progress mb-1 border ">
+    
+        <div class="progress-bar border border-danger progress-bar-striped bg-warning"
+             role="progressbar" style="width: 33%" aria-valuenow="33"
+             aria-valuemin="0"
+             aria-valuemax="100">فتح جلسة تلقائي</div>
+             <div class="progress-bar border border-danger progress-bar-striped bg-info"
+             role="progressbar" style="width: 33%" aria-valuenow="33"
+             aria-valuemin="0"
+             aria-valuemax="100">اغلاق جلسة تلقائي</div>
+             <div class="progress-bar bg-success"
+             role="progressbar" style="width: 34%" aria-valuenow="34"
+             aria-valuemin="0"
+             aria-valuemax="100">جلسة كاملة</div>
+    
+</div>
+        </div>
+        <div class="col"></div>
+        {% endif %}
+    </div>
+    
+
+    <form>
+        <div class="container-fluid mb-3">
+            <div class="row">
+                <div class="col-auto p-0">
+                    <p class="p-0 m-0">-</p>
+                    <a href="{% url 'Attendance:records_export' object.id %}?{{ old_q }}"
+                       class="btn btn-light bg-white border-0 rounded-pill">تصدير</a>
+                    <button type="submit" class="btn btn-secondary border-0  rounded-pill"
+                            id="inputGroup-sizing-lg">تصفية
+                    </button>
+
+                </div>
+                <div class="col-4">
+                    <div class="row">
+                        <div class="col-6">
+                            من
+                            {{ form.from_date }}
+                        </div>
+                        <div class="col-6">
+                            الي
+                            {{ form.to_date }}
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="col">
+
+
+                </div>
+                <div class="col-2 p-0">
+                    الجهاز
+                    {{ form.device }}
+                </div>
+
+            </div>
+        </div>
+    </form>
+    <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">اليوم</th>
+            <th scope="col">الساعة</th>
+            <th scope="col">ساعات العمل</th>
+            <th scope="col">الساعات الاضافية</th>
+            <th scope="col">الاذونات</th>
+            <th scope="col">التأخير(بالدقائق)</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for day in object.days %}
+            <tr>
+                <td>{{ day.date }} </td>
+                <td>
+                    {% for shift in day.shifts %}
+                        {{ shift.name }} <br/> 
+                    {% endfor %}
+                </td>
+                <td>{{ day.work }} </td>
+                <td>{{ day.overwork }}</td>
+                <td>
+                    {% for e in day.work_day_exceptions %}
+                    {{ e.type }}
+                    {% endfor %}
+                </td>
+                <td>{{ day.late_min }}</td>
+                {% comment %} <td></td> {% endcomment %}
+                
+                
+            </tr>
+
+        
+    {% endfor %}
+
+         
+        </tbody>
+      </table>
+
+    {% comment %} {% for day in object.days %} {% endcomment %}
+        {% comment %} <div class="row"> {% endcomment %}
+            {% comment %} <div class="col"> {% endcomment %}
+                {% comment %} {{ day.date }}  {% endcomment %}
+                {% comment %} - {{ day.overwork }} {% endcomment %}
+            {% comment %} </div> {% endcomment %}
+            {% comment %} <div class="col-8"> {% endcomment %}
+                {% comment %} {% for shift in day.shifts %} <div>{{ shift.name }}</div> {% endfor %} / {{ day.work }} / {{ day.late_min }} {% endcomment %}
+                {% comment %} {% include 'attendance/reports/progress_bar.html' with day=day %} {% endcomment %}
+            {% comment %} </div> {% endcomment %}
+            {% comment %} <div class="col"></div> {% endcomment %}
+        {% comment %} </div> {% endcomment %}
+    {% comment %} {% endfor %} {% endcomment %}
+
+    <div class="my-5"></div>
+{% endblock %}

@@ -1,0 +1,8 @@
+<select name="fixed_by" class="form-control rounded-pill"
+        >
+    <option value="" selected="">---------</option>
+    {% for user in users %}
+        <option value="{{ user.id }}">{{ user }}</option>
+    {% endfor %}
+
+</select>

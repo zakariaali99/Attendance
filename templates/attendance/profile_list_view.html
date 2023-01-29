@@ -1,0 +1,30 @@
+{% extends 'list_search_base.html' %}
+
+{% block add_url %}
+    {% url 'Attendance:add_profile' %}
+{% endblock %}
+
+{% block tabel %}
+
+    <div class="col-12 text-center fs-6">
+        <div class="container bg-hti rounded-pill">
+            <div class="row">
+                <div class="col-1">رقم</div>
+                <div class="col">الاسم</div>
+            </div>
+        </div>
+
+        {% for profile in object_list %}
+            <a href="{% url 'Attendance:edit_profile' profile.id %}" class="btn p-0 btn-lg w-100 fs-6">
+                <div class="container bg-light mt-1 rounded-pill">
+                    <div class="row">
+                        <div class="col-1">{{ profile.id }}</div>
+                        <div class="col">{{ profile.name }}</div>
+
+                    </div>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+
+{% endblock %}

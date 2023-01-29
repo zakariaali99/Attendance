@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+    <br>
+    <br>
+    <br>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 col-sm-6 col-12">
+                <a href="{% url 'VIP:accounts_list' %}" class="btn p-0">
+
+                    <div class="card shadow-sm p-5 rounded text-center">
+                        <div class="row">
+                            <div class="col-12">
+                                <img class="img-fluid" src="{% static 'imgs/accounting.svg' %}" alt="">
+                            </div>
+                            <div class="col-12 border-top mt-3 pt-2">
+                                حسابات
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-md-3 col-sm-6 col-12">
+                <a href="{% url 'VIP:payments_list' %}" class="btn p-0">
+
+                    <div class="card shadow-sm p-5 rounded text-center">
+                        <div class="row">
+                            <div class="col-12">
+                                <img class="img-fluid" src="{% static 'imgs/payment.svg' %}" alt="">
+                            </div>
+                            <div class="col-12 border-top mt-3 pt-2">
+                                عمليات الدفع
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-md-3 col-sm-6 col-12">
+                <a href="{% url 'VIP:emails_list' %}" class="btn p-0">
+
+                    <div class="card shadow-sm p-5 rounded text-center">
+                        <div class="row">
+                            <div class="col-12">
+                                <img class="img-fluid" src="{% static 'imgs/email_list.svg' %}" alt="">
+                            </div>
+                            <div class="col-12 border-top mt-3 pt-2">
+                                القوائم البريدية
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            {% if "VIPAlert.can_view_users" in perms %}
+                <div class="col-3">
+                    <a href="{% url 'VIP:users_list' %}" class="btn p-0">
+
+                        <div class="card shadow-sm p-5 rounded text-center">
+                            <div class="row">
+                                <div class="col-12 px-5 py-3">
+                                    <img class="img-fluid" src="{% static 'imgs/user.svg' %}" alt="">
+                                </div>
+                                <div class="col-12 border-top mt-3 pt-2">
+                                    المستخدمين
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
