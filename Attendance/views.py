@@ -2,18 +2,21 @@ import calendar
 import datetime
 import io
 from datetime import date
+from typing import Any, Dict
+
 import xlsxwriter
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.db.models import Q
 from django.http import HttpResponse
-from django.template.response import TemplateResponse 
+from django.template.response import TemplateResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views import View
-from django.views.generic import ListView, CreateView, UpdateView, DetailView, TemplateView, DeleteView, RedirectView, FormView
+from django.views.generic import ListView, CreateView, UpdateView, DetailView, TemplateView, DeleteView, RedirectView, \
+    FormView
 
-from Attendance.forms import * #EditVacationForm, EmployeeForm, ProfileForm, DeviceForm, ReportFilterForm, AddVacationForm, AddVacationTypeForm, FilterVacationsForm,FilterExceptionsForm
+from Attendance.forms import *  # EditVacationForm, EmployeeForm, ProfileForm, DeviceForm, ReportFilterForm, AddVacationForm, AddVacationTypeForm, FilterVacationsForm,FilterExceptionsForm
 from Attendance.models import Employee, Profile, Record, WorkDay, ZKTDevice, Vacation, VacationType, Exception
 from Attendance.sync_records import sync_all, sync_all_devices
 
@@ -50,12 +53,12 @@ def required_days(from_date, to_date):
     total = 0
     for d in range(from_date.toordinal(), to_date.toordinal()):
         dt = date.fromordinal(d)
-        if dt.weekday() == 4:
+        if dt.weekday() == 4 or dt.weekday() == 5:
             c += 1;
         total += 1;
 
     return total - c
-         
+
 
 def data_device(view):
     get = view.request.GET
@@ -79,7 +82,6 @@ class AddEmployeeView(CreateView):
     permission_required = ('Attendance.can_create_employees',)
 
     def get(self, request, *args, **kwargs):
-
         return super().get(request, *args, **kwargs)
 
 
@@ -105,7 +107,6 @@ class EditEmployeeView(UpdateView):
     permission_required = ('Attendance.can_edit_employees',)
 
     def get(self, request, *args, **kwargs):
-
         return super().get(request, *args, **kwargs)
 
 
@@ -128,7 +129,7 @@ class EmployeeView(ListView):
         return super().get_queryset().order_by("-name")
 
 
-class EmployeeRecordsView( DetailView):
+class EmployeeRecordsView(DetailView):
     template_name = "attendance/reports/employee_report.html"
     model = Employee
     success_url = reverse_lazy("Attendance:home")
@@ -180,7 +181,6 @@ class ProfileListView(ListView):
     model = Profile
 
     def get(self, request, *args, **kwargs):
-
         return super().get(request, *args, **kwargs)
 
 
@@ -191,7 +191,6 @@ class AddProfileView(CreateView):
     success_url = reverse_lazy("Attendance:profiles")
 
     def get(self, request, *args, **kwargs):
-
         return super().get(request, *args, **kwargs)
 
 
@@ -202,21 +201,26 @@ class EditProfileView(UpdateView):
     success_url = reverse_lazy("Attendance:profiles")
 
     def get(self, request, *args, **kwargs):
-
         return super().get(request, *args, **kwargs)
 
 
 class DeleteProfileView(DeleteView):
-    template_name = "delete_form.html"
+    template_name = "attendance/delete_form.html"
     model = Profile
     success_url = reverse_lazy("Attendance:profiles")
 
 
 class ReportView(TemplateView):
     template_name = "attendance/reports/monthly_report.html"
+    # if Profile.objects.all().count() == 0:
+    #     template_name = "attendance/employee_list_view.html"
+
     model = Employee
 
     def get_template_names(self):
+        if Profile.objects.all().count() < 1:
+            name = "create_profile_first.html"
+            return [name]
         device = data_device(self)
         if device.out_during_work:
             name = "attendance/reports/out_during_work.html"
@@ -252,7 +256,6 @@ class ReportView(TemplateView):
         return data
 
     def get(self, request, *args, **kwargs):
-
         return super().get(request, *args, **kwargs)
 
 
@@ -310,7 +313,6 @@ class ExportEmployeeReportView(DetailView):
     model = Employee
 
     def get(self, request, *args, **kwargs):
-
         employee = self.get_object()
         device = data_device(self)
         from_date, to_date = default_date_range(self)
@@ -359,7 +361,6 @@ class DeviceListView(ListView):
     model = ZKTDevice
 
     def get(self, request, *args, **kwargs):
-        
         return super().get(request, *args, **kwargs)
 
 
@@ -370,7 +371,6 @@ class EditDeviceView(UpdateView):
     success_url = reverse_lazy("Attendance:devices")
 
     def get(self, request, *args, **kwargs):
-       
         return super().get(request, *args, **kwargs)
 
 
@@ -381,46 +381,44 @@ class AddDeviceView(CreateView):
     success_url = reverse_lazy("Attendance:devices")
 
     def get(self, request, *args, **kwargs):
-       
         return super().get(request, *args, **kwargs)
-
 
 
 class VacationsView(ListView):
     template_name = "attendance/vacations/vacations_list_view.html"
-    # form_class = Vacation
+    form_class = Vacation
     model = Vacation
-    
-    
+
     # success_url = reverse_lazy("Attendance:devices")
 
     def get_context_data(self, **kwargs):
-        data =  super().get_context_data(**kwargs)
+        data = super().get_context_data(**kwargs)
         data["search_form"] = FilterVacationsForm()
         return data
 
     def get_queryset(self):
         q = super().get_queryset()
+        print(q)
+        print(q.count())
         g = self.request.GET
 
         if g.get('employees', "") != "":
             q = q.filter(employee_id=g.get('employees', None))
 
-        if g.get('type', "") != "":
+        if g.get('vacation_type', "") != "":
             q = q.filter(vacation_type_id=g.get('type', None))
-        
+
         if g.get('date', "") != "":
             q = q.filter(date__gte=g.get('date', None))
-        
+
         if g.get('to_date', "") != "":
             q = q.filter(date__lte=g.get('to_date', None))
 
         return q
 
     def get(self, request, *args, **kwargs):
-   
-        return super().get(request, *args, **kwargs)
 
+        return super().get(request, *args, **kwargs)
 
 
 class AddVacationsView(FormView):
@@ -431,27 +429,22 @@ class AddVacationsView(FormView):
     permission_required = ('Attendance.can_create_employees',)
 
     def get(self, request, *args, **kwargs):
-
         return super().get(request, *args, **kwargs)
 
-
     def post(self, request, *args, **kwargs) -> HttpResponse:
-
         return super().post(request, *args, **kwargs)
 
     def form_valid(self, form) -> HttpResponse:
-        
         for e in form.data.getlist("employees"):
             v = Vacation(date=form.data["date"],
-            to_date=form.data["to_date"],
-            note=form.data["note"],
-            vacation_type_id=form.data["type"],
-            employee_id=e
-            )
-            
+                         to_date=form.data["to_date"],
+                         note=form.data["note"],
+                         vacation_type_id=form.data["type"],
+                         employee_id=e
+                         )
+
             v.save()
             v = Vacation.objects.get(id=v.id)
-            
 
             employee = Employee.objects.get(id=e)
             employee.current_vacations = employee.current_vacations - (v.to_date - v.date).days
@@ -467,8 +460,8 @@ class AddVacationTypeView(CreateView):
     permission_required = ('Attendance.can_create_employees',)
 
     def get(self, request, *args, **kwargs):
-
         return super().get(request, *args, **kwargs)
+
 
 class EditVacationTypeView(UpdateView):
     template_name = "attendance/vacations/add_edit_vacation_type.html"
@@ -478,19 +471,17 @@ class EditVacationTypeView(UpdateView):
     permission_required = ('Attendance.can_create_employees',)
 
     def get(self, request, *args, **kwargs):
-
         return super().get(request, *args, **kwargs)
+
 
 class VacationTypeView(ListView):
     template_name = "attendance/vacations/vacation_type_list_view.html"
     model = VacationType
-    
+
     permission_required = ('Attendance.can_create_employees',)
 
     def get(self, request, *args, **kwargs):
-
         return super().get(request, *args, **kwargs)
-
 
 
 class EditVacationView(UpdateView):
@@ -501,26 +492,22 @@ class EditVacationView(UpdateView):
     permission_required = ('Attendance.can_create_employees',)
 
     def get(self, request, *args, **kwargs):
-
         return super().get(request, *args, **kwargs)
 
 
 class DeleteVacationView(DeleteView):
-    template_name = "delete_form.html"
+    template_name = "attendance/delete_form.html"
     model = Vacation
     success_url = reverse_lazy("Attendance:vacation")
-    extra_context ={
-        "back_url":reverse_lazy("Attendance:vacation")
+    extra_context = {
+        "back_url": reverse_lazy("Attendance:vacation")
     }
-
-
 
 
 class ExceptionsView(ListView):
     template_name = "attendance/exceptions/exceptions_list_view.html"
     # form_class = Vacation
     model = Exception
-    
 
     def get_queryset(self):
         q = super().get_queryset()
@@ -531,27 +518,23 @@ class ExceptionsView(ListView):
 
         if g.get('type', "") != "":
             q = q.filter(type=g.get('type', None))
-        
+
         if g.get('date', "") != "":
             q = q.filter(date__gte=g.get('date', None))
-        
-        
 
         return q
-    
+
     # success_url = reverse_lazy("Attendance:devices")
 
     def get_context_data(self, **kwargs):
-        data =  super().get_context_data(**kwargs)
+        data = super().get_context_data(**kwargs)
         data["search_form"] = FilterExceptionsForm()
         return data
 
     def get(self, request, *args, **kwargs):
-       
+
         return super().get(request, *args, **kwargs)
 
-
-    
 
 class AddExceptionsView(FormView):
     template_name = "attendance/exceptions/add_edit_exception.html"
@@ -561,31 +544,27 @@ class AddExceptionsView(FormView):
     permission_required = ('Attendance.can_create_employees',)
 
     def get(self, request, *args, **kwargs):
-       
         return super().get(request, *args, **kwargs)
 
-
     def post(self, request, *args, **kwargs) -> HttpResponse:
-
         return super().post(request, *args, **kwargs)
 
     def form_valid(self, form) -> HttpResponse:
-        
         for e in form.data.getlist("employees"):
             Exception(date=form.data["date"],
-            note=form.data["note"],
-            type=form.data["type"],
-            employee_id=e
-            ).save()
+                      note=form.data["note"],
+                      type=form.data["type"],
+                      employee_id=e
+                      ).save()
         return super().form_valid(form)
 
 
 class DeleteExceptionView(DeleteView):
-    template_name = "delete_form.html"
+    template_name = "attendance/delete_form.html"
     model = Exception
     success_url = reverse_lazy("Attendance:exception")
-    extra_context ={
-        "back_url":reverse_lazy("Attendance:exception")
+    extra_context = {
+        "back_url": reverse_lazy("Attendance:exception")
     }
 
 
@@ -597,6 +576,30 @@ class EditExceptionView(UpdateView):
     permission_required = ('Attendance.can_create_employees',)
 
     def get(self, request, *args, **kwargs):
-
         return super().get(request, *args, **kwargs)
+
+
+class AddPermission(CreateView):
+    template_name = "attendance/reports/permissions.html"
+    form_class = PermissionForm
+    model = Record
+    success_url = reverse_lazy("Attendance:list")
+
+    def get_context_data(self, **kwargs) :
+        context_data = super().get_context_data(**kwargs)
+        context_data["employee"] = Employee.objects.get(id=self.kwargs["pk"])
+        return context_data
+
+
+class PermissionList(ListView):
+    template_name = "attendance/reports/permissions.html"
+    form_class = PermissionForm
+    model = Record
+    success_url = reverse_lazy("Attendance:list")
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        context_data["employee"] = Employee.objects.get(id=self.kwargs["pk"])
+        return context_data
+
 

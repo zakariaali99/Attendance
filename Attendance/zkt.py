@@ -120,26 +120,27 @@ def sync_missed(device):
     print("Desconnecting from device")
     conn.disconnect()
     print("Device disconnected successfully")
-    records = list(Record.objects.all()) 
-    
+    records = list(Record.objects.all())
+
     data_records = [Record(user_id=i.user_id, timestamp=i.timestamp.replace(tzinfo=UTC), status=i.status, uid=i.uid,
-                       device=device) for i in data]
+                           device=device) for i in data]
     records_ts = np.array([r.timestamp for r in records])
-    
-    ed = [ np.isin(records_ts,r.timestamp) for r in data_records]
+
+    ed = [np.isin(records_ts, r.timestamp) for r in data_records]
     ed1 = [not any(e) for e in ed]
     missed = np.array(data_records)[ed1]
-    
+
     print(len(missed))
     return missed
     # Record.objects.bulk_create(missed)
+
 
 def sync_users(device):
     users = []
     zk = ZK(device.ip, device.port)
     conn = zk.connect()
     data = conn.get_users()
-    emp = list(Employee.objects.all())#filter(device=device))
+    emp = list(Employee.objects.all())  # filter(device=device))
     emp_ids = [i.attendance_id for i in emp]
 
     # last = Record.objects.last()  # order_by("timestamp").last()

@@ -1,12 +1,9 @@
-from asyncio import exceptions
 import datetime
-import enum
-import profile
-import time
 from django.db import models
 from django.db.models import Q
-from django.utils import timezone 
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+
 
 class Day(models.Model):
     days = [
@@ -115,11 +112,12 @@ class Employee(models.Model):
 
     @property
     def holidays_count(self):
-        return len(list(filter(lambda a: a.is_friday,self.all_days)))
+        excluded_days = filter(lambda a: not a.is_friday and not a.is_saturday, self.all_days)
+        return len(list(filter(lambda a: a.is_holiday, excluded_days)))
 
     @property
     def late_days(self):
-        return list(filter(lambda a: a.late > 0,self.all_days))
+        return list(filter(lambda a: a.late > 0, self.all_days))
 
     @property
     def late_days_count(self):
@@ -131,19 +129,15 @@ class Employee(models.Model):
         for v in Vacation.objects.filter(employee=self.id):
             c += (v.to_date - v.date).days
         return c
-    
+
     @property
     def extra_work(self):
-        extrawork=ExtraWork.objects.filter(employee=self)
+        extrawork = ExtraWork.objects.filter(employee=self)
         return sum(e.time for e in extrawork)
-
-    # @property
-    # def required_days_count(self):
-        # return sum(datetime(year, month, 13).weekday() == 4 for year in range(1950, 2051) for month in range(1,13))
 
     def days(self, from_date=None, to_date=None):
         wd = self.all_days  # WorkDay.objects.filter(employee=self)
-        
+
         wd = filter(lambda a: len(a.shifts()) > 0, wd)
         if from_date:
             if not isinstance(from_date, datetime.date):
@@ -155,10 +149,7 @@ class Employee(models.Model):
             if not isinstance(to_date, datetime.date):
                 to_date = datetime.datetime.strptime(to_date, "%Y-%m-%d")
             wd = filter(lambda a: a.date <= to_date.date(), wd)
-            # wd = wd.filter(date__lte=to_date)
-        # _ = [w.set_records(list(self.records)) for w in wd]
 
-        # print(f"Log {type(from_date)} --> {to_date}")
         return wd
 
     @property
@@ -200,19 +191,25 @@ class Employee(models.Model):
         ]
 
 
+attendance_choices = [
+    ("early_exit", "خروج مبكر"),
+    ("late", "تأخير"),
+]
+
+
 class Record(models.Model):
     id = models.AutoField(primary_key=True)
     user_id = models.CharField(max_length=4096)
     timestamp = models.DateTimeField(default=None, null=True)
-    status = models.CharField(max_length=256)
     punch = models.CharField(max_length=256)
     uid = models.CharField(max_length=1024, default="", blank=True)
     device = models.ForeignKey("Attendance.ZKTDevice", on_delete=models.SET_NULL, null=True)
+    status = models.CharField(choices=attendance_choices, default="attendance", null=True, max_length=50)
+    note = models.TextField(default="")
 
     def __str__(self):
-        return f"{self.user_id} -> {self.timestamp}, {self.id}"
+        return f"{self.user_id} -> {self.timestamp}, {self.id}, {self.status}"
 
-   
 
 class ZKTDevice(models.Model):
     id = models.AutoField(primary_key=True)
@@ -220,7 +217,6 @@ class ZKTDevice(models.Model):
     port = models.IntegerField(default=4370)
     name = models.CharField(max_length=4096, blank=True, default="")
     out_during_work = models.BooleanField(default=False)
-    
 
     def __str__(self):
         if self.name.__len__() <= 0:
@@ -274,19 +270,20 @@ class Shift:
             return 0
         etime = self.profile.calculate_start_time.replace(tzinfo=None)
         time = datetime.datetime(self.start.year, self.start.month, self.start.day, etime.hour, etime.minute)
-        
-        if self.start.replace(tzinfo=None ) <= time:
+
+        if self.start.replace(tzinfo=None) <= time:
             return 0
-        m = (self.start.replace(tzinfo=None ) - time).seconds
-        
+        m = (self.start.replace(tzinfo=None) - time).seconds
+
         return m
-    
+
     @property
     def early(self):
         # m=(self.profile.end_time.replace(tzinfo=None) - self.end.replace(tzinfo=None)).seconds
         # if m < 0:
-            return 0
-        # return m
+        return 0
+
+    # return m
 
     @property
     def style(self):
@@ -295,6 +292,7 @@ class Shift:
         if self.automatic_close:
             return "border border-danger progress-bar-striped bg-info"
         return self.theme
+
 
 class Holiday(models.Model):
     date = models.DateField(null=True, default=None)
@@ -307,7 +305,6 @@ class VacationType(models.Model):
 
     def __str__(self) -> str:
         return self.title
-    
 
 
 class Vacation(models.Model):
@@ -315,11 +312,10 @@ class Vacation(models.Model):
     to_date = models.DateField(null=True, default=None)
     employee = models.ForeignKey('Employee', on_delete=models.CASCADE)
     note = models.TextField()
-    vacation_type = models.ForeignKey("VacationType",null=True, on_delete=models.SET_NULL)
+    vacation_type = models.ForeignKey("VacationType", null=True, on_delete=models.SET_NULL)
 
     def __str__(self) -> str:
         return f"{self.employee.name} - [ {self.vacation_type.title} ] - [{self.date} > {self.to_date}]"
-
 
 
 class ExceptionType(models.Model):
@@ -329,10 +325,12 @@ class ExceptionType(models.Model):
     def __str__(self) -> str:
         return self.title
 
+
 class Exception(models.Model):
+
     types = [
-        ("early_exit","Early exit"),
-        ("late","Late"),
+        ("early_exit", "خروج مبكر"),
+        ("late", "تأخير"),
     ]
     date = models.DateField(null=True, default=None)
     employee = models.ForeignKey('Employee', on_delete=models.CASCADE)
@@ -341,6 +339,7 @@ class Exception(models.Model):
 
     def __str__(self) -> str:
         return f"{self.employee.name} - [ {self.type} ] - [{self.date}]"
+
 
 class ExtraWork(models.Model):
     start = models.DateTimeField(null=False, default=timezone.now())
@@ -354,8 +353,8 @@ class ExtraWork(models.Model):
     def time(self):
         return (self.end - self.start).seconds
 
+
 class WorkDay(models.Model):
-    
     date = models.DateField(null=True, default=None)
     employee = models.ForeignKey('Employee', on_delete=models.CASCADE)
     device = models.ForeignKey('Attendance.ZKTDevice', on_delete=models.SET_NULL, default=1, null=True)
@@ -371,24 +370,26 @@ class WorkDay(models.Model):
 
     def set_records(self, t):
         self._records = t
-    
+
     @property
     def is_friday(self):
         return self.date.weekday() == 4
 
-        
+    @property
+    def is_saturday(self):
+        return self.date.weekday() == 5
+
     @property
     def late(self):
         return sum([s.late for s in self.shifts()])
-        
+
     @property
     def late_min(self):
         return self.late / 60
-        
+
     @property
     def work_day_exceptions(self):
         return Exception.objects.filter(employee=self.employee).filter(date=self.date)
-        
 
     def records(self):
         if self._records is None:
@@ -408,7 +409,7 @@ class WorkDay(models.Model):
         # if end_rc.timestamp.date() == s.start.date():
         if end_rc is not None:
             s.end = end_rc.timestamp
-            
+
         if start_rc is None:
             ts = end_rc.timestamp
             device = end_rc.device
@@ -424,8 +425,9 @@ class WorkDay(models.Model):
             next_day = 1
         smn, sh = start.minute, start.hour
         if is_in:
-            if profile.hourly and (s.start.replace(tzinfo=None) > datetime.datetime(y, m, d + next_day, h, mn).replace(tzinfo=None) or \
-             s.start.replace(tzinfo=None) < datetime.datetime(y, m, d, sh, smn).replace(tzinfo=None)):
+            if profile.hourly and (
+                    s.start.replace(tzinfo=None) > datetime.datetime(y, m, d + next_day, h, mn).replace(tzinfo=None) or \
+                    s.start.replace(tzinfo=None) < datetime.datetime(y, m, d, sh, smn).replace(tzinfo=None)):
                 s.theme = "bg-dark"
                 s.type = "overwork"
                 overworktime += s.seconds
@@ -463,12 +465,10 @@ class WorkDay(models.Model):
         if p.by_finger_print_count:
             return self.by_finger_print_count()
 
-
         rs = self.records()
-        
-        
+
         rs = list(filter(lambda r: r.timestamp.date() == self.date, rs))
-        
+
         rs.sort(key=lambda a: a.timestamp)
         shifts = []
         if len(rs) <= 0:
@@ -476,8 +476,7 @@ class WorkDay(models.Model):
 
         ts = rs[0].timestamp
         d, y, m = ts.day, ts.year, ts.month
-        
-        
+
         smn, sh = p.start_time.minute, p.start_time.hour
         emn, eh = p.end_time.minute, p.end_time.hour
         mn, h = p.shift_start_time.minute, p.shift_start_time.hour
@@ -485,7 +484,6 @@ class WorkDay(models.Model):
         end_profile_shift = Record(timestamp=datetime.datetime(y, m, d, eh, emn))
         start_shift = Record(timestamp=datetime.datetime(y, m, d, h, mn))
 
-        
         if len(rs) == 1:
 
             delta_start = rs[0].timestamp.replace(tzinfo=None) - start_profile_shift.timestamp
@@ -496,7 +494,7 @@ class WorkDay(models.Model):
                 is_in = True
                 # s, _, _ = self.prepare_shift(start_shift, rs[0], p, not is_in)
                 # shifts.append(s)
-                exceptions = filter(lambda a: a.type != "late",self.work_day_exceptions())
+                exceptions = filter(lambda a: a.type != "late", self.work_day_exceptions())
                 print("Early exit", exceptions)
                 end_time = None
                 if p.auto_close or len(exceptions) > 0:
@@ -508,7 +506,7 @@ class WorkDay(models.Model):
             else:
                 # s, _, _ = self.prepare_shift(start_shift, start_profile_shift, p, is_in)
                 # shifts.append(s)
-                exceptions = filter(lambda a: a.type == "late",self.work_day_exceptions())
+                exceptions = filter(lambda a: a.type == "late", self.work_day_exceptions())
                 start_time = None
                 if p.auto_open or len(exceptions) > 0:
                     start_time = start_profile_shift
@@ -574,7 +572,7 @@ class WorkDay(models.Model):
         self.worktime = worktime
         self.overworktime = overworktime
         print(shifts)
-        
+
         return shifts
 
     def by_finger_print_count(self):
@@ -587,26 +585,30 @@ class WorkDay(models.Model):
         if p is None:
             p = Profile.objects.first()
 
-
         shift_next_day = 0
         next_day = 0
         if p.shift_end_next_day:
             shift_next_day = 1
-        
+
         if p.next_day:
             next_day = 1
 
-        start_date = datetime.datetime(self.date.year,self.date.month,self.date.day, p.shift_start_time.hour, p.shift_start_time.minute)
-        start_date_working = datetime.datetime(self.date.year,self.date.month,self.date.day, p.start_time.hour, p.start_time.minute)
-        
-        end_date = datetime.datetime(self.date.year,self.date.month,self.date.day, p.shift_end_time.hour, p.shift_end_time.minute) + datetime.timedelta(days=shift_next_day)
-        end_date_working = datetime.datetime(self.date.year,self.date.month,self.date.day, p.end_time.hour, p.end_time.minute) + datetime.timedelta(days=next_day)
-        
-        rs = list(filter(lambda r: r.timestamp.replace(tzinfo=None) >= start_date and r.timestamp.replace(tzinfo=None) <= end_date , rs))
-        
-        
+        start_date = datetime.datetime(self.date.year, self.date.month, self.date.day, p.shift_start_time.hour,
+                                       p.shift_start_time.minute)
+        start_date_working = datetime.datetime(self.date.year, self.date.month, self.date.day, p.start_time.hour,
+                                               p.start_time.minute)
+
+        end_date = datetime.datetime(self.date.year, self.date.month, self.date.day, p.shift_end_time.hour,
+                                     p.shift_end_time.minute) + datetime.timedelta(days=shift_next_day)
+        end_date_working = datetime.datetime(self.date.year, self.date.month, self.date.day, p.end_time.hour,
+                                             p.end_time.minute) + datetime.timedelta(days=next_day)
+
+        rs = list(filter(
+            lambda r: r.timestamp.replace(tzinfo=None) >= start_date and r.timestamp.replace(tzinfo=None) <= end_date,
+            rs))
+
         rs.sort(key=lambda a: a.timestamp)
-        
+
         shifts = []
         print("-----------")
         print(len(rs), self.date)
@@ -614,7 +616,9 @@ class WorkDay(models.Model):
         if len(rs) == 1:
             start_profile_shift = Record(timestamp=start_date)
             end_profile_shift = Record(timestamp=end_date)
-            start_shift = Record(timestamp=datetime.datetime(self.date.year,self.date.month,self.date.day, p.start_time.hour, p.start_time.minute))
+            start_shift = Record(
+                timestamp=datetime.datetime(self.date.year, self.date.month, self.date.day, p.start_time.hour,
+                                            p.start_time.minute))
             delta_start = rs[0].timestamp.replace(tzinfo=None) - start_profile_shift.timestamp
             delta_end = end_profile_shift.timestamp - rs[0].timestamp.replace(tzinfo=None)
 
@@ -623,7 +627,7 @@ class WorkDay(models.Model):
                 is_in = True
                 # s, _, _ = self.prepare_shift(start_shift, rs[0], p, not is_in)
                 # shifts.append(s)
-                exceptions = filter(lambda a: a.type != "late",self.work_day_exceptions)
+                exceptions = filter(lambda a: a.type != "late", self.work_day_exceptions)
                 print("Early exit", exceptions, end_date_working)
                 print("Early exit", exceptions, end_date_working)
                 end_time = None
@@ -637,7 +641,7 @@ class WorkDay(models.Model):
             else:
                 # s, _, _ = self.prepare_shift(start_shift, start_profile_shift, p, is_in)
                 # shifts.append(s)
-                exceptions = filter(lambda a: a.type == "late",self.work_day_exceptions)
+                exceptions = filter(lambda a: a.type == "late", self.work_day_exceptions)
                 start_time = None
                 if p.auto_open or len(list(exceptions)) > 0:
                     start_time = Record()
@@ -651,11 +655,10 @@ class WorkDay(models.Model):
             print("-----------")
             print(shifts)
             return shifts
-            
 
         for i in range(0, len(rs) - 1, 2):
             # if rs[i].timestamp.date() != self.date:
-                # continue
+            # continue
 
             s, w, ow = self.prepare_shift(rs[i], rs[i + 1], p, is_in)
 
@@ -673,7 +676,7 @@ class WorkDay(models.Model):
             if s.type == work_type:
                 t += s.seconds
         return round(t / 3600, 2)
-    
+
     def late_and_early(self, work_type):
         t = 0
         for s in self.shifts():
@@ -683,25 +686,19 @@ class WorkDay(models.Model):
 
     @property
     def overwork(self):
-        # if self.overworktime is None:
-        #     self.shifts()
-        # return self.overworktime #self.calculate("overwork")
+
         return self.calculate("overwork")
 
     @property
     def work(self):
-        # if self.worktime is None:
-        #     self.shifts()
+
         return self.calculate("work")
 
     @property
     def out_return_time(self):
-        
+
         return self.calculate("out")
 
     def get_formatted_date(self):
-        
+
         return datetime.date.strftime(self.date, "%Y-%m-%d")
-
-
-

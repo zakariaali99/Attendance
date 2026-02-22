@@ -1,3 +1,5 @@
+from typing import Any
+
 from django import forms
 from django.utils import timezone
 
@@ -28,12 +30,11 @@ class EmployeeForm(forms.ModelForm):
                 'class': 'form-control rounded-pill',
 
             })
-            ,'current_vacations': forms.NumberInput(attrs={
+            , 'current_vacations': forms.NumberInput(attrs={
                 'class': 'form-control rounded-pill',
 
             }),
         }
-
 
 
 class ProfileForm(forms.ModelForm):
@@ -62,17 +63,17 @@ class ProfileForm(forms.ModelForm):
 
             'allowed_start_time': forms.TimeInput(attrs={
                 'class': 'form-control rounded-pill',
-                
+
                 'type': 'time'
             }),
             'calculate_start_time': forms.TimeInput(attrs={
                 'class': 'form-control rounded-pill',
-                
+
                 'type': 'time'
             }),
             'calculate_end_time': forms.TimeInput(attrs={
                 'class': 'form-control rounded-pill',
-                
+
                 'type': 'time'
             }),
             'allowed_end_time': forms.TimeInput(attrs={
@@ -96,14 +97,12 @@ class ProfileForm(forms.ModelForm):
 
             }),
         }
-       
 
 
 class DeviceForm(forms.ModelForm):
     class Meta:
         model = ZKTDevice
         fields = '__all__'  # ['name', 'phone', 'email', 'start_date', 'expire_date']
-
 
         widgets = {
             'name': forms.TextInput(attrs={
@@ -124,7 +123,7 @@ class DeviceForm(forms.ModelForm):
 class ReportFilterForm(forms.Form):
     from_date = forms.DateField(initial=timezone.now().date())
     to_date = forms.DateField(initial=timezone.now().date())
-    # device = forms.ModelChoiceField(queryset=ZKTDevice.objects.all(), initial=ZKTDevice.objects.order_by('id').first())
+    device = forms.ModelChoiceField(queryset=ZKTDevice.objects.all(), initial=ZKTDevice.objects.order_by('id').first())
 
     from_date.widget = forms.DateInput(attrs={
         'class': 'form-control rounded-pill',
@@ -134,23 +133,17 @@ class ReportFilterForm(forms.Form):
         'class': 'form-control rounded-pill',
         'type': 'date'
     })
-    # device.widget.attrs = {
-    #     'class': 'form-control rounded-pill',
-    # }
-
+    device.widget = forms.Select(attrs={
+        'class': 'form-control rounded-pill'})
 
 
 class AddVacationForm(forms.Form):
     date = forms.DateField(initial=timezone.now().date())
     to_date = forms.DateField(initial=timezone.now().date())
-    # type = forms.ModelChoiceField(queryset=VacationType.objects.all(), initial=VacationType.objects.order_by('id').first())
+    type = forms.ModelChoiceField(queryset=VacationType.objects.all(), initial=VacationType.objects.order_by('id').first())
     note = forms.CharField(max_length=250, required=False)
-    # employees = forms.ModelMultipleChoiceField(queryset=Employee.objects.filter(active=False))
+    employees = forms.ModelMultipleChoiceField(queryset=Employee.objects.filter(active=False))
 
-    # type.widget.attrs = {
-    #     'class': 'form-control rounded-pill',
-    #     # 'type': 'date'
-    # }
     date.widget = forms.DateInput(attrs={
         'class': 'form-control rounded-pill',
         'type': 'date'
@@ -162,22 +155,16 @@ class AddVacationForm(forms.Form):
     note.widget.attrs = {
         'class': 'form-control rounded-pill',
     }
-
-    # employees.widget.attrs = {
-    #     'class': 'form-control rounded w-100',
-    # }
+    type.widget.attrs = {
+        'class': 'form-control rounded-pill',
+    }
 
 
 class FilterVacationsForm(forms.Form):
     date = forms.DateField(initial=None, required=False)
     to_date = forms.DateField(initial=None, required=False)
-    # type = forms.ModelChoiceField(queryset=VacationType.objects.all(), initial=None, required=False)
-    # employees = forms.ModelChoiceField(queryset=Employee.objects.filter(active=False), required=False)
-
-    # type.widget.attrs = {
-    #     'class': 'form-control rounded-pill',
-    #     # 'type': 'date'
-    # }
+    type = forms.ModelChoiceField(queryset=VacationType.objects.all(), initial=VacationType.objects.order_by('id').first())
+    employees = forms.ModelChoiceField(queryset=Employee.objects.filter(active=False))
 
     date.widget = forms.DateInput(attrs={
         'class': 'form-control rounded-pill',
@@ -188,11 +175,12 @@ class FilterVacationsForm(forms.Form):
         'class': 'form-control rounded-pill',
         'type': 'date'
     })
-
-    # employees.widget.attrs = {
-    #     'class': 'form-control rounded-pill w-100',
-    # }
-
+    type.widget.attrs = {
+        'class': 'form-control rounded-pill',
+    }
+    employees.widget.attrs = {
+        'class': 'form-control rounded-pill',
+    }
 
 
 class AddVacationTypeForm(forms.ModelForm):
@@ -200,11 +188,10 @@ class AddVacationTypeForm(forms.ModelForm):
         model = VacationType
         fields = '__all__'  # ['name', 'phone', 'email', 'start_date', 'expire_date']
 
-
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'form-control rounded-pill',
-                }),
+            }),
         }
 
 
@@ -212,7 +199,6 @@ class EditVacationForm(forms.ModelForm):
     class Meta:
         model = Vacation
         fields = '__all__'  # ['name', 'phone', 'email', 'start_date', 'expire_date']
-
 
         widgets = {
             'note': forms.TextInput(attrs={'class': 'form-control rounded-pill'}),
@@ -226,7 +212,7 @@ class EditVacationForm(forms.ModelForm):
 class FilterExceptionsForm(forms.Form):
     date = forms.DateField(initial=None, required=False)
     to_date = forms.DateField(initial=None, required=False)
-    type = forms.ChoiceField(choices=[('','---------')]+Exception.types, initial=None, required=False)
+    type = forms.ChoiceField(choices=[('', '---------')] + Exception.types, initial=None, required=False)
     employees = forms.ModelChoiceField(queryset=Employee.objects.filter(active=False), required=False)
 
     type.widget.attrs = {
@@ -249,36 +235,30 @@ class FilterExceptionsForm(forms.Form):
     }
 
 
-
-
 class AddExceptionForm(forms.Form):
     date = forms.DateField(initial=timezone.now().date())
+    # start_time = forms.DateField(initial=timezone.now().date())
     # to_date = forms.DateField(initial=timezone.now().date())
-    # type = forms.ChoiceField(choices=Exception.types, initial=VacationType.objects.order_by('id').first())
+    type = forms.ChoiceField(choices=Exception.types, initial=VacationType.objects.order_by('id').first())
     note = forms.CharField(max_length=250, required=False)
-    # employees = forms.ModelMultipleChoiceField(queryset=Employee.objects.filter(active=False))
+    employees = forms.ModelMultipleChoiceField(queryset=Employee.objects.filter(active=False))
 
-    # type.widget.attrs = {
-    #     'class': 'form-control rounded-pill',
-    #     # 'type': 'date'
-    # }
     date.widget = forms.DateInput(attrs={
         'class': 'form-control rounded-pill',
         'type': 'date'
     })
-    # to_date.widget = forms.DateInput(attrs={
-    #     'class': 'form-control rounded-pill',
-    #     'type': 'date'
-    # })
+
     note.widget.attrs = {
         'class': 'form-control rounded-pill',
     }
 
-    # employees.widget.attrs = {
-    #     'class': 'form-control rounded w-100',
-    # }
+    type.widget.attrs = {
+        'class': 'form-control rounded-pill',
+    }
 
-
+    employees.widget.attrs = {
+        'class': 'form-control rounded-pill',
+    }
 
 
 class EditExceptionForm(forms.ModelForm):
@@ -286,11 +266,42 @@ class EditExceptionForm(forms.ModelForm):
         model = Exception
         fields = '__all__'  # ['name', 'phone', 'email', 'start_date', 'expire_date']
 
-
         widgets = {
             'note': forms.TextInput(attrs={'class': 'form-control rounded-pill'}),
             'date': forms.DateInput(attrs={'class': 'form-control rounded-pill'}),
-            
+
             'type': forms.Select(attrs={'class': 'rounded-pill w-100'}),
             'employee': forms.Select(attrs={'class': 'rounded-pill w-100'}),
+        }
+
+
+class PermissionForm(forms.ModelForm):
+
+    class Meta:
+        model = Record
+        # fields = '__all__'
+        # ['user_id', 'timestamp', 'punch', 'uid', 'device', 'status', 'note']
+        exclude = ['user_id', 'punch', 'uid']
+        widgets = {
+            'timestamp': forms.DateTimeInput(attrs={
+                'class': 'form-control rounded-pill',
+
+                'type': 'datetime-local'
+            }),
+            'permissiontime': forms.TimeInput(attrs={
+                'class': 'form-control rounded-pill',
+
+                'type': 'time'
+            }),
+
+            'employee': forms.Select(attrs={
+                'class': 'rounded-pill form-control'}),
+
+            'status': forms.Select(attrs={
+                'class': 'form-control rounded-pill'}),
+            'device': forms.Select(attrs={
+                'class': 'form-control rounded-pill'}),
+            'note': forms.TextInput(attrs={
+                'class': 'form-control rounded-pill'}),
+
         }

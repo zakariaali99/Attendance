@@ -16,7 +16,8 @@ def sync_records(device=None, records=None):
     this_year = timezone.now().year
     month = 12
     _, last_day_in_the_month = calendar.monthrange(this_year, month)
-    workdays = WorkDay.objects.filter(device=device).order_by("-date").exclude(date__gt=f"{this_year}-{month}-{last_day_in_the_month}")
+    workdays = WorkDay.objects.filter(device=device).order_by("-date").exclude(
+        date__gt=f"{this_year}-{month}-{last_day_in_the_month}")
     workday = None
     if workdays.count() > 0:
         workday = workdays.first()
@@ -69,7 +70,6 @@ def sync_all(device):
     sync_users(device)
     records, ts = sync_attendance(device)
     sync_records(device)
-
 
 
 def sync_all_devices():

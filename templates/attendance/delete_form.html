@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block body %}
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <div class="container my-5">
+        <div class="col-6 mx-auto">
+
+            <form method="post">{% csrf_token %}
+                <p>{% trans 'Are you sure you want to delete' %} "{{ object.id }} - {{ object }}"?</p>
+                <hr class="border-danger">
+                <a href="{% url 'Attendance:profiles' %}" class="btn btn-light mr-5">{% trans 'Back to list' %}</a>
+                <button class="btn btn-danger ml-5" type="submit" value="Confirm">{% trans 'Confirm' %}</button>
+{#                <input class="btn btn-danger" type="submit" value="Confirm">#}
+            </form>
+        </div>
+    </div>
+{% endblock %}

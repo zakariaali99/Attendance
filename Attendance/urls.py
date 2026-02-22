@@ -12,6 +12,7 @@ urlpatterns = [
     path('create', AddEmployeeView.as_view(), name="add"),
     path('edit/<int:pk>', EditEmployeeView.as_view(), name="edit"),
     path('records/<int:pk>', EmployeeRecordsView.as_view(), name="records"),
+    path('permission/<str:pk>', AddPermission.as_view(), name="permission"),
     path('records/<int:pk>/export', ExportEmployeeReportView.as_view(), name="records_export"),
 
     path('profile/', ProfileListView.as_view(), name="profiles"),
