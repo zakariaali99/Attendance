@@ -607,11 +607,31 @@ class DashboardView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         today = timezone.now().date()
-        total_employees = Employee.objects.count()
-        today_workdays = WorkDay.objects.filter(date=today).count()
-        today_exceptions = Exception.objects.filter(date=today).count()
-        context['total_employees'] = total_employees
-        context['today_workdays'] = today_workdays
-        context['today_exceptions'] = today_exceptions
-        context['absent'] = total_employees - today_workdays
+        
+        # Simple overview metrics
+        total_employees = Employee.objects.all()
+        today_workdays = WorkDay.objects.filter(date=today)
+        today_exceptions = Exception.objects.filter(date=today)
+        
+        context['total_employees'] = total_employees.count()
+        context['today_workdays'] = today_workdays.count()
+        context['today_exceptions'] = today_exceptions.count()
+        context['absent'] = total_employees.count() - today_workdays.count()
+        
+        # Anomaly Detection: Employees late more than 3 times in the last 30 workdays
+        anomalies = []
+        recent_date_limit = today - datetime.timedelta(days=30)
+        
+        # We'll check employees with high late counts in recent WorkDays
+        # This is a bit heavy, so we limit to active employees
+        for emp in total_employees[:100]: # Limit for performance if many
+            recent_lates = WorkDay.objects.filter(employee=emp, date__gte=recent_date_limit).filter(Q(late__gt=0)).count()
+            if recent_lates > 3:
+                anomalies.append({
+                    'name': emp.name,
+                    'late_count': recent_lates,
+                    'id': emp.id
+                })
+        
+        context['anomalies'] = anomalies[:5] # Show top 5
         return context

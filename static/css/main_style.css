@@ -17,7 +17,7 @@
 body {
     background: var(--bg-dark);
     background-image: radial-gradient(circle at top right, rgba(59, 130, 246, 0.15), transparent 400px),
-                      radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.1), transparent 400px);
+        radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.1), transparent 400px);
     background-attachment: fixed;
     color: var(--text-main);
     min-height: 100vh;
@@ -41,7 +41,8 @@ body {
     border-color: var(--primary-color) !important;
 }
 
-.card, .container.bg-light.mt-1.rounded-pill {
+.card,
+.container.bg-light.mt-1.rounded-pill {
     background: var(--bg-card) !important;
     backdrop-filter: blur(10px);
     border: 1px solid var(--border-glass);
@@ -51,7 +52,8 @@ body {
     margin-bottom: 1rem;
 }
 
-.card:hover, .container.bg-light.mt-1.rounded-pill:hover {
+.card:hover,
+.container.bg-light.mt-1.rounded-pill:hover {
     transform: translateY(-2px);
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
     background: rgba(30, 41, 59, 0.9) !important;
@@ -152,14 +154,14 @@ input.form-control:focus {
     display: block;
 }
 
-.floating-top{
+.floating-top {
     position: absolute;
     top: -100%;
     display: none;
     transition-duration: 10ms;
 }
 
-.floating-top.show{
+.floating-top.show {
     display: block;
     top: 10%;
     transition-duration: 10ms;
@@ -168,4 +170,48 @@ input.form-control:focus {
 /* Reset any bg-white classes that conflict in dark mode */
 .bg-white {
     background-color: transparent !important;
+}
+
+/* Sidebar & Layout */
+.sidebar {
+    min-width: 260px;
+    max-width: 260px;
+    background: rgba(15, 23, 42, 0.9) !important;
+    backdrop-filter: blur(20px);
+    height: calc(100vh - 60px);
+    position: sticky;
+    top: 60px;
+}
+
+.list-group-item-action {
+    color: var(--text-muted) !important;
+    transition: all 0.2s ease;
+    border: none !important;
+}
+
+.list-group-item-action:hover {
+    background: rgba(59, 130, 246, 0.1) !important;
+    color: var(--primary-color) !important;
+    padding-left: 1.5rem !important;
+}
+
+.list-group-item-action.active {
+    background: var(--primary-color) !important;
+    color: white !important;
+}
+
+#page-content-wrapper {
+    overflow-x: hidden;
+    background: transparent;
+}
+
+/* RTL Support for Sidebar */
+[dir="rtl"] .sidebar {
+    border-right: none !important;
+    border-left: 1px solid var(--border-glass) !important;
+}
+
+[dir="rtl"] .list-group-item-action:hover {
+    padding-left: 0 !important;
+    padding-right: 1.5rem !important;
 }

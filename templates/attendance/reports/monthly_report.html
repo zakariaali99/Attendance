@@ -47,70 +47,63 @@
     <h4 class="text-center mb-4 text-white">التحليلات والمقارنة البيانية</h4>
     <div class="row">
         <div class="col-12">
-            <canvas id="attendanceChart" height="100"></canvas>
+            <canvas id="attendanceChart" height="100"
+                data-labels='[{% for emp in object_list %}"{{ emp.name|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}]'
+                data-hours='[{% for emp in object_list %}{{ emp.count_hours|default:0 }}{% if not forloop.last %},{% endif %}{% endfor %}]'
+                data-lates='[{% for emp in object_list %}{{ emp.late_days_count|default:0 }}{% if not forloop.last %},{% endif %}{% endfor %}]'>
+            </canvas>
         </div>
     </div>
 </div>
 
-{{ object_list|json_script:"empNames" }}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        var ctx = document.getElementById('attendanceChart').getContext('2d');
+        const canvas = document.getElementById('attendanceChart');
+        const ctx = canvas.getContext('2d');
+
+        const empNames = JSON.parse(canvas.getAttribute('data-labels'));
+        const empHours = JSON.parse(canvas.getAttribute('data-hours'));
+        const empLates = JSON.parse(canvas.getAttribute('data-lates'));
 
         Chart.defaults.color = '#f8fafc';
         Chart.defaults.font.family = 'Inter';
 
-        var empNames = [];
-        var empHours = [];
-        var empLates = [];
-
-        {% for emp in object_list %}
-        empNames.push("{{ emp.name|escapejs }}");
-        empHours.push({{ emp.count_hours |default: 0 }});
-    empLates.push({{ emp.late_days_count |default: 0 }});
-    {% endfor %}
-
-    var attendanceChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: empNames,
-            datasets: [
-                {
-                    label: 'اجمالي ساعات العمل',
-                    data: empHours,
-                    backgroundColor: 'rgba(59, 130, 246, 0.7)',
-                    borderColor: 'rgba(59, 130, 246, 1)',
-                    borderWidth: 1,
-                    borderRadius: 4
-                },
-                {
-                    label: 'ايام التأخير',
-                    data: empLates,
-                    backgroundColor: 'rgba(239, 68, 68, 0.7)',
-                    borderColor: 'rgba(239, 68, 68, 1)',
-                    borderWidth: 1,
-                    borderRadius: 4
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { position: 'top' },
-                title: { display: false }
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: empNames,
+                datasets: [
+                    {
+                        label: 'اجمالي ساعات العمل',
+                        data: empHours,
+                        backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        borderWidth: 1,
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'ايام التأخير',
+                        data: empLates,
+                        backgroundColor: 'rgba(239, 68, 68, 0.7)',
+                        borderColor: 'rgba(239, 68, 68, 1)',
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }
+                ]
             },
-            scales: {
-                x: {
-                    grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' },
+                    title: { display: false }
                 },
-                y: {
-                    beginAtZero: true,
-                    grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                scales: {
+                    x: { grid: { color: 'rgba(255, 255, 255, 0.1)' } },
+                    y: { beginAtZero: true, grid: { color: 'rgba(255, 255, 255, 0.1)' } }
                 }
             }
-        }
-    });
+        });
     });
 </script>
 
