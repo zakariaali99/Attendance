@@ -7,7 +7,7 @@ from typing import Any, Dict
 import xlsxwriter
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.db.models import Q
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.template.response import TemplateResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
@@ -17,8 +17,9 @@ from django.views.generic import ListView, CreateView, UpdateView, DetailView, T
     FormView
 
 from Attendance.forms import *  # EditVacationForm, EmployeeForm, ProfileForm, DeviceForm, ReportFilterForm, AddVacationForm, AddVacationTypeForm, FilterVacationsForm,FilterExceptionsForm
-from Attendance.models import Employee, Profile, Record, WorkDay, ZKTDevice, Vacation, VacationType, Exception
+from Attendance.models import *
 from Attendance.sync_records import sync_all, sync_all_devices
+from Attendance.tasks import sync_all_devices_task
 
 
 def default_date_range(view):
@@ -85,18 +86,15 @@ class AddEmployeeView(CreateView):
         return super().get(request, *args, **kwargs)
 
 
-class SyncDevicesView(RedirectView):
-    url = reverse_lazy("Attendance:list")
+class SyncDevicesView(TemplateView):
     permission_required = ('Attendance.can_create_employees',)
 
     def get(self, request, *args, **kwargs):
-
         try:
-            sync_all_devices()
-        except:
-            pass
-            # return TemplateResponse(request,"error.html")
-        return super().get(request, *args, **kwargs)
+            sync_all_devices_task.delay()
+            return JsonResponse({'status': 'success', 'message': 'Device synchronization started in background.'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
 
 class EditEmployeeView(UpdateView):
@@ -603,3 +601,17 @@ class PermissionList(ListView):
         return context_data
 
 
+class DashboardView(TemplateView):
+    template_name = "attendance/dashboard.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        today = timezone.now().date()
+        total_employees = Employee.objects.count()
+        today_workdays = WorkDay.objects.filter(date=today).count()
+        today_exceptions = Exception.objects.filter(date=today).count()
+        context['total_employees'] = total_employees
+        context['today_workdays'] = today_workdays
+        context['today_exceptions'] = today_exceptions
+        context['absent'] = total_employees - today_workdays
+        return context

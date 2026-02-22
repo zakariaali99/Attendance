@@ -6,8 +6,7 @@ app_name = "Attendance"
 
 urlpatterns = [
 
-    path('', EmployeeView.as_view(), name="list_home"),
-    path('', EmployeeView.as_view(), name="home"),
+    path('', DashboardView.as_view(), name="dashboard"),
     path('list', EmployeeView.as_view(), name="list"),
     path('create', AddEmployeeView.as_view(), name="add"),
     path('edit/<int:pk>', EditEmployeeView.as_view(), name="edit"),

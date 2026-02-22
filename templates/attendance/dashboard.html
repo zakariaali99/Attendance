@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="text-center mb-5 text-white">لوحة التحكم Overview</h1>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="card bg-hti text-white shadow-sm border-0 h-100">
+                <div class="card-body text-center d-flex flex-column justify-content-center">
+                    <h5 class="card-title">اجمالي الموظفين</h5>
+                    <p class="display-4 fw-bold mb-0">{{ total_employees }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-hti text-white shadow-sm border-0 h-100">
+                <div class="card-body text-center d-flex flex-column justify-content-center">
+                    <h5 class="card-title">حضور اليوم</h5>
+                    <p class="display-4 fw-bold mb-0 text-success">{{ today_workdays }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-hti text-white shadow-sm border-0 h-100">
+                <div class="card-body text-center d-flex flex-column justify-content-center">
+                    <h5 class="card-title">غياب اليوم</h5>
+                    <p class="display-4 fw-bold mb-0 text-danger">{{ absent }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-hti text-white shadow-sm border-0 h-100">
+                <div class="card-body text-center d-flex flex-column justify-content-center">
+                    <h5 class="card-title">أذونات اليوم</h5>
+                    <p class="display-4 fw-bold mb-0 text-warning">{{ today_exceptions }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-center gap-3">
+        <a href="{% url 'Attendance:list' %}" class="btn btn-primary btn-lg rounded-pill px-5 shadow-sm">قائمة
+            الموظفين</a>
+        <a href="{% url 'Attendance:report' %}"
+            class="btn btn-outline-light btn-lg rounded-pill px-5 shadow-sm">التقارير</a>
+        <button id="sync-btn" class="btn btn-success btn-lg rounded-pill px-5 shadow-sm">
+            <span id="sync-text">مزامنة الاجهزة (AJAX)</span>
+            <div class="spinner-border spinner-border-sm text-light ms-2 d-none" id="sync-spinner" role="status"></div>
+        </button>
+    </div>
+
+</div>
+
+<!-- Auto-Dismiss Alert Container -->
+<div id="alert-container" class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100"></div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const syncBtn = document.getElementById("sync-btn");
+        const syncSpinner = document.getElementById("sync-spinner");
+        const alertContainer = document.getElementById("alert-container");
+
+        syncBtn.addEventListener("click", function () {
+            // UI state
+            syncBtn.disabled = true;
+            syncSpinner.classList.remove('d-none');
+
+            fetch("{% url 'Attendance:sync_devices' %}", {
+                method: "GET",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "Accept": "application/json"
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    showAlert(data.message, data.status === 'success' ? 'success' : 'danger');
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    showAlert("حدث خطأ أثناء الاتصال بالخادم", "danger");
+                })
+                .finally(() => {
+                    syncBtn.disabled = false;
+                    syncSpinner.classList.add('d-none');
+                });
+        });
+
+        function showAlert(message, type) {
+            const wrapper = document.createElement('div');
+            wrapper.innerHTML = `
+                <div class="alert alert-${type} alert-dismissible fade show shadow-sm" role="alert">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `;
+            alertContainer.append(wrapper);
+
+            // Auto-dismiss after 4 seconds
+            setTimeout(() => {
+                const alertNode = wrapper.querySelector('.alert');
+                if (alertNode) {
+                    const bsAlert = new bootstrap.Alert(alertNode);
+                    bsAlert.close();
+                }
+            }, 4000);
+        }
+    });
+</script>
+{% endblock %}
