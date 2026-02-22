@@ -69,17 +69,18 @@ def sync_all(device):
     # الرئيسي - 192.168.100.201:4370
     sync_users(device)
     records, ts = sync_attendance(device)
-    sync_records(device)
-
+    if records:
+        sync_records(device, records=records)
 
 def sync_all_devices():
     from Attendance.models import ZKTDevice, Record, WorkDay
 
     for device in ZKTDevice.objects.all():
-        Record.objects.filter(device=device).delete()
-        WorkDay.objects.filter(device=device).delete()
-        print(f"{device.name} - {device.ip}:{device.port}")
-        sync_all(device)
+        print(f"Syncing: {device.name} - {device.ip}:{device.port}")
+        try:
+            sync_all(device)
+        except Exception as e:
+            print(f"Failed to sync {device.name}: {e}")
 
 
 if __name__ == '__main__':

@@ -126,14 +126,15 @@ class Employee(models.Model):
     @property
     def vacations_count(self):
         c = 0
-        for v in Vacation.objects.filter(employee=self.id):
-            c += (v.to_date - v.date).days
+        for v in self.vacation_set.all():
+            if v.date and v.to_date:
+                c += (v.to_date - v.date).days
         return c
 
     @property
     def extra_work(self):
-        extrawork = ExtraWork.objects.filter(employee=self)
-        return sum(e.time for e in extrawork)
+        extrawork = self.extrawork_set.all()
+        return sum(e.time() for e in extrawork)
 
     def days(self, from_date=None, to_date=None):
         wd = self.all_days  # WorkDay.objects.filter(employee=self)
@@ -199,8 +200,8 @@ attendance_choices = [
 
 class Record(models.Model):
     id = models.AutoField(primary_key=True)
-    user_id = models.CharField(max_length=4096)
-    timestamp = models.DateTimeField(default=None, null=True)
+    user_id = models.CharField(max_length=4096, db_index=True)
+    timestamp = models.DateTimeField(default=None, null=True, db_index=True)
     punch = models.CharField(max_length=256)
     uid = models.CharField(max_length=1024, default="", blank=True)
     device = models.ForeignKey("Attendance.ZKTDevice", on_delete=models.SET_NULL, null=True)
@@ -355,7 +356,7 @@ class ExtraWork(models.Model):
 
 
 class WorkDay(models.Model):
-    date = models.DateField(null=True, default=None)
+    date = models.DateField(null=True, default=None, db_index=True)
     employee = models.ForeignKey('Employee', on_delete=models.CASCADE)
     device = models.ForeignKey('Attendance.ZKTDevice', on_delete=models.SET_NULL, default=1, null=True)
     start_percent = None
@@ -389,7 +390,7 @@ class WorkDay(models.Model):
 
     @property
     def work_day_exceptions(self):
-        return Exception.objects.filter(employee=self.employee).filter(date=self.date)
+        return [e for e in self.employee.exception_set.all() if e.date == self.date]
 
     def records(self):
         if self._records is None:

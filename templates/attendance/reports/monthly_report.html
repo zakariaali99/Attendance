@@ -1,55 +1,114 @@
 {% extends 'base.html' %}
 {% block body %}
-    <p class="text-center h3">تقرير خلال الفترة</p>
-    
-    <form>
-        <div class="container-fluid mt-1">
-            <div class="row">
-                <div class="col-auto p-0">
-                    <p class="p-0 m-0">-</p>
-                    <a href="{% url 'Attendance:export_report' %}?{{ old_q }}"
-                       class="btn btn-light bg-white border-0 rounded-pill">تصدير</a>
-                    <button type="submit" class="btn btn-secondary border-0  rounded-pill"
-                            id="inputGroup-sizing-lg">تصفية
-                    </button>
+<p class="text-center h3">تقرير خلال الفترة</p>
 
-                </div>
-                <div class="col-4">
-                    <div class="row">
-                        <div class="col-6">
-                            من
-                            {{ form.from_date }}
-                        </div>
-                        <div class="col-6">
-                            الي
-                            {{ form.to_date }}
-                        </div>
-                    </div>
-
-
-                </div>
-
-                <div class="col">
-
-
-                </div>
-                <div class="col-2 p-0">
-                    الجهاز
-                    {{ form.device }}
-                </div>
+<form>
+    <div class="container-fluid mt-1">
+        <div class="row">
+            <div class="col-auto p-0">
+                <p class="p-0 m-0">-</p>
+                <a href="{% url 'Attendance:export_report' %}?{{ old_q }}"
+                    class="btn btn-light bg-white border-0 rounded-pill">تصدير</a>
+                <button type="submit" class="btn btn-secondary border-0  rounded-pill" id="inputGroup-sizing-lg">تصفية
+                </button>
 
             </div>
+            <div class="col-4">
+                <div class="row">
+                    <div class="col-6">
+                        من
+                        {{ form.from_date }}
+                    </div>
+                    <div class="col-6">
+                        الي
+                        {{ form.to_date }}
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="col">
+
+
+            </div>
+            <div class="col-2 p-0">
+                الجهاز
+                {{ form.device }}
+            </div>
+
         </div>
-    </form>
-    <br>
-    <br>
+    </div>
+</form>
+<br>
 
-    <div class="col-12 text-center fs-6">
-        
+<!-- Analysis & Visual Analytics Section -->
+<div class="container bg-hti rounded-3 p-4 mb-5 shadow-sm">
+    <h4 class="text-center mb-4 text-white">التحليلات والمقارنة البيانية</h4>
+    <div class="row">
+        <div class="col-12">
+            <canvas id="attendanceChart" height="100"></canvas>
+        </div>
+    </div>
+</div>
 
-        <table class="table table-hover">
-            <thead>
-              <tr>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var ctx = document.getElementById('attendanceChart').getContext('2d');
+
+        Chart.defaults.color = '#f8fafc';
+        Chart.defaults.font.family = 'Inter';
+
+        var attendanceChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: [{% for emp in object_list %}"{{ emp.name }}"{% if not forloop.last %}, {% endif %}{% endfor %}],
+        datasets: [
+        {
+            label: 'اجمالي ساعات العمل',
+            data: [{% for emp in object_list %}{{ emp.count_hours }}{% if not forloop.last %}, {% endif %} {% endfor %}],
+    backgroundColor: 'rgba(59, 130, 246, 0.7)',
+        borderColor: 'rgba(59, 130, 246, 1)',
+            borderWidth: 1,
+                borderRadius: 4
+                        },
+    {
+        label: 'ايام التأخير',
+            data: [{% for emp in object_list %} { { emp.late_days_count } } {% if not forloop.last %}, {% endif %} {% endfor %}],
+    backgroundColor: 'rgba(239, 68, 68, 0.7)',
+        borderColor: 'rgba(239, 68, 68, 1)',
+            borderWidth: 1,
+                borderRadius: 4
+                        }
+                    ]
+                },
+    options: {
+        responsive: true,
+            plugins: {
+            legend: { position: 'top' },
+            title: { display: false }
+        },
+        scales: {
+            x: {
+                grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            },
+            y: {
+                beginAtZero: true,
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            }
+        }
+    }
+            });
+        });
+</script>
+
+<div class="col-12 text-center fs-6">
+
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
                 <th scope="col">#</th>
                 <th scope="col">الاسم</th>
                 <th scope="col">نظام العمل</th>
@@ -60,40 +119,39 @@
                 <th scope="col">ايام التأخير</th>
                 <th scope="col">الاجازات</th>
                 <th scope="col">بيانات الموظف</th>
-                
-              </tr>
-            </thead>
-            <tbody>
-                {% for employee in object_list %}
-                    <tr>
-                        <th scope="row">{{ employee.attendance_id }}</th>
-                        <td>{{ employee.name }}</td>
-                        <td>{{ employee.default_profile }}</td>
-                        <td>{{ employee.count_hours }}</td>
-                        <td>{{ required_days }}</td>
-                        <td>{{ employee.all_days_count }}</td>
-                        <td>{{ employee.holidays_count }}</td>
-                        <td>{{ employee.late_days_count }}</td>
-                        <td>{{ employee.vacations_count }}</td>
-                        <td>
-                            {% if "Attendance.can_edit_employees" in perms %}
-                                    <a href="{% url 'Attendance:edit' employee.id %}"
-                                       class="btn btn-link p-0 btn-lg fs-6">تعديل</a>
-                                {% endif %}
-                            <a href="{% url 'Attendance:records' employee.id %}?{% if from_date %}from_date={{ from_date }}{% endif %}{% if to_date %}&to_date={{ to_date }}{% endif %}"
-                               class="btn btn-link p-0 btn-lg fs-6"> سجل الحضور</a>
 
-                               <a href="{% url 'Attendance:vacation' %}?employees={{ employee.id }}&{% if from_date %}from_date={{ from_date }}{% endif %}{% if to_date %}&to_date={{ to_date }}{% endif %}"
-                               class="btn btn-link p-0 btn-lg fs-6"> الاجازات</a>
-                        </td>
-                        
-                    </tr>
-                {% endfor %}
-              
-              
-            </tbody>
-          </table>
-    </div>
-    <br>
-    <br>
+            </tr>
+        </thead>
+        <tbody>
+            {% for employee in object_list %}
+            <tr>
+                <th scope="row">{{ employee.attendance_id }}</th>
+                <td>{{ employee.name }}</td>
+                <td>{{ employee.default_profile }}</td>
+                <td>{{ employee.count_hours }}</td>
+                <td>{{ required_days }}</td>
+                <td>{{ employee.all_days_count }}</td>
+                <td>{{ employee.holidays_count }}</td>
+                <td>{{ employee.late_days_count }}</td>
+                <td>{{ employee.vacations_count }}</td>
+                <td>
+                    {% if "Attendance.can_edit_employees" in perms %}
+                    <a href="{% url 'Attendance:edit' employee.id %}" class="btn btn-link p-0 btn-lg fs-6">تعديل</a>
+                    {% endif %}
+                    <a href="{% url 'Attendance:records' employee.id %}?{% if from_date %}from_date={{ from_date }}{% endif %}{% if to_date %}&to_date={{ to_date }}{% endif %}"
+                        class="btn btn-link p-0 btn-lg fs-6"> سجل الحضور</a>
+
+                    <a href="{% url 'Attendance:vacation' %}?employees={{ employee.id }}&{% if from_date %}from_date={{ from_date }}{% endif %}{% if to_date %}&to_date={{ to_date }}{% endif %}"
+                        class="btn btn-link p-0 btn-lg fs-6"> الاجازات</a>
+                </td>
+
+            </tr>
+            {% endfor %}
+
+
+        </tbody>
+    </table>
+</div>
+<br>
+<br>
 {% endblock %}

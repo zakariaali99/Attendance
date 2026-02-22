@@ -231,7 +231,7 @@ class ReportView(TemplateView):
         from_date, to_date = default_date_range(self)
         device = data_device(self)
         data = super().get_context_data(**kwargs)
-        em = list(Employee.objects.filter(active=False))
+        em = list(Employee.objects.filter(active=False).select_related('default_profile', 'device').prefetch_related('vacation_set', 'extrawork_set', 'exception_set'))
         wds = WorkDay.objects.filter(Q(date__gte=from_date) & Q(date__lte=to_date) & Q(device=device))
         rcs = Record.objects.filter(Q(timestamp__gte=from_date) & Q(timestamp__lte=to_date) & Q(device=device))
         wds = list(wds)
@@ -265,7 +265,7 @@ class ExportReportView(View):
         from_date, to_date = default_date_range(self)
         device = data_device(self)
 
-        em = list(Employee.objects.filter(active=False))
+        em = list(Employee.objects.filter(active=False).select_related('default_profile', 'device').prefetch_related('vacation_set', 'extrawork_set', 'exception_set'))
         wds = WorkDay.objects.filter(Q(date__gte=from_date) & Q(date__lte=to_date) & Q(device=device))
         rcs = Record.objects.filter(Q(timestamp__gte=from_date) & Q(timestamp__lte=to_date) & Q(device=device))
         wds = list(wds)
@@ -313,7 +313,7 @@ class ExportEmployeeReportView(DetailView):
     model = Employee
 
     def get(self, request, *args, **kwargs):
-        employee = self.get_object()
+        employee = Employee.objects.select_related('default_profile', 'device').prefetch_related('vacation_set', 'extrawork_set', 'exception_set').get(id=self.kwargs['pk'])
         device = data_device(self)
         from_date, to_date = default_date_range(self)
 
