@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&amp;family=Manrope:wght@800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'IBM_Plex_Sans_Arabic', sans-serif;
+            background-color: #fcf8fb;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "background": "#fcf8fb",
+                      "surface-dim": "#ddd9dc",
+                      "surface-variant": "#e5e1e5",
+                      "on-error": "#ffffff",
+                      "outline-variant": "#c9c5ce",
+                      "on-secondary-container": "#6e5c00",
+                      "on-surface-variant": "#47464d",
+                      "surface": "#fcf8fb",
+                      "primary-fixed": "#e4dfff",
+                      "inverse-surface": "#313033",
+                      "error-container": "#ffdad6",
+                      "on-tertiary-fixed": "#1a1833",
+                      "tertiary-container": "#2d2b47",
+                      "on-error-container": "#93000a",
+                      "surface-bright": "#fcf8fb",
+                      "secondary-fixed": "#ffe16d",
+                      "on-tertiary-container": "#9692b4",
+                      "on-primary-fixed-variant": "#464364",
+                      "secondary": "#705d00",
+                      "surface-container": "#f1edf0",
+                      "primary": "#181534",
+                      "on-secondary-fixed-variant": "#544600",
+                      "on-primary": "#ffffff",
+                      "outline": "#78767e",
+                      "inverse-primary": "#c7c2ea",
+                      "inverse-on-surface": "#f4eff3",
+                      "tertiary-fixed-dim": "#c7c3e6",
+                      "error": "#ba1a1a",
+                      "primary-container": "#2d2a4a",
+                      "surface-tint": "#5e5a7d",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-container-low": "#f7f2f6",
+                      "on-secondary-fixed": "#221b00",
+                      "tertiary": "#181631",
+                      "on-surface": "#1c1b1e",
+                      "on-primary-fixed": "#1a1736",
+                      "on-background": "#1c1b1e",
+                      "secondary-fixed-dim": "#e9c400",
+                      "secondary-container": "#fcd400",
+                      "surface-container-high": "#ebe7ea",
+                      "primary-fixed-dim": "#c7c2ea",
+                      "surface-container-highest": "#e5e1e5",
+                      "on-primary-container": "#9691b7",
+                      "on-secondary": "#ffffff",
+                      "tertiary-fixed": "#e3dfff",
+                      "on-tertiary-fixed-variant": "#464461",
+                      "on-tertiary": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              }
+            },
+          }
+        }
+    </script>
+</head>
+<body class="text-on-surface">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-[0px_8px_32px_rgba(24,21,52,0.06)] flex flex-row-reverse justify-between items-center px-6 h-16 w-full">
+<div class="flex items-center gap-4 flex-row-reverse">
+<img alt="Al-Khawarizmi Logo" class="h-10 w-10 object-contain" data-alt="precise gold and navy logo for a technical management system, incorporating algorithmic motifs and a clock element" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtPhny8U3oWs_TTvBfNBEMOynsgCwi1hbe8TNrTLoo3S3gHyN2z6hgwEdLe_05J2BGp9paBIEpMWifUtIMPdvzkdeTttpIdFvybpe1WjtDFkeIMEg1P-sH8uCxdOTQqdGJjFxTOy_gAxlNC3bfqVP6TSGV70OfZs_35p7eMog4TNARnGxug835vxAfs8rObCw9u-0aIOKLduZ4b5zBXgO62MeXXBCMtiska2HYj4-dCtukCtp3BPP1jrExbyvFVKNbNPdRf2NpEGg"/>
+<h1 class="text-xl font-bold text-[#181534] dark:text-slate-100 font-['IBM_Plex_Sans_Arabic']">منظومة الخوارزمي</h1>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden md:flex flex-row-reverse gap-4">
+<span class="material-symbols-outlined p-2 text-slate-500 hover:bg-slate-100 transition-colors rounded-full cursor-pointer" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined p-2 text-slate-500 hover:bg-slate-100 transition-colors rounded-full cursor-pointer" data-icon="settings">settings</span>
+</div>
+<div class="h-10 w-10 rounded-full bg-primary-container overflow-hidden border-2 border-secondary-container">
+<img alt="User profile avatar" class="h-full w-full object-cover" data-alt="professional male portrait with neutral background for corporate profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAi4KkhbWarEe9gu4JTAtuHvnaEcsUx7Q4UmCEx5RN3MSepo7tShN87UUWq7TITpkbQj4vi9nlgaYiLhbe9qwGi0shJcQLbSqSsgpbthzjZr4ZuQn7VKMVILpMqea2UyrkOaCnl8603TWqlxLi75Gd4SOUbE54YUpEsI25QfnimulomU-n0U92NPht3eUgv5A1cvrvmRhVv_rCk3awIES3FX3M4x-AuftiGEqM_FU8i0PszdRyfS-flTbg6ZQ5OCtvm0wfy2uk8Co"/>
+</div>
+</div>
+</header>
+<!-- SideNavBar -->
+<aside class="fixed right-0 h-screen w-64 bg-[#181534] text-[#fcd400] font-['IBM_Plex_Sans_Arabic'] flex flex-col h-full py-8 z-40 mt-16 shadow-2xl overflow-y-auto">
+<nav class="flex-1 px-4 space-y-2">
+<a class="flex flex-row-reverse items-center gap-3 text-slate-300 px-4 py-3 hover:text-white hover:bg-[#2D2A4A]/50 transition-all hover:translate-x-[-4px] duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>لوحة التحكم</span>
+</a>
+<a class="flex flex-row-reverse items-center gap-3 bg-[#2D2A4A] text-[#fcd400] px-4 py-3 rounded-lg hover:translate-x-[-4px] duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span>الموظفين</span>
+</a>
+<a class="flex flex-row-reverse items-center gap-3 text-slate-300 px-4 py-3 hover:text-white hover:bg-[#2D2A4A]/50 transition-all hover:translate-x-[-4px] duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="router">router</span>
+<span>الأجهزة</span>
+</a>
+<a class="flex flex-row-reverse items-center gap-3 text-slate-300 px-4 py-3 hover:text-white hover:bg-[#2D2A4A]/50 transition-all hover:translate-x-[-4px] duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="pending_actions">pending_actions</span>
+<span>سجلات الحضور</span>
+</a>
+<a class="flex flex-row-reverse items-center gap-3 text-slate-300 px-4 py-3 hover:text-white hover:bg-[#2D2A4A]/50 transition-all hover:translate-x-[-4px] duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="schedule">schedule</span>
+<span>إعدادات الوردية</span>
+</a>
+</nav>
+<div class="px-4 mt-auto">
+<a class="flex flex-row-reverse items-center gap-3 text-slate-300 px-4 py-3 hover:text-white hover:bg-[#2D2A4A]/50 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span>المساعدة</span>
+</a>
+<button class="w-full mt-4 flex flex-row-reverse items-center justify-center gap-2 py-3 bg-secondary text-on-secondary rounded-lg font-bold">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span>تسجيل خروج</span>
+</button>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="mr-64 pt-24 px-8 pb-12 transition-all">
+<!-- Page Header & Summary -->
+<div class="mb-8 flex flex-col gap-6">
+<div class="flex justify-between items-end">
+<div>
+<h2 class="text-3xl font-bold text-primary mb-1">سجل حضور الموظف</h2>
+<p class="text-on-surface-variant">عرض تفصيلي لأداء الحضور والانصراف لشهر أكتوبر 2023</p>
+</div>
+<div class="flex gap-3">
+<button class="bg-surface-container-high px-4 py-2 rounded-xl flex items-center gap-2 hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-xl" data-icon="filter_list">filter_list</span>
+<span>تصفية</span>
+</button>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-xl flex items-center gap-2 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-xl" data-icon="download">download</span>
+<span>تصدير التقرير</span>
+</button>
+</div>
+</div>
+<!-- Bento Grid Summary -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+<!-- Employee Profile Card -->
+<div class="md:col-span-2 bg-white rounded-full p-6 flex items-center gap-6 shadow-[0px_8px_32px_rgba(24,21,52,0.04)] border-r-4 border-secondary-container">
+<div class="w-20 h-20 rounded-2xl overflow-hidden shadow-lg">
+<img alt="Employee Photo" class="w-full h-full object-cover" data-alt="professional male portrait with neutral background for corporate profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsTuaoorlQyMc4HRnc9s_aoGw1t2EaavMJY0VavDYuMh5OwcHl-a0PmHQXqB3eT0VLlpWQGpRRmBBh0RvIPvOPxhZ5OIHWXw30V6GNbreTAnBUrQQNoxt1LM7Z7y-Mtior0hVqWmFbWWiFgDTK_FaG9S6G1hq9A_SeJ6zvcb3q-4AP29RAn-HjreY9U49qtRnLh2UrtXQpnRI9Y4isDvSDhVjGLDW2Wse0eHKasDZtQQ8bjScxjNxOZlR7vcjfs--05MCpTjhoLKQ"/>
+</div>
+<div>
+<h3 class="text-2xl font-bold text-primary">أحمد محمود الشناوي</h3>
+<p class="text-on-surface-variant flex items-center gap-2 mt-1">
+<span class="material-symbols-outlined text-sm" data-icon="badge">badge</span>
+                            الرقم الوظيفي: #AK-7842
+                        </p>
+<span class="inline-block mt-2 px-3 py-1 bg-primary-container text-on-primary-container rounded-full text-xs font-bold">مهندس برمجيات أول</span>
+</div>
+</div>
+<!-- Hours Stats -->
+<div class="bg-white rounded-full p-6 flex flex-col justify-center items-center text-center shadow-[0px_8px_32px_rgba(24,21,52,0.04)]">
+<span class="text-on-surface-variant text-sm mb-1">إجمالي ساعات العمل</span>
+<div class="text-4xl font-black text-primary font-['Manrope']">168.5</div>
+<span class="text-secondary font-bold text-xs mt-1">هذا الشهر</span>
+</div>
+<!-- Status Summary -->
+<div class="bg-white rounded-full p-6 flex flex-col justify-center items-center text-center shadow-[0px_8px_32px_rgba(24,21,52,0.04)]">
+<span class="text-on-surface-variant text-sm mb-1">معدل الانضباط</span>
+<div class="text-4xl font-black text-[#10b981] font-['Manrope']">94%</div>
+<div class="flex gap-2 mt-2">
+<span class="w-2 h-2 rounded-full bg-[#10b981]"></span>
+<span class="w-2 h-2 rounded-full bg-[#10b981]"></span>
+<span class="w-2 h-2 rounded-full bg-[#10b981]"></span>
+<span class="w-2 h-2 rounded-full bg-slate-200"></span>
+</div>
+</div>
+</div>
+</div>
+<!-- Detailed Table -->
+<div class="bg-white rounded-full shadow-[0px_8px_32px_rgba(24,21,52,0.04)] overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-right border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant border-b border-transparent">
+<th class="px-6 py-4 font-bold text-sm">التاريخ</th>
+<th class="px-6 py-4 font-bold text-sm">وقت الحضور</th>
+<th class="px-6 py-4 font-bold text-sm">وقت الانصراف</th>
+<th class="px-6 py-4 font-bold text-sm">إجمالي الساعات</th>
+<th class="px-6 py-4 font-bold text-sm">التأخير</th>
+<th class="px-6 py-4 font-bold text-sm">إضافي</th>
+<th class="px-6 py-4 font-bold text-sm">الحالة</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="px-6 py-5 font-medium">الأحد، 15 أكتوبر</td>
+<td class="px-6 py-5 text-primary">08:00 ص</td>
+<td class="px-6 py-5 text-primary">04:30 م</td>
+<td class="px-6 py-5 font-bold">8.5 س</td>
+<td class="px-6 py-5 text-slate-400">—</td>
+<td class="px-6 py-5 text-secondary font-bold">+0.5 س</td>
+<td class="px-6 py-5">
+<span class="bg-[#10b981]/10 text-[#059669] px-4 py-1 rounded-full text-xs font-bold border border-[#10b981]/20">منضبط</span>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="px-6 py-5 font-medium">الاثنين، 16 أكتوبر</td>
+<td class="px-6 py-5 text-error">08:45 ص</td>
+<td class="px-6 py-5 text-primary">04:00 م</td>
+<td class="px-6 py-5 font-bold">7.25 س</td>
+<td class="px-6 py-5 text-error font-bold">45 د</td>
+<td class="px-6 py-5 text-slate-400">—</td>
+<td class="px-6 py-5">
+<span class="bg-error/10 text-error px-4 py-1 rounded-full text-xs font-bold border border-error/20">تأخر صباحي</span>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="px-6 py-5 font-medium">الثلاثاء، 17 أكتوبر</td>
+<td class="px-6 py-5 text-primary">07:55 ص</td>
+<td class="px-6 py-5 text-secondary">03:15 م</td>
+<td class="px-6 py-5 font-bold">7.25 س</td>
+<td class="px-6 py-5 text-slate-400">—</td>
+<td class="px-6 py-5 text-slate-400">—</td>
+<td class="px-6 py-5">
+<span class="bg-[#f59e0b]/10 text-[#d97706] px-4 py-1 rounded-full text-xs font-bold border border-[#f59e0b]/20">خروج مبكر</span>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="px-6 py-5 font-medium">الأربعاء، 18 أكتوبر</td>
+<td class="px-6 py-5 text-primary">08:00 ص</td>
+<td class="px-6 py-5 text-primary">05:00 م</td>
+<td class="px-6 py-5 font-bold">9.0 س</td>
+<td class="px-6 py-5 text-slate-400">—</td>
+<td class="px-6 py-5 text-secondary font-bold">+1.0 س</td>
+<td class="px-6 py-5">
+<span class="bg-[#10b981]/10 text-[#059669] px-4 py-1 rounded-full text-xs font-bold border border-[#10b981]/20">منضبط</span>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors bg-error-container/5">
+<td class="px-6 py-5 font-medium text-error">الخميس، 19 أكتوبر</td>
+<td class="px-6 py-5 text-slate-400">—</td>
+<td class="px-6 py-5 text-slate-400">—</td>
+<td class="px-6 py-5 font-bold text-slate-400">0 س</td>
+<td class="px-6 py-5 text-slate-400">—</td>
+<td class="px-6 py-5 text-slate-400">—</td>
+<td class="px-6 py-5">
+<span class="bg-error text-on-error px-4 py-1 rounded-full text-xs font-bold">غائب</span>
+</td>
+</tr>
+<!-- Row 6 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="px-6 py-5 font-medium">الأحد، 22 أكتوبر</td>
+<td class="px-6 py-5 text-primary">07:50 ص</td>
+<td class="px-6 py-5 text-primary">04:10 م</td>
+<td class="px-6 py-5 font-bold">8.3 س</td>
+<td class="px-6 py-5 text-slate-400">—</td>
+<td class="px-6 py-5 text-secondary font-bold">+0.3 س</td>
+<td class="px-6 py-5">
+<span class="bg-[#10b981]/10 text-[#059669] px-4 py-1 rounded-full text-xs font-bold border border-[#10b981]/20">منضبط</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-6 py-4 flex justify-between items-center bg-surface-container-low/30">
+<p class="text-sm text-on-surface-variant">عرض 1 - 6 من أصل 22 يوماً</p>
+<div class="flex gap-2">
+<button class="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span>
+</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center bg-primary text-on-primary font-bold text-xs">1</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-surface-container-high transition-colors text-xs">2</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-surface-container-high transition-colors text-xs">3</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="chevron_left">chevron_left</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Contextual Information Overlay -->
+<div class="fixed bottom-8 left-8 flex flex-col gap-4 max-w-xs">
+<div class="bg-primary p-6 rounded-full shadow-2xl text-on-primary border-l-4 border-secondary-container">
+<div class="flex items-center gap-3 mb-2">
+<span class="material-symbols-outlined text-secondary" data-icon="lightbulb" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
+<h4 class="font-bold">تحليل الخوارزمي</h4>
+</div>
+<p class="text-xs leading-relaxed text-on-primary-container">
+                بناءً على السجلات الأخيرة، يظهر أحمد استقراراً في الحضور المبكر، مع وجود فجوة إنتاجية في أيام الخميس. نوصي بمراجعة جدول العمل ليوم الخميس.
+            </p>
+</div>
+</div>
+</body></html>

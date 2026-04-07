@@ -1,33 +1,119 @@
 {% extends 'list_search_base.html' %}
+{% load static %}
 
-{% block add_url %}
-    {% url 'Attendance:add_devices' %}
+{% block heading %}إدارة أجهزة البصمة (ZKTeco){% endblock %}
+
+{% block add_url %}{% url 'Attendance:add_devices' %}{% endblock %}
+
+{% block heading_actions %}
+<button id="global-sync-btn" class="flex flex-row-reverse items-center gap-2 bg-secondary-container text-on-secondary-container px-6 py-3 rounded-2xl font-black shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200">
+    <span class="material-symbols-outlined">sync</span>
+    <span class="text-xs">مزامنة الكل الآن</span>
+</button>
 {% endblock %}
 
 {% block tabel %}
-
-    <div class="col-12 text-center fs-6">
-        <div class="container bg-hti rounded-pill">
-            <div class="row">
-                <div class="col-1">رقم</div>
-                <div class="col">الاسم</div>
-                <div class="col-4 d-none d-md-block">العنوان</div>
-                <div class="col-2 d-none d-md-block">المنفذ</div>
-            </div>
-        </div>
-
-        {% for device in object_list %}
-            <a href="{% url 'Attendance:edit_devices' device.id %}" class="btn p-0 btn-lg w-100 fs-6">
-                <div class="container bg-light mt-1 rounded-pill">
-                    <div class="row">
-                        <div class="col-1">{{ device.id }}</div>
-                        <div class="col">{{ device.name }}</div>
-                        <div class="col-4 d-none d-md-block">{{ device.ip }}</div>
-                        <div class="col-2 d-none d-md-block">{{ device.port }}</div>
-                    </div>
-                </div>
-            </a>
-        {% endfor %}
+<div class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-surface-container dark:border-slate-800 overflow-hidden animate-fade-in-up">
+    <div class="overflow-x-auto">
+        <table class="w-full text-right border-collapse">
+            <thead>
+                <tr class="bg-surface-container-low dark:bg-slate-800/50 text-outline dark:text-slate-500">
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest">مسمى الجهاز</th>
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">عنوان الاتصال (IP)</th>
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">المنفذ (Port)</th>
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">حالة الاتصال</th>
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-surface-container dark:divide-slate-800">
+                {% for device in object_list %}
+                <tr class="hover:bg-surface-container-lowest dark:hover:bg-slate-800/30 transition-all duration-200">
+                    <td class="px-6 py-5">
+                        <div class="flex items-center gap-4 flex-row-reverse">
+                            <div class="w-12 h-12 rounded-2xl bg-primary-container/20 dark:bg-slate-800 text-primary dark:text-primary-fixed flex items-center justify-center border border-white dark:border-slate-700 shadow-sm transition-transform group-hover:scale-110">
+                                <span class="material-symbols-outlined text-[24px]">developer_board</span>
+                            </div>
+                            <div>
+                                <div class="font-black text-primary dark:text-white text-base font-headline">{{ device.name }}</div>
+                                <div class="text-[10px] text-outline font-bold">قالب: ZKTeco biometric device</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-5 text-center">
+                        <span class="inline-flex items-center px-4 py-1.5 rounded-full bg-surface-container dark:bg-slate-800 text-primary dark:text-slate-200 font-bold text-xs border border-white dark:border-slate-700">
+                            {{ device.ip }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-5 text-center">
+                        <span class="text-xs font-black text-on-surface-variant dark:text-slate-400">{{ device.port }}</span>
+                    </td>
+                    <td class="px-6 py-5 text-center">
+                        <span class="inline-flex items-center gap-1.5 bg-green-50 dark:bg-green-950/20 text-green-600 dark:text-green-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border border-green-100 dark:border-green-900/50">
+                            <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+                            جاهز للعمل
+                        </span>
+                    </td>
+                    <td class="px-6 py-5">
+                        <div class="flex items-center justify-center gap-2 flex-row-reverse">
+                            <a href="{% url 'Attendance:edit_devices' device.id %}" 
+                               class="flex items-center gap-2 px-6 py-2.5 rounded-xl border border-surface-container dark:border-slate-700 text-primary dark:text-slate-200 font-black text-xs hover:bg-surface-container transition-all group shadow-sm">
+                                <span class="material-symbols-outlined text-[18px] group-hover:rotate-45 transition-transform">settings</span>
+                                <span>الإعدادات</span>
+                            </a>
+                            <a href="{% url 'Attendance:delete_devices' device.id %}" 
+                               onclick="return confirm('هل أنت متأكد من حذف هذا الجهاز؟')"
+                               class="flex items-center justify-center w-10 min-w-10 h-10 rounded-xl border border-red-100 dark:border-red-900/50 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all">
+                                <span class="material-symbols-outlined text-[20px]">delete</span>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="px-6 py-16 text-center">
+                        <div class="flex flex-col items-center gap-4 opacity-30 dark:opacity-50">
+                            <span class="material-symbols-outlined text-[64px]">dns</span>
+                            <p class="text-base font-bold font-headline">لم يتم ربط أي أجهزة بصمة حالياً.</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
+</div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const globalSyncBtn = document.getElementById("global-sync-btn");
+        if (globalSyncBtn) {
+            globalSyncBtn.addEventListener("click", function () {
+                const icon = this.querySelector('.material-symbols-outlined');
+                icon.classList.add('animate-spin');
+                this.querySelector('span:not(.material-symbols-outlined)').innerText = 'جاري مزامنة القواعد...';
+                this.classList.add('opacity-80', 'cursor-not-allowed');
+                this.disabled = true;
+
+                fetch("{% url 'Attendance:sync_devices' %}")
+                    .then(response => response.json())
+                    .then(() => {
+                        location.reload();
+                    })
+                    .catch(() => {
+                        alert("حدث خطأ أثناء المزامنة");
+                        location.reload();
+                    });
+            });
+        }
+    });
+</script>
+<style>
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    .animate-spin {
+        animation: spin 1s linear infinite;
+    }
+</style>
 {% endblock %}

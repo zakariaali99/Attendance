@@ -1,74 +1,135 @@
 {% extends 'base.html' %}
+{% load static %}
 
+{% block title %}منظومة الخوارزمي - {% if form.instance.pk %}تعديل إعدادات {{ form.instance.name }}{% else %}إضافة جهاز بصمة جديد{% endif %}{% endblock %}
 
 {% block body %}
-    <br>
-    <br>
-    <br>
-    <div class="container">
-        <div class="row">
-            <div class="col"></div>
-            <div class="col-8">
+<nav class="flex flex-row-reverse items-center gap-2 mb-8 text-xs font-bold text-outline dark:text-slate-500 uppercase tracking-widest animate-fade-in-up">
+    <a href="{% url 'Attendance:dashboard' %}" class="hover:text-primary dark:hover:text-white transition-colors">الرئيسية</a>
+    <span class="material-symbols-outlined text-[14px]">chevron_left</span>
+    <a href="{% url 'Attendance:devices' %}" class="hover:text-primary dark:hover:text-white transition-colors">إدارة الأجهزة</a>
+    <span class="material-symbols-outlined text-[14px]">chevron_left</span>
+    <span class="text-primary dark:text-white">{% if form.instance.pk %}تعديل الجهاز{% else %}إضافة جهاز جديد{% endif %}</span>
+</nav>
 
-                <form method="post">
-                    {#                    {{ form.as_p }}#}
-                    {% csrf_token %}
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-12">
-                                {{ form.errors }}
-                            </div>
-                            <div class="col-12">
-                                <div class="mb-3">
-                                    <label for="{{ form.name.id_for_label }}" class="form-label">اسم الجهاز</label>
-                                    {{ form.name }}
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="mb-3">
-                                    <label for="{{ form.ip.id_for_label }}" class="form-label">عنوان الجهاز (IP)</label>
-                                    {{ form.ip }}
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="mb-3">
-                                    <label for="{{ form.port.id_for_label }}" class="form-label">المنفذ (Port)</label>
-                                    {{ form.port }}
-                                </div>
-                            </div>
-                            <div class='row'>
-                            <div class="col"></div>
-                            <div class="col-auto">
-                                <div class="mb-3">
-                                {{ form.out_during_work }}
-                                    <label for="{{ form.out_during_work.id_for_label }}" class="form-label">جهاز متابعة الخروج اثناء الدوام</label>
-                                    
-                                </div>
-                            </div>
-                            <div class="col"></div>
-                            </div>
-                            
-                            <div class='row'>
-                            <div class="col"></div>
-                            <div class="col-3 mt-2">
-                                <button type="submit" class="btn btn-primary w-100 rounded-pill">حفظ</button>
-                            </div>
-                            <div class="col"></div>
-                            </div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade-in-up">
+    <!-- Form Side Info -->
+    <div class="lg:col-span-1 space-y-6">
+        <!-- Connection Status Card -->
+        <div class="bg-primary dark:bg-black rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">
+            <div class="relative z-10">
+                <div class="flex items-center gap-3 flex-row-reverse mb-6">
+                    <span class="material-symbols-outlined text-secondary">wifi</span>
+                    <h3 class="text-xs font-black uppercase tracking-widest font-headline">جودة الاتصال</h3>
+                </div>
+                <div class="space-y-6">
+                    <div class="flex flex-col items-center justify-center py-4">
+                        <div class="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center mb-4 border border-white/20">
+                            <span class="material-symbols-outlined text-secondary text-[32px]">cell_tower</span>
                         </div>
+                        <p class="text-[10px] opacity-70 font-bold text-center leading-relaxed px-4">تأكد من أن الجهاز في نفس شبكة الخادم (Server) لضمان سرعة مزامنة البيانات.</p>
                     </div>
-                </form>
+                </div>
             </div>
-            <div class="col"></div>
+            <div class="absolute -bottom-8 -left-8 w-32 h-32 bg-white/5 rounded-full blur-2xl"></div>
+        </div>
+
+        <!-- Tech Info Card -->
+        <div class="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-surface-container dark:border-slate-800">
+            <h3 class="text-[11px] font-black text-primary dark:text-white uppercase tracking-widest mb-6 text-right font-headline flex items-center gap-2 flex-row-reverse">
+                <span class="material-symbols-outlined text-secondary">info</span>
+                معلومات تقنية
+            </h3>
+            <ul class="space-y-4 text-right">
+                <li class="flex flex-row-reverse items-start gap-3">
+                    <span class="w-1.5 h-1.5 bg-secondary rounded-full mt-1.5 shrink-0"></span>
+                    <p class="text-[9px] text-on-surface-variant dark:text-slate-400 font-bold leading-relaxed tracking-wide">المنفذ الافتراضي لأجهزة ZKTeco هو 4370.</p>
+                </li>
+                <li class="flex flex-row-reverse items-start gap-3">
+                    <span class="w-1.5 h-1.5 bg-secondary rounded-full mt-1.5 shrink-0"></span>
+                    <p class="text-[9px] text-on-surface-variant dark:text-slate-400 font-bold leading-relaxed tracking-wide">استخدم عناوين IP ثابتة (Static IP) للأجهزة لضمان استقرار الربط.</p>
+                </li>
+            </ul>
         </div>
     </div>
 
+    <!-- Main Form Content -->
+    <div class="lg:col-span-2">
+        <form method="post" class="space-y-8 h-full flex flex-col">
+            {% csrf_token %}
+            
+            <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-surface-container dark:border-slate-800 overflow-hidden flex-grow px-8 py-10">
+                
+                {% if form.errors %}
+                <div class="mb-8 p-4 bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/50 rounded-2xl flex flex-col gap-2">
+                    <div class="flex items-center gap-2 flex-row-reverse text-red-600 dark:text-red-400 font-black text-xs">
+                        <span class="material-symbols-outlined text-[18px]">error</span>
+                        <span>فشل التحقق من بيانات الجهاز:</span>
+                    </div>
+                    <ul class="text-[11px] text-red-500 dark:text-red-400 font-bold flex flex-col gap-1 text-right pr-4">
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li>{{ field.label }}: {{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
 
+                <!-- Section: Device Details -->
+                <div class="space-y-8">
+                    <div class="flex items-center gap-3 flex-row-reverse pb-2 border-b border-surface-container dark:border-slate-800">
+                        <span class="material-symbols-outlined text-secondary">memory</span>
+                        <h2 class="text-sm font-black text-primary dark:text-white uppercase tracking-widest font-headline">بيانات الاتصال بالجهاز</h2>
+                    </div>
 
-    <br>
-    <br>
-    <br>
+                    <div class="grid grid-cols-1 gap-8">
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">مسمى الجهاز (مثال: جهاز الاستقبال الرئيسي)</label>
+                            {{ form.name }}
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="space-y-2">
+                                <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">عنوان الـ IP</label>
+                                {{ form.ip }}
+                                <p class="text-[8px] text-outline font-bold mt-1 pr-2">مثال: 192.168.1.201</p>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">رقم المنفذ (Port)</label>
+                                {{ form.port }}
+                            </div>
+                        </div>
+                    </div>
 
+                    <!-- Section: Functional Settings -->
+                    <div class="flex items-center gap-3 flex-row-reverse pb-2 mt-12 border-b border-surface-container dark:border-slate-800">
+                        <span class="material-symbols-outlined text-secondary">settings_applications</span>
+                        <h2 class="text-sm font-black text-primary dark:text-white uppercase tracking-widest font-headline">الإعدادات الوظيفية</h2>
+                    </div>
 
+                    <div class="grid grid-cols-1 gap-4">
+                        <div class="flex flex-row-reverse items-center justify-between p-5 bg-surface-container-low dark:bg-slate-800/50 rounded-2xl border border-surface-container dark:border-slate-800 group hover:border-secondary transition-all">
+                            <div class="text-right">
+                                <span class="text-xs font-black text-primary dark:text-white font-headline block">جهاز متابعة الخروج أثناء الدوام</span>
+                                <p class="text-[9px] text-outline font-bold">تفعيل هذا الخيار سيخصص الجهاز لرقابة حركات الخروج المؤقت أثناء العمل.</p>
+                            </div>
+                            {{ form.out_during_work }}
+                        </div>
+                    </div>
+                </div>
+            </div>
 
+            <!-- Form Actions -->
+            <div class="flex flex-row-reverse items-center justify-between gap-4 mt-6">
+                <button type="submit" 
+                    class="flex flex-row-reverse items-center gap-3 bg-primary dark:bg-white text-white dark:text-primary px-10 py-5 rounded-2xl font-black shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-200">
+                    <span class="material-symbols-outlined">save</span>
+                    <span>{% if form.instance.pk %}حفظ تعديلات الجهاز{% else %}إضافة الجهاز للمنظومة{% endif %}</span>
+                </button>
+                <a href="{% url 'Attendance:devices' %}" class="text-xs font-black text-outline dark:text-slate-500 hover:text-red-500 dark:hover:text-red-400 transition-colors uppercase tracking-widest">إلغاء العملية</a>
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock %}

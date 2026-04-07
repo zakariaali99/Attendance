@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>تسجيل الدخول - منظومة الخوارزمي</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#fcd400",
+                        "on-background": "#1c1b1e",
+                        "surface-container-lowest": "#ffffff",
+                        "primary": "#181534",
+                        "surface-container-highest": "#e5e1e5",
+                        "on-surface-variant": "#47464d",
+                        "on-surface": "#1c1b1e",
+                        "tertiary-fixed": "#e3dfff",
+                        "on-tertiary-container": "#9692b4",
+                        "secondary-fixed-dim": "#e9c400",
+                        "surface-dim": "#ddd9dc",
+                        "on-secondary-fixed": "#221b00",
+                        "tertiary-fixed-dim": "#c7c3e6",
+                        "inverse-on-surface": "#f4eff3",
+                        "error-container": "#ffdad6",
+                        "on-primary-container": "#9691b7",
+                        "surface-bright": "#fcf8fb",
+                        "surface-tint": "#5e5a7d",
+                        "secondary-fixed": "#ffe16d",
+                        "background": "#fcf8fb",
+                        "surface-container": "#f1edf0",
+                        "surface": "#fcf8fb",
+                        "on-error": "#ffffff",
+                        "primary-fixed": "#e4dfff",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "surface-container-low": "#f7f2f6",
+                        "on-tertiary-fixed-variant": "#464461",
+                        "on-tertiary-fixed": "#1a1833",
+                        "tertiary": "#181631",
+                        "on-secondary-fixed-variant": "#544600",
+                        "inverse-surface": "#313033",
+                        "inverse-primary": "#c7c2ea",
+                        "outline-variant": "#c9c5ce",
+                        "primary-container": "#2d2a4a",
+                        "on-primary-fixed-variant": "#464364",
+                        "error": "#ba1a1a",
+                        "on-secondary-container": "#6e5c00",
+                        "on-primary-fixed": "#1a1736",
+                        "secondary": "#705d00",
+                        "primary-fixed-dim": "#c7c2ea",
+                        "surface-container-high": "#ebe7ea",
+                        "on-primary": "#ffffff",
+                        "surface-variant": "#e5e1e5",
+                        "outline": "#78767e",
+                        "on-secondary": "#ffffff",
+                        "tertiary-container": "#2d2b47"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["IBM Plex Sans Arabic", "sans-serif"],
+                        "body": ["IBM Plex Sans Arabic", "sans-serif"],
+                        "label": ["IBM Plex Sans Arabic", "sans-serif"]
+                    }
+                },
+            }
+        }
+    </script>
+<style>
+        body {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            background-color: #fcf8fb;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .geometric-bg {
+            background-color: #181534;
+            background-image: linear-gradient(30deg, #181534 12%, transparent 12.5%, transparent 87%, #181534 87.5%, #181534),
+            linear-gradient(150deg, #181534 12%, transparent 12.5%, transparent 87%, #181534 87.5%, #181534),
+            linear-gradient(30deg, #181534 12%, transparent 12.5%, transparent 87%, #181534 87.5%, #181534),
+            linear-gradient(150deg, #181534 12%, transparent 12.5%, transparent 87%, #181534 87.5%, #181534),
+            linear-gradient(60deg, #2D2A4A 25%, transparent 25.5%, transparent 75%, #2D2A4A 75%, #2D2A4A),
+            linear-gradient(60deg, #2D2A4A 25%, transparent 25.5%, transparent 75%, #2D2A4A 75%, #2D2A4A);
+            background-size: 80px 140px;
+            background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
+            opacity: 0.03;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex items-center justify-center relative overflow-hidden">
+<div class="absolute inset-0 geometric-bg z-0"></div>
+<main class="relative z-10 w-full max-w-[440px] px-6">
+<div class="bg-surface-container-lowest rounded-xl shadow-[0_32px_64px_rgba(24,21,52,0.08)] overflow-hidden border border-white/40">
+<div class="bg-gradient-to-br from-primary to-primary-container p-8 text-center">
+<div class="mb-6 inline-block bg-white p-4 rounded-xl shadow-lg">
+<img alt="Logo" class="h-16 w-auto" data-alt="precise geometric brand logo for an algorithm company, minimalist golden ratio icon with dark navy and gold accents on white" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvvFQnmn0XVKsnUSBQUS_WKh8q8HWLNNWY8tu7HYzQSV-mDeN2ABWtSURq7EtsVUp2DRCC41Cm9R6cvldE76JWp9opNTl09wp_LITSq1BaJKpdXSSXZJYGixw3gbTkVAKKEpQV8RUGxYNvlWXLjnYpNkjEOTzNqDpy6VCrUaW8Q-7ncz6wcZgrTycgWZ31mFzYk9kDL3iUbWJoM7y_331vskIUBlkNnV1iVnN1HjdPF-dw8M1O6pxq_IeqUINx82KIzdCDzjiLeJw"/>
+</div>
+<h1 class="text-white text-2xl font-bold tracking-tight mb-2">منظومة الخوارزمي</h1>
+<p class="text-on-primary-container text-sm font-medium opacity-90">نظام إدارة الحضور والتحليل الذكي</p>
+</div>
+<form class="p-8 space-y-6">
+<div class="space-y-2">
+<label class="block text-sm font-semibold text-primary/80 pr-1" for="username">اسم المستخدم</label>
+<div class="relative group">
+<div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-primary/40 group-focus-within:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">person</span>
+</div>
+<input class="block w-full bg-surface-container-high border-none rounded-xl py-3.5 pr-12 pl-4 text-on-surface placeholder:text-on-surface-variant/40 focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-highest transition-all duration-300" id="username" name="username" placeholder="أدخل اسم المستخدم الخاص بك" type="text"/>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between items-center pr-1">
+<label class="block text-sm font-semibold text-primary/80" for="password">كلمة المرور</label>
+</div>
+<div class="relative group">
+<div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-primary/40 group-focus-within:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">lock</span>
+</div>
+<input class="block w-full bg-surface-container-high border-none rounded-xl py-3.5 pr-12 pl-12 text-on-surface placeholder:text-on-surface-variant/40 focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-highest transition-all duration-300" id="password" name="password" placeholder="••••••••" type="password"/>
+<button class="absolute inset-y-0 left-0 pl-4 flex items-center text-primary/40 hover:text-primary transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+</div>
+</div>
+<div class="flex items-center justify-between px-1">
+<label class="flex items-center cursor-pointer group">
+<input class="w-5 h-5 rounded-lg border-none bg-surface-container-high text-secondary focus:ring-secondary/20 transition-all" type="checkbox"/>
+<span class="mr-3 text-sm text-on-surface-variant group-hover:text-primary transition-colors">تذكرني على هذا الجهاز</span>
+</label>
+<a class="text-sm font-medium text-primary hover:text-secondary transition-colors underline-offset-4 hover:underline" href="#">نسيت كلمة المرور؟</a>
+</div>
+<button class="w-full bg-secondary-container hover:bg-secondary-fixed-dim text-on-secondary-container font-bold py-4 rounded-xl shadow-lg shadow-secondary-container/20 flex items-center justify-center gap-2 transition-all active:scale-[0.98]" type="submit">
+<span>تسجيل الدخول للنظام</span>
+<span class="material-symbols-outlined font-bold">login</span>
+</button>
+<div class="pt-4 border-t border-surface-container-highest flex flex-col items-center gap-3">
+<p class="text-xs text-on-surface-variant text-center leading-relaxed">
+                        عن طريق تسجيل الدخول، أنت توافق على <br/>
+<a class="text-primary font-semibold" href="#">سياسة الخصوصية</a> و <a class="text-primary font-semibold" href="#">شروط الاستخدام</a>
+</p>
+</div>
+</form>
+</div>
+<div class="mt-8 text-center">
+<p class="text-on-surface-variant/60 text-xs">
+                © 2024 منظومة الخوارزمي الذكية. جميع الحقوق محفوظة.
+            </p>
+</div>
+</main>
+<div class="fixed bottom-0 right-0 p-12 opacity-[0.03] pointer-events-none select-none">
+<span class="material-symbols-outlined text-[240px]" style="font-variation-settings: 'FILL' 1;">fingerprint</span>
+</div>
+<div class="fixed top-0 left-0 p-12 opacity-[0.03] pointer-events-none select-none">
+<span class="material-symbols-outlined text-[240px]" style="font-variation-settings: 'FILL' 1;">analytics</span>
+</div>
+</body></html>

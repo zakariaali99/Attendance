@@ -1,99 +1,118 @@
 {% extends 'base.html' %}
-
+{% load static %}
 
 {% block body %}
-    <br>
-    <br>
-    <br>
-    <div class="container">
-        <div class="row">
-            <div class="col-12 text-center">
-                <h3>اضافة إذن</h3>
-            </div>
-            <div class="col"></div>
-            <div class="col-8">
+<div class="row justify-content-center animate-fade-in-up">
+    <div class="col-lg-10">
+        <div class="d-flex align-items-center mb-5">
+            <a href="{% url 'Attendance:extra_work' %}" class="btn btn-outline-secondary btn-rounded px-3 ms-4 shadow-sm">
+                <i class="bi bi-arrow-right ms-2"></i> رجوع للسجل
+            </a>
+            <h2 class="mb-0 fw-bold text-main">إضافة سجل عمل إضافي</h2>
+        </div>
 
-                <form method="post">
-                
+        <div class="card border-0 shadow-lg overflow-hidden">
+            <div class="card-header bg-info py-4 border-0">
+                <h4 class="mb-0 text-white text-center fw-bold">
+                    <i class="bi bi-plus-circle ms-2"></i> تفاصيل العمل الإضافي
+                </h4>
+            </div>
+            <div class="card-body p-4 p-md-5">
+                <form method="post" class="needs-validation">
                     {% csrf_token %}
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-12">
-                                {{ form.errors }}
-                            </div>
-                            <div class="col-6">
-                                <div class="mb-3">
-                                    <label for="{{ form.date.id_for_label }}" class="form-label"> يوم</label>
-                                    {{ form.date }}
-                                </div>
-                            </div>
-                           
-                            <div class="col-6">
-                                <div class="mb-3">
-                                    <label for="{{ form.type.id_for_label }}" class="form-label">نوع الاذن</label>
-                                    {{ form.type }}
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="mb-3">
-                                    <label for="{{ form.note.id_for_label }}" class="form-label">ملاحظات</label>
-                                    {{ form.note }}
+
+                    {% if form.errors %}
+                    <div class="alert alert-danger border-0 rounded-4 p-4 mb-4">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="bi bi-exclamation-triangle-fill ms-2 fs-5"></i>
+                            <h6 class="mb-0 fw-bold">يرجى مراجعة المدخلات:</h6>
+                        </div>
+                        {{ form.errors }}
+                    </div>
+                    {% endif %}
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold text-muted small text-uppercase mb-2">
+                                <i class="bi bi-calendar-event ms-1 text-info"></i> التاريخ
+                            </label>
+                            {{ form.date }}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold text-muted small text-uppercase mb-2">
+                                <i class="bi bi-tag ms-1 text-info"></i> نوع العمل الإضافي
+                            </label>
+                            {{ form.type }}
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-bold text-muted small text-uppercase mb-2">
+                                <i class="bi bi-pencil-square ms-1 text-info"></i> ملاحظات إضافية
+                            </label>
+                            {{ form.note }}
+                        </div>
+
+                        <div class="col-12 mt-5">
+                            <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-glass">
+                                <h6 class="text-main fw-bold text-uppercase mb-0">
+                                    <i class="bi bi-people ms-2 text-info"></i> اختيار الموظفين
+                                </h6>
+                                <div class="form-check form-switch ps-0 m-0">
+                                    <label class="form-check-label fw-bold small text-muted ms-5" for="employee_all">تحديد الكل</label>
+                                    <input type="checkbox" class="form-check-input ms-0" id="employee_all">
                                 </div>
                             </div>
                             
-                            
-                            <div class="col-12">
-                                <div class="mb-3">
-                                    <label for="{{ form.employees.id_for_label }}" class="form-label">الموظف</label>
-                                {% comment %} {{ form.employees }} {% endcomment %}
-                                <div class="w-100 border p-2" style="max-height: 200px; overflow-y: scroll;">
-                                    <input type="checkbox" class="custom-control-input" id="employee_all">
-                                    <label class="custom-control-label" for="employee_all">تحديد الكل</label>
-                                    <br/>
-                                {% for e in form.employees.field.queryset.all %}
-                                    <input name="employees" value="{{ e.id }}" type="checkbox" class="custom-control-input" id="employee_{{ e.id }}">
-                                    <label class="custom-control-label" for="employee_{{ e.id }}">{{ e.name }}</label>
-                                    <br/>
-                                {% endfor %}
-                                </div>
-                                    
+                            <div class="bg-light bg-opacity-50 rounded-4 p-4 border border-glass" style="max-height: 300px; overflow-y: auto;">
+                                <div class="row g-3">
+                                    {% for e in form.employees.field.queryset.all %}
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="form-check p-2 rounded-3 hover-shadow transition border border-transparent">
+                                            <input name="employees" value="{{ e.id }}" type="checkbox" class="form-check-input ms-3" id="employee_{{ e.id }}">
+                                            <label class="form-check-label fw-600 small" for="employee_{{ e.id }}">
+                                                {{ e.name }}
+                                                <div class="text-muted" style="font-size: 0.75rem;">ID: {{ e.attendance_id }}</div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
                                 </div>
                             </div>
-                            
-                            
-                            
-                            <div class='row'>
-                            <div class="col"></div>
-                            <div class="col-3 mt-2">
-                                <button type="submit" class="btn btn-primary w-100 rounded-pill">حفظ</button>
-                            </div>
-                            <div class="col"></div>
+                        </div>
+
+                        <div class="col-12 mt-5">
+                            <div class="d-flex gap-3">
+                                <button type="submit" class="btn btn-info btn-lg btn-rounded px-5 flex-grow-1 shadow-lg text-white">
+                                    <i class="bi bi-check2-circle ms-2"></i> حفظ السجل
+                                </button>
+                                <a href="{% url 'Attendance:extra_work' %}" class="btn btn-outline-secondary btn-lg btn-rounded px-5">
+                                    تجاهل
+                                </a>
                             </div>
                         </div>
                     </div>
                 </form>
             </div>
-            <div class="col"></div>
         </div>
     </div>
+</div>
 
-
-
-    <br>
-    <br>
-    <br>
-
-
-
-
+<style>
+    .form-check:hover {
+        background: var(--bg-card);
+        border-color: var(--border-glass) !important;
+    }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-thumb { background: var(--border-glass); border-radius: 10px; }
+</style>
 {% endblock %}
-
 
 {% block scripts %}
 <script>
-    $("#employee_all").click(function () {
-        $("input[name='employees']").prop('checked', $(this).prop('checked'));
+    document.getElementById("employee_all").addEventListener('change', function() {
+        const checkboxes = document.querySelectorAll("input[name='employees']");
+        checkboxes.forEach(cb => cb.checked = this.checked);
     });
-    
 </script>
 {% endblock %}

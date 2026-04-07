@@ -1,73 +1,131 @@
 {% extends 'list_search_base.html' %}
 {% load static %}
+{% load widget_tweaks %}
 
-{% block add_url %}
-    {% url 'Attendance:add_exception' %}
+{% block heading %}سجل الأذونات والاستثناءات{% endblock %}
+
+{% block add_url %}{% url 'Attendance:add_exception' %}{% endblock %}
+
+{% block search_box %}
+<div class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-surface-container dark:border-slate-800 p-6 mb-8 animate-fade-in-up">
+    <form method="get" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+        <div class="space-y-2">
+            <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">الموظف</label>
+            {{ search_form.employees|add_class:"form-select" }}
+        </div>
+        <div class="space-y-2">
+            <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">نوع الإذن</label>
+            {{ search_form.type|add_class:"form-select" }}
+        </div>
+        <div class="space-y-2">
+            <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">التاريخ</label>
+            {{ search_form.date|add_class:"form-control" }}
+        </div>
+        <div>
+            <button type="submit" class="w-full py-4 bg-primary dark:bg-white text-white dark:text-primary font-black rounded-2xl shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined">filter_list</span>
+                <span>تصفية</span>
+            </button>
+        </div>
+    </form>
+</div>
 {% endblock %}
 
-{##}
-{#{% block search_box %}#}
-{#<form>#}
-{#    <div class="row">#}
-{#    <div class="form-group col-3 p-0">#}
-{#      <label for="{{ search_form.employees.id_for_label }}">الموظف</label>#}
-{#      {{ search_form.employees }}#}
-{#    #}
-{#    </div>#}
-{#    <div class="form-group col-3 p-0">#}
-{#      <label for="{{ search_form.type.id_for_label }}">نوع الإذن</label>#}
-{#      {{ search_form.type }}#}
-{#    </div>#}
-{#    <div class="col-2 p-0">#}
-{#        <label for="{{ search_form.date.id_for_label }}">من</label>#}
-{#        {{ search_form.date }}#}
-{#    </div>#}
-{#    <div class="col-2 p-0">#}
-{#        <label for="{{ search_form.to_date.id_for_label }}">الي</label>#}
-{#        {{ search_form.to_date }}#}
-{#    </div>#}
-{#    <div class="col-2 p-0 mt-1">#}
-{#        <button type="submit" class="btn btn-primary rounded-pill">تصفية</button>#}
-{#    </div>#}
-{#</div>#}
-{#  </form>#}
-{#{% endblock %}#}
-
 {% block tabel %}
+<div class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-surface-container dark:border-slate-800 overflow-hidden animate-fade-in-up">
+    <div class="p-6 border-b border-surface-container dark:border-slate-800 flex justify-between items-center flex-row-reverse">
+        <h2 class="text-xl font-black text-primary dark:text-white font-headline flex items-center gap-2 flex-row-reverse">
+            <span class="material-symbols-outlined text-secondary">history_toggle_off</span>
+            قائمة بالأذونات المسجلة
+        </h2>
+        <div class="text-[10px] font-black bg-surface-container dark:bg-slate-800 text-outline dark:text-slate-400 px-3 py-1 rounded-full uppercase tracking-widest">
+            إدارة أذونات التأخير والخروج
+        </div>
+    </div>
     
-    <div class="col-12">
-       
-    </div>
-    <div class="col-12 text-center fs-6">
-        <table class="table table-hover">
-            <thead class="bg-hti">
-              <tr>
-                <th scope="col">الموظف</th>
-                <th scope="col">الاجازة</th>
-                <th scope="col">الفترة</th>
-                <th scope="col">ملاحظات</th>
-                <th scope="col">-</th>
-              </tr>
+    <div class="overflow-x-auto">
+        <table class="w-full text-right border-collapse" id="exceptionsTable">
+            <thead>
+                <tr class="bg-surface-container-low dark:bg-slate-800/50 text-outline dark:text-slate-500">
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest">الموظف</th>
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest">نوع الإذن</th>
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">التاريخ</th>
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest">السبب / الملاحظات</th>
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">الإجراءات</th>
+                </tr>
             </thead>
-            <tbody>
-                {% for vacation in object_list %}
-              <tr>
-                <th scope="row">{{ vacation.employee.name }}</th>
-                <td>{{ vacation.type }}</td>
-                <td>{{ vacation.date }}</td>
-                <td>{{ vacation.note }}</td>
-                <td>
-                    <a href="{% url 'Attendance:edit_exception' vacation.id %}"
-                                       class="btn btn-link p-0 btn-lg fs-6">تعديل</a>
-                                       <a href="{% url 'Attendance:delete_exception' vacation.id %}"
-                                       class="btn btn-link p-0 btn-lg fs-6">حذف</a>
-                </td>
-              </tr>
-            {% endfor %}
-             
+            <tbody class="divide-y divide-surface-container dark:divide-slate-800">
+                {% for exception in object_list %}
+                <tr class="hover:bg-surface-container-lowest dark:hover:bg-slate-800/30 transition-all duration-200">
+                    <td class="px-6 py-5">
+                        <div class="flex items-center gap-4 flex-row-reverse">
+                            <div class="w-10 h-10 rounded-full bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 flex items-center justify-center font-black text-xs border border-white dark:border-slate-700 shadow-sm">
+                                {{ exception.employee.name|slice:":1"|upper }}
+                            </div>
+                            <div>
+                                <div class="font-black text-primary dark:text-white text-sm font-headline">{{ exception.employee.name }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-5">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container dark:bg-slate-800 text-primary dark:text-slate-300 font-bold text-[10px] uppercase tracking-widest border border-white dark:border-slate-700 shadow-sm">
+                            {{ exception.get_type_display }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-5 text-center">
+                        <div class="flex items-center justify-center gap-2 flex-row-reverse text-[11px] font-bold text-on-surface-variant dark:text-slate-400">
+                            <span class="material-symbols-outlined text-[14px]">calendar_today</span>
+                            <span>{{ exception.date|date:"Y-m-d" }}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-5">
+                        <p class="text-[10px] text-outline dark:text-slate-500 font-bold max-w-[200px] truncate" title="{{ exception.note }}">
+                            {{ exception.note|default:"لا توجد ملاحظات" }}
+                        </p>
+                    </td>
+                    <td class="px-6 py-5">
+                        <div class="flex items-center justify-center gap-2 flex-row-reverse">
+                            <a href="{% url 'Attendance:edit_exception' exception.id %}" 
+                               class="flex items-center justify-center w-10 min-w-10 h-10 rounded-xl border border-surface-container dark:border-slate-700 text-primary dark:text-slate-200 hover:bg-surface-container transition-all shadow-sm">
+                                <span class="material-symbols-outlined text-[18px]">edit</span>
+                            </a>
+                            <a href="{% url 'Attendance:delete_exception' exception.id %}" 
+                               onclick="return confirm('هل أنت متأكد من حذف هذا الإذن؟')"
+                               class="flex items-center justify-center w-10 min-w-10 h-10 rounded-xl border border-red-50 dark:border-red-950/20 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all">
+                                <span class="material-symbols-outlined text-[18px]">delete</span>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="px-6 py-16 text-center">
+                        <div class="flex flex-col items-center gap-4 opacity-30 dark:opacity-50">
+                            <span class="material-symbols-outlined text-[64px]">rule_folder</span>
+                            <p class="text-base font-bold font-headline">سجل الأذونات فارغ حالياً.</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
             </tbody>
-          </table>
-       
+        </table>
     </div>
+</div>
+{% endblock %}
 
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        if ($.fn.dataTable) {
+            $('#exceptionsTable').DataTable({
+                "order": [[ 2, "desc" ]],
+                "pageLength": 25,
+                "dom": 'rtip',
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Arabic.json"
+                }
+            });
+        }
+    });
+</script>
 {% endblock %}

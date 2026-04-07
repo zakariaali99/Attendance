@@ -1,23 +1,26 @@
-{% if is_paginated %}
-    <nav aria-label="Page navigation example">
-        <ul class="pagination justify-content-center">
-            <li class="page-item {% if not page_obj.has_previous %} disabled {% endif %}">
-                <a class="page-link" href="{% if  page_obj.has_previous %}
-                ?page={{ page_obj.previous_page_number }}&{{ old_q }}
-                {% else %}# {% endif %}" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                </a>
-            </li>
-            <li class="page-item"><a class="page-link" href="?page={{ page_obj.number }}">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</a></li>
+{% if page_obj.has_other_pages %}
+<div class="flex flex-row-reverse justify-center mt-10 mb-6 font-headline">
+    <nav class="bg-white dark:bg-slate-900 px-2 py-2 rounded-2xl border border-surface-container dark:border-slate-800 shadow-sm flex items-center gap-2">
+        {% if page_obj.has_previous %}
+        <a href="?{{ params }}&page={{ page_obj.previous_page_number }}" 
+           class="w-10 h-10 flex items-center justify-center rounded-xl text-primary dark:text-white hover:bg-surface-container dark:hover:bg-slate-800 transition-colors">
+            <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+        </a>
+        {% endif %}
 
-            <li class="page-item {% if not page_obj.has_next %} disabled {% endif %}">
-                <a class="page-link" href="{% if page_obj.has_next %}
-                ?page={{ page_obj.next_page_number }}&{{ old_q }}
-                {% else %}# {% endif %}" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                </a>
-            </li>
-        </ul>
+        <div class="flex items-center gap-1">
+            <span class="w-10 h-10 flex items-center justify-center rounded-xl bg-secondary-container text-on-secondary-container font-black text-sm shadow-md shadow-secondary-container/20">
+                {{ page_obj.number }}
+            </span>
+            <span class="text-xs font-bold text-outline dark:text-slate-500 mx-2 uppercase tracking-widest">من {{ page_obj.paginator.num_pages }}</span>
+        </div>
+
+        {% if page_obj.has_next %}
+        <a href="?{{ params }}&page={{ page_obj.next_page_number }}" 
+           class="w-10 h-10 flex items-center justify-center rounded-xl text-primary dark:text-white hover:bg-surface-container dark:hover:bg-slate-800 transition-colors">
+            <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+        </a>
+        {% endif %}
     </nav>
-
+</div>
 {% endif %}

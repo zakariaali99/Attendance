@@ -1,99 +1,138 @@
 {% extends 'base.html' %}
+{% load static %}
 
+{% block title %}منظومة الخوارزمي - تسجيل إذن حضور/انصراف{% endblock %}
 
 {% block body %}
-    <br>
-    <br>
-    <br>
-    <div class="container">
-        <div class="row">
-            <div class="col-12 text-center">
-                <h3>اضافة إذن</h3>
+<nav class="flex flex-row-reverse items-center gap-2 mb-8 text-xs font-bold text-outline dark:text-slate-500 uppercase tracking-widest animate-fade-in-up">
+    <a href="{% url 'Attendance:dashboard' %}" class="hover:text-primary dark:hover:text-white transition-colors">الرئيسية</a>
+    <span class="material-symbols-outlined text-[14px]">chevron_left</span>
+    <a href="{% url 'Attendance:exception' %}" class="hover:text-primary dark:hover:text-white transition-colors">سجل الأذونات</a>
+    <span class="material-symbols-outlined text-[14px]">chevron_left</span>
+    <span class="text-primary dark:text-white">تسجيل إذن جديد</span>
+</nav>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade-in-up">
+    <!-- Form Side Info -->
+    <div class="lg:col-span-1 space-y-6">
+        <!-- Permission Type Info Card -->
+        <div class="bg-amber-500 dark:bg-amber-900 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">
+            <div class="relative z-10">
+                <div class="flex items-center gap-3 flex-row-reverse mb-6">
+                    <span class="material-symbols-outlined">pending_actions</span>
+                    <h3 class="text-xs font-black uppercase tracking-widest font-headline">طبيعة الإذن</h3>
+                </div>
+                <div class="space-y-4 text-right">
+                    <p class="text-[10px] opacity-90 font-bold leading-relaxed tracking-wide">يُستخدم هذا النموذج لتبرير حالات التأخير (Late) أو الخروج المبكر (Out Early) أو الانصراف المؤقت لغرض المصلحة أو لظروف خاصة.</p>
+                </div>
             </div>
-            <div class="col"></div>
-            <div class="col-8">
+            <div class="absolute -bottom-8 -left-8 w-32 h-32 bg-white/5 rounded-full blur-2xl"></div>
+        </div>
 
-                <form method="post">
-                
-                    {% csrf_token %}
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-12">
-                                {{ form.errors }}
-                            </div>
-                            <div class="col-6">
-                                <div class="mb-3">
-                                    <label for="{{ form.date.id_for_label }}" class="form-label"> يوم</label>
-                                    {{ form.date }}
-                                </div>
-                            </div>
-                           
-                            <div class="col-6">
-                                <div class="mb-3">
-                                    <label for="{{ form.type.id_for_label }}" class="form-label">نوع الاذن</label>
-                                    {{ form.type }}
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="mb-3">
-                                    <label for="{{ form.note.id_for_label }}" class="form-label">ملاحظات</label>
-                                    {{ form.note }}
-                                </div>
-                            </div>
-
-
-                            <div class="col-12">
-                                <div class="mb-3">
-                                    <label for="{{ form.employees.id_for_label }}" class="form-label">الموظف</label>
-                                {% comment %} {{ form.employees }} {% endcomment %}
-                                <div class="w-100 border p-2" style="max-height: 200px; overflow-y: scroll;">
-                                    <input type="checkbox" class="custom-control-input" id="employee_all">
-                                    <label class="custom-control-label" for="employee_all">تحديد الكل</label>
-                                    <br/>
-                                {% for e in form.employees.field.queryset.all %}
-                                    <input name="employees" value="{{ e.id }}" type="checkbox" class="custom-control-input" id="employee_{{ e.id }}">
-                                    <label class="custom-control-label" for="employee_{{ e.id }}">{{ e.name }}</label>
-                                    <br/>
-                                {% endfor %}
-                                </div>
-
-                                </div>
-                            </div>
-
-
-                            
-                            <div class='row'>
-                            <div class="col"></div>
-                            <div class="col-3 mt-2">
-                                <button type="submit" class="btn btn-primary w-100 rounded-pill">حفظ</button>
-                            </div>
-                            <div class="col"></div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="col"></div>
+        <!-- Help Card -->
+        <div class="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-surface-container dark:border-slate-800">
+            <h3 class="text-[11px] font-black text-primary dark:text-white uppercase tracking-widest mb-6 text-right font-headline">ملاحظة إدارية</h3>
+            <p class="text-[10px] text-on-surface-variant dark:text-slate-400 font-bold leading-relaxed text-right">الأذونات المسجلة هنا تظهر في التقارير الشهرية كحالات "مُبررة" ولا يتم احتسابها كخصم من ساعات الموظف إذا تم اختيار النوع المناسب.</p>
         </div>
     </div>
 
+    <!-- Main Form Content -->
+    <div class="lg:col-span-2">
+        <form method="post" class="space-y-8 h-full flex flex-col">
+            {% csrf_token %}
+            
+            <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-surface-container dark:border-slate-800 overflow-hidden flex-grow px-8 py-10">
+                
+                {% if form.errors %}
+                <div class="mb-8 p-4 bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/50 rounded-2xl flex flex-col gap-2">
+                    <div class="flex items-center gap-2 flex-row-reverse text-red-600 dark:text-red-400 font-black text-xs">
+                        <span class="material-symbols-outlined text-[18px]">error</span>
+                        <span>يرجى التحقق من المدخلات:</span>
+                    </div>
+                    {{ form.errors }}
+                </div>
+                {% endif %}
 
+                <!-- Section: Exception Details -->
+                <div class="space-y-8">
+                    <div class="flex items-center gap-3 flex-row-reverse pb-2 border-b border-surface-container dark:border-slate-800">
+                        <span class="material-symbols-outlined text-secondary">edit_calendar</span>
+                        <h2 class="text-sm font-black text-primary dark:text-white uppercase tracking-widest font-headline">تفاصيل الإذن والاستثناء</h2>
+                    </div>
 
-    <br>
-    <br>
-    <br>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">تاريخ الإذن</label>
+                            {{ form.date }}
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">نوع الإذن / المبرر</label>
+                            {{ form.type }}
+                        </div>
+                        <div class="md:col-span-2 space-y-2">
+                            <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">سبب الإذن (ملاحظات تفصيلية)</label>
+                            {{ form.note }}
+                        </div>
+                    </div>
 
+                    <!-- Section: Employees Selection -->
+                    <div class="flex items-center gap-3 flex-row-reverse pb-2 mt-12 border-b border-surface-container dark:border-slate-800">
+                        <span class="material-symbols-outlined text-secondary">person_search</span>
+                        <h2 class="text-sm font-black text-primary dark:text-white uppercase tracking-widest font-headline">الموظفين المشمولين بالإذن</h2>
+                    </div>
 
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center flex-row-reverse mb-2">
+                            <p class="text-[9px] text-outline font-bold text-right pr-2">اختر الموظفين المعنيين بهذا اليوم:</p>
+                            <label class="flex items-center gap-2 flex-row-reverse cursor-pointer group">
+                                <input type="checkbox" id="employee_all" class="form-check-input">
+                                <span class="text-[10px] font-black text-outline group-hover:text-primary transition-colors">تحديد الكل</span>
+                            </label>
+                        </div>
+                        
+                        <div class="bg-surface-container-low dark:bg-slate-800/50 rounded-2xl p-6 border border-surface-container dark:border-slate-800">
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar">
+                                {% for e in form.employees.field.queryset.all %}
+                                <div class="group">
+                                    <label class="flex items-center gap-3 p-3 rounded-xl border border-transparent hover:border-surface-container hover:bg-white dark:hover:bg-slate-800 transition-all cursor-pointer flex-row-reverse text-right">
+                                        <input name="employees" value="{{ e.id }}" type="checkbox" class="form-check-input employee-checkbox">
+                                        <div class="flex-grow">
+                                            <div class="text-[11px] font-black text-primary dark:text-white mb-0.5">{{ e.name }}</div>
+                                            <div class="text-[9px] text-outline dark:text-slate-500 font-bold uppercase tracking-widest">ID: {{ e.attendance_id }}</div>
+                                        </div>
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-
+            <!-- Form Actions -->
+            <div class="flex flex-row-reverse items-center justify-between gap-4 mt-6">
+                <button type="submit" 
+                    class="flex flex-row-reverse items-center gap-3 bg-amber-500 hover:bg-amber-600 text-white px-10 py-5 rounded-2xl font-black shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 border-b-4 border-amber-700">
+                    <span class="material-symbols-outlined">verified_user</span>
+                    <span>اعتماد الإذن وحفظ الحركات</span>
+                </button>
+                <a href="{% url 'Attendance:exception' %}" class="text-xs font-black text-outline dark:text-slate-500 hover:text-red-500 dark:hover:text-red-400 transition-colors uppercase tracking-widest">إلغاء وتراجع</a>
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock %}
-
 
 {% block scripts %}
 <script>
-    $("#employee_all").click(function () {
-        $("input[name='employees']").prop('checked', $(this).prop('checked'));
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectAll = document.getElementById("employee_all");
+        if (selectAll) {
+            selectAll.addEventListener('change', function() {
+                const checkboxes = document.querySelectorAll(".employee-checkbox");
+                checkboxes.forEach(cb => cb.checked = this.checked);
+            });
+        }
     });
-    
 </script>
 {% endblock %}

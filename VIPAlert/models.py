@@ -1,15 +1,8 @@
-from datetime import datetime
-import time
-from uuid import uuid4
-import os
-from django.contrib.auth import password_validation
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
-from django.urls import reverse
-from django.utils.translation import gettext_lazy as _
-from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 
 class UserManager(BaseUserManager):
@@ -72,7 +65,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     user_type = models.IntegerField(default=1, choices=user_types)
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
 
-
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
@@ -94,4 +86,3 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def can_view_users(self):
         return self.has_perm('can_view_users')
-

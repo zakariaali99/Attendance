@@ -123,7 +123,7 @@ class DeviceForm(forms.ModelForm):
 class ReportFilterForm(forms.Form):
     from_date = forms.DateField(initial=timezone.now().date())
     to_date = forms.DateField(initial=timezone.now().date())
-    device = forms.ModelChoiceField(queryset=ZKTDevice.objects.all(), initial=ZKTDevice.objects.order_by('id').first())
+    device = forms.ModelChoiceField(queryset=ZKTDevice.objects.all())
 
     from_date.widget = forms.DateInput(attrs={
         'class': 'form-control rounded-pill',
@@ -140,7 +140,7 @@ class ReportFilterForm(forms.Form):
 class AddVacationForm(forms.Form):
     date = forms.DateField(initial=timezone.now().date())
     to_date = forms.DateField(initial=timezone.now().date())
-    type = forms.ModelChoiceField(queryset=VacationType.objects.all(), initial=VacationType.objects.order_by('id').first())
+    type = forms.ModelChoiceField(queryset=VacationType.objects.all())
     note = forms.CharField(max_length=250, required=False)
     employees = forms.ModelMultipleChoiceField(queryset=Employee.objects.filter(active=False))
 
@@ -163,7 +163,7 @@ class AddVacationForm(forms.Form):
 class FilterVacationsForm(forms.Form):
     date = forms.DateField(initial=None, required=False)
     to_date = forms.DateField(initial=None, required=False)
-    type = forms.ModelChoiceField(queryset=VacationType.objects.all(), initial=VacationType.objects.order_by('id').first())
+    type = forms.ModelChoiceField(queryset=VacationType.objects.all())
     employees = forms.ModelChoiceField(queryset=Employee.objects.filter(active=False))
 
     date.widget = forms.DateInput(attrs={
@@ -239,7 +239,7 @@ class AddExceptionForm(forms.Form):
     date = forms.DateField(initial=timezone.now().date())
     # start_time = forms.DateField(initial=timezone.now().date())
     # to_date = forms.DateField(initial=timezone.now().date())
-    type = forms.ChoiceField(choices=Exception.types, initial=VacationType.objects.order_by('id').first())
+    type = forms.ChoiceField(choices=Exception.types)
     note = forms.CharField(max_length=250, required=False)
     employees = forms.ModelMultipleChoiceField(queryset=Employee.objects.filter(active=False))
 

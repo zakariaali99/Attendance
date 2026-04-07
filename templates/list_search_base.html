@@ -1,69 +1,48 @@
 {% extends 'base.html' %}
 
+{% block title %}إدارة البيانات - منظومة الخوارزمي{% endblock %}
 
 {% block body %}
-    <br/>
-    <h2 class="text-center">
-        {% block title %}
-            <br/>
-        {% endblock %}
-    </h2>
-    <br/>
-
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-12 mb-5">
-                <div class="row">
-                    <div class="col"></div>
-                    <div class="col-8 col-md-6">
-                        {% block search_box %}
-                        <div class="w-100 border-hti border rounded-pill ">
-                            
-                            <form>
-                                <div class="container-fluid">
-                                    <div class="row">
-                                        <div class="col-auto border-end p-0">
-                                            <button type="submit" class="btn btn-light bg-white border-0 rounded-pill"
-                                                    id="inputGroup-sizing-lg">بحث
-                                            </button>
-                                        </div>
-                                        <div class="col p-0">
-                                            <input id="mainSearchField" name="q" type="text" class="form-control border-0 "
-                                                   value="{{ q }}"
-                                                   aria-label="Sizing example input"
-                                                   aria-describedby="inputGroup-sizing-lg">
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                            
-                        </div>
-                        {% endblock %}
-                    </div>
-                    <div class="col-3 col-md-auto p-0">
-                        {% block add_btn %}
-
-                            <a href="{% block add_url %}{% endblock %}" type="submit"
-                               class="btn btn-primary border-0 rounded-pill"
-                               id="inputGroup-sizing-lg">+ اضافة
-                            </a>
-                        {% endblock %}
-                    </div>
-                    <div class="col"></div>
+<header class="mb-10 animate-fade-in-up">
+    <div class="flex flex-col lg:flex-row-reverse justify-between items-start lg:items-center gap-6">
+        <div class="text-right">
+            <h1 class="text-3xl font-black text-primary dark:text-white mb-2 font-headline">
+                {% block heading %}{% endblock %}
+            </h1>
+            <p class="text-on-surface-variant dark:text-slate-400 font-body text-sm">إدارة واستعراض البيانات وإجراء العمليات المختلفة بدقة واحترافية.</p>
+        </div>
+        
+        <div class="flex flex-row-reverse items-center gap-4 w-full lg:w-auto">
+            {% block search_box %}
+            <form method="GET" class="relative group flex-grow lg:w-80">
+                <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-outline group-focus-within:text-secondary-container">
+                    <span class="material-symbols-outlined text-[20px]">search</span>
                 </div>
-            </div>
+                <input type="text" name="q" value="{{ request.GET.q|default:'' }}"
+                    class="block w-full py-3 pr-11 pl-4 bg-white dark:bg-slate-900 border border-surface-container dark:border-slate-800 rounded-2xl text-sm font-headline text-primary dark:text-white placeholder:text-outline focus:ring-2 focus:ring-secondary-container transition-all group-hover:border-outline shadow-sm"
+                    placeholder="ابحث هنا عن أي شيء...">
+            </form>
+            {% endblock %}
 
-
-            {% block tabel %}
-
+            {% block add_btn %}
+            <a href="{% block add_url %}{% endblock %}" class="flex flex-row-reverse items-center gap-2 bg-primary dark:bg-white text-white dark:text-primary px-6 py-3 rounded-2xl font-black shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200">
+                <span class="material-symbols-outlined">add</span>
+                <span class="text-sm">إضافة جديد</span>
+            </a>
             {% endblock %}
         </div>
     </div>
-    <br>
-    <br/>
-    <br/>
+</header>
+
+<div class="animate-fade-in-up" style="animation-delay: 0.1s;">
+    {% block tabel %}
+    {% endblock %}
+</div>
+
+{% if is_paginated or page_obj %}
+<div class="mt-10 animate-fade-in-up" style="animation-delay: 0.2s;">
     {% include 'paginator.html' %}
-    <br/>
-    <br/>
-    <br/>
+</div>
+{% endif %}
+
 {% endblock %}

@@ -31,8 +31,8 @@ urlpatterns = [
     path('vacation/<int:pk>/edit', EditVacationView.as_view(), name="edit_vacation"),
     path('vacation/<int:pk>/delete', DeleteVacationView.as_view(), name="delete_vacation"),
     path('vacation/types', VacationTypeView.as_view(), name="vacation_types"),
-    path('vacation/types/<int:pk>', EditVacationTypeView.as_view(), name="edit_vacation_types"),
-    path('vacation/types/<int:pk>/delete', EditVacationTypeView.as_view(), name="delete_vacation_types"),
+    path('vacation/types/<int:pk>', EditVacationTypeView.as_view(), name="edit_vacation_type"),
+    path('vacation/types/<int:pk>/delete', DeleteVacationTypeView.as_view(), name="delete_vacation_type"),
     path('vacation/types/add', AddVacationTypeView.as_view(), name="add_vacation_type"),
 
 

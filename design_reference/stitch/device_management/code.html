@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@100;200;300;400;500;600;700&amp;family=Tajawal:wght@200;300;400;500;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-container": "#fcd400",
+                    "on-tertiary-container": "#9692b4",
+                    "surface": "#fcf8fb",
+                    "surface-variant": "#e5e1e5",
+                    "on-secondary-fixed": "#221b00",
+                    "tertiary-container": "#2d2b47",
+                    "on-surface-variant": "#47464d",
+                    "outline": "#78767e",
+                    "surface-container-low": "#f7f2f6",
+                    "on-error-container": "#93000a",
+                    "on-primary-fixed-variant": "#464364",
+                    "secondary": "#705d00",
+                    "on-secondary-container": "#6e5c00",
+                    "on-background": "#1c1b1e",
+                    "background": "#fcf8fb",
+                    "inverse-primary": "#c7c2ea",
+                    "surface-dim": "#ddd9dc",
+                    "error": "#ba1a1a",
+                    "primary-container": "#2d2a4a",
+                    "surface-bright": "#fcf8fb",
+                    "on-primary-container": "#9691b7",
+                    "secondary-fixed-dim": "#e9c400",
+                    "on-surface": "#1c1b1e",
+                    "on-primary": "#ffffff",
+                    "surface-tint": "#5e5a7d",
+                    "on-error": "#ffffff",
+                    "primary-fixed-dim": "#c7c2ea",
+                    "secondary-fixed": "#ffe16d",
+                    "error-container": "#ffdad6",
+                    "primary": "#181534",
+                    "tertiary-fixed-dim": "#c7c3e6",
+                    "tertiary": "#181631",
+                    "primary-fixed": "#e4dfff",
+                    "on-tertiary-fixed": "#1a1833",
+                    "on-tertiary-fixed-variant": "#464461",
+                    "surface-container-high": "#ebe7ea",
+                    "outline-variant": "#c9c5ce",
+                    "on-secondary-fixed-variant": "#544600",
+                    "on-secondary": "#ffffff",
+                    "inverse-surface": "#313033",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-highest": "#e5e1e5",
+                    "inverse-on-surface": "#f4eff3",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-fixed": "#1a1736",
+                    "surface-container": "#f1edf0",
+                    "tertiary-fixed": "#e3dfff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Tajawal", "sans-serif"],
+                    "body": ["IBM Plex Sans Arabic", "sans-serif"],
+                    "label": ["IBM Plex Sans Arabic", "sans-serif"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+        }
+        body { font-family: 'IBM Plex Sans Arabic', sans-serif; }
+        .glass-header {
+            background: rgba(252, 248, 251, 0.8);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen">
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 w-full z-50 glass-header shadow-sm h-16 flex flex-row-reverse justify-between items-center px-6">
+<div class="flex items-center gap-4 flex-row-reverse">
+<img alt="منظومة الخوارزمي" class="h-10 w-auto" data-alt="professional logo for Al-Khawarizmi attendance system, geometric mathematical pattern, navy and gold color scheme, clean modern brand identity" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6RwD16jVQ3-gN-ESIaa3yXLC2Ne-y0snOgDlrUtNX1YXpXjMC7eoxAvtq0Q0ylL-3sF41zbGiqXmOJ0KhC9sp4zRk4OhatmsFZJNUYytVyJdq31r2VzVrHWDyu_8c4PGkIpc1tJuPpSvFqpLPxCQZL6hiKh6OFDQzClcug3ZcLL1BWGy1Ze8gAGMgfcSblOvFL9n3yGEQF9bRsjH8KvvmfLbkvhmP5SDu4zdgQMAeqsJGZPj8-PQZbpi050IxpaLMDJfb7T52njY"/>
+<h1 class="text-xl font-bold text-primary font-headline">منظومة الخوارزمي</h1>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden md:block">
+<input class="bg-surface-container-high border-none rounded-full px-10 py-2 text-sm focus:ring-2 focus:ring-primary/20 w-64 text-right" placeholder="بحث عن جهاز..." type="text"/>
+<span class="material-symbols-outlined absolute right-3 top-2.5 text-outline text-lg" data-icon="search">search</span>
+</div>
+<button class="p-2 rounded-full hover:bg-slate-100 transition-all text-primary">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container border-2 border-surface">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+</div>
+</div>
+</header>
+<div class="flex h-screen pt-16">
+<!-- Side Navigation Bar -->
+<aside class="fixed right-0 top-0 h-full w-64 z-40 bg-primary pt-20 pb-4 hidden md:flex flex-col">
+<div class="px-4 mb-8 text-right">
+<h2 class="text-white text-lg font-black font-headline">إدارة الأجهزة</h2>
+<p class="text-on-primary-container text-xs opacity-70">نظام إدارة الحضور والانصراف</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex flex-row-reverse items-center gap-3 text-slate-300 p-3 mx-2 hover:bg-primary-container hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-medium">لوحة التحكم</span>
+</a>
+<a class="flex flex-row-reverse items-center gap-3 text-slate-300 p-3 mx-2 hover:bg-primary-container hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-medium">الموظفين</span>
+</a>
+<a class="flex flex-row-reverse items-center gap-3 text-slate-300 p-3 mx-2 hover:bg-primary-container hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span class="font-medium">الجداول الزمنية</span>
+</a>
+<a class="flex flex-row-reverse items-center gap-3 bg-primary-container text-secondary-container rounded-lg p-3 mx-2" href="#">
+<span class="material-symbols-outlined" data-icon="devices" data-weight="fill" style="font-variation-settings: 'FILL' 1;">devices</span>
+<span class="font-bold">الأجهزة</span>
+</a>
+<a class="flex flex-row-reverse items-center gap-3 text-slate-300 p-3 mx-2 hover:bg-primary-container hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="event_busy">event_busy</span>
+<span class="font-medium">الإجازات</span>
+</a>
+<a class="flex flex-row-reverse items-center gap-3 text-slate-300 p-3 mx-2 hover:bg-primary-container hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+<span class="font-medium">التقارير</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-white/10 pt-4">
+<a class="flex flex-row-reverse items-center gap-3 text-slate-300 p-3 mx-2 hover:bg-primary-container transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-medium">الإعدادات</span>
+</a>
+<button class="w-[calc(100%-1rem)] mx-2 mt-2 bg-error/10 text-error p-3 rounded-lg flex flex-row-reverse items-center gap-3 justify-center font-bold">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span>تسجيل خروج</span>
+</button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 mr-0 md:mr-64 p-6 bg-surface-container-low transition-all">
+<!-- Breadcrumbs & Actions -->
+<div class="flex flex-col md:flex-row-reverse justify-between items-start md:items-center gap-4 mb-8">
+<div class="text-right">
+<h2 class="text-3xl font-bold text-primary font-headline">أجهزة ZKTeco</h2>
+<p class="text-outline">إدارة ومراقبة أجهزة القياسات الحيوية في الشبكة</p>
+</div>
+<div class="flex gap-3">
+<button class="bg-secondary-container text-on-secondary-container px-6 py-2.5 rounded-full font-bold flex items-center gap-2 shadow-sm hover:brightness-95 transition-all">
+<span class="material-symbols-outlined" data-icon="sync">sync</span>
+<span>مزامنة الكل الآن</span>
+</button>
+<button class="bg-primary text-white px-6 py-2.5 rounded-full font-bold flex items-center gap-2 shadow-lg hover:bg-primary-container transition-all">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+<span>إضافة جهاز جديد</span>
+</button>
+</div>
+</div>
+<!-- Dashboard Stats Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm flex flex-col items-center justify-center text-center border-b-4 border-secondary-container">
+<span class="text-sm font-medium text-outline mb-1">إجمالي الأجهزة</span>
+<span class="text-4xl font-black text-primary font-headline">12</span>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm flex flex-col items-center justify-center text-center border-b-4 border-green-500">
+<span class="text-sm font-medium text-outline mb-1">متصل الآن</span>
+<span class="text-4xl font-black text-green-600 font-headline">10</span>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm flex flex-col items-center justify-center text-center border-b-4 border-error">
+<span class="text-sm font-medium text-outline mb-1">غير متصل</span>
+<span class="text-4xl font-black text-error font-headline">2</span>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm flex flex-col items-center justify-center text-center border-b-4 border-primary">
+<span class="text-sm font-medium text-outline mb-1">آخر مزامنة</span>
+<span class="text-xl font-bold text-primary font-headline">منذ 5 دقائق</span>
+</div>
+</div>
+<!-- Devices Modern List/Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+<!-- Device Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group">
+<div class="p-5 flex justify-between items-start">
+<div class="flex flex-col items-end">
+<span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold flex items-center gap-1 mb-2">
+<span class="w-2 h-2 rounded-full bg-green-500"></span>
+                                متصل بالشبكة
+                            </span>
+<h3 class="text-xl font-bold text-primary">جهاز المدخل الرئيسي</h3>
+<p class="text-sm text-outline font-mono">ID: ZK-MAIN-001</p>
+</div>
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-3xl" data-icon="fingerprint">fingerprint</span>
+</div>
+</div>
+<div class="px-5 py-4 bg-surface-container-low grid grid-cols-2 gap-4">
+<div class="text-right">
+<span class="text-xs text-outline block">عنوان IP</span>
+<span class="text-sm font-mono font-bold text-on-surface">192.168.1.101</span>
+</div>
+<div class="text-right">
+<span class="text-xs text-outline block">المنفذ (Port)</span>
+<span class="text-sm font-mono font-bold text-on-surface">4370</span>
+</div>
+</div>
+<div class="p-4 flex gap-2">
+<button class="flex-1 bg-primary text-white py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="sync">sync</span>
+                            مزامنة
+                        </button>
+<button class="px-3 py-2 bg-surface-container text-primary rounded-lg hover:bg-surface-container-high">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</div>
+<!-- Sync Progress Indicator (Hidden normally, shown during sync) -->
+<div class="h-1 bg-surface-container-high w-full overflow-hidden">
+<div class="h-full bg-secondary-container w-[65%]"></div>
+</div>
+</div>
+<!-- Device Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+<div class="p-5 flex justify-between items-start">
+<div class="flex flex-col items-end">
+<span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold flex items-center gap-1 mb-2">
+<span class="w-2 h-2 rounded-full bg-green-500"></span>
+                                متصل بالشبكة
+                            </span>
+<h3 class="text-xl font-bold text-primary">فرع الطابق الثاني</h3>
+<p class="text-sm text-outline font-mono">ID: ZK-F2-004</p>
+</div>
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-3xl" data-icon="face">face</span>
+</div>
+</div>
+<div class="px-5 py-4 bg-surface-container-low grid grid-cols-2 gap-4">
+<div class="text-right">
+<span class="text-xs text-outline block">عنوان IP</span>
+<span class="text-sm font-mono font-bold text-on-surface">192.168.1.104</span>
+</div>
+<div class="text-right">
+<span class="text-xs text-outline block">المنفذ (Port)</span>
+<span class="text-sm font-mono font-bold text-on-surface">4370</span>
+</div>
+</div>
+<div class="p-4 flex gap-2">
+<button class="flex-1 bg-primary text-white py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="sync">sync</span>
+                            مزامنة
+                        </button>
+<button class="px-3 py-2 bg-surface-container text-primary rounded-lg hover:bg-surface-container-high">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</div>
+<div class="h-1 bg-surface-container-high w-full"></div>
+</div>
+<!-- Device Card 3 (Offline) -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow relative">
+<div class="absolute inset-0 bg-white/40 pointer-events-none"></div>
+<div class="p-5 flex justify-between items-start">
+<div class="flex flex-col items-end">
+<span class="text-xs bg-error-container text-error px-2 py-0.5 rounded-full font-bold flex items-center gap-1 mb-2">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+                                غير متصل
+                            </span>
+<h3 class="text-xl font-bold text-primary">مستودع (ب)</h3>
+<p class="text-sm text-outline font-mono">ID: ZK-WH-009</p>
+</div>
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center text-outline">
+<span class="material-symbols-outlined text-3xl" data-icon="barcode_scanner">barcode_scanner</span>
+</div>
+</div>
+<div class="px-5 py-4 bg-surface-container-low grid grid-cols-2 gap-4">
+<div class="text-right">
+<span class="text-xs text-outline block">عنوان IP</span>
+<span class="text-sm font-mono font-bold text-on-surface opacity-50">192.168.2.55</span>
+</div>
+<div class="text-right">
+<span class="text-xs text-outline block">المنفذ (Port)</span>
+<span class="text-sm font-mono font-bold text-on-surface opacity-50">4370</span>
+</div>
+</div>
+<div class="p-4 flex gap-2">
+<button class="flex-1 bg-outline text-white py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-2 cursor-not-allowed">
+<span class="material-symbols-outlined text-sm" data-icon="cloud_off">cloud_off</span>
+                            إعادة المحاولة
+                        </button>
+<button class="px-3 py-2 bg-surface-container text-primary rounded-lg hover:bg-surface-container-high">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</div>
+<div class="h-1 bg-error/20 w-full"></div>
+</div>
+<!-- Device Card 4 (Syncing State) -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm border-2 border-secondary-container">
+<div class="p-5 flex justify-between items-start">
+<div class="flex flex-col items-end">
+<span class="text-xs bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded-full font-bold flex items-center gap-1 mb-2">
+<span class="material-symbols-outlined text-xs animate-spin" data-icon="sync">sync</span>
+                                جاري المزامنة...
+                            </span>
+<h3 class="text-xl font-bold text-primary">مبنى الإدارة</h3>
+<p class="text-sm text-outline font-mono">ID: ZK-ADMIN-012</p>
+</div>
+<div class="w-12 h-12 rounded-lg bg-secondary-container/20 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-3xl" data-icon="hub">hub</span>
+</div>
+</div>
+<div class="px-5 py-4 bg-surface-container-low">
+<div class="flex justify-between items-center mb-2">
+<span class="text-xs font-bold text-primary">تم جلب 450 سجلاً من أصل 1200</span>
+<span class="text-xs font-bold text-secondary">38%</span>
+</div>
+<div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+<div class="bg-secondary-container h-full w-[38%] rounded-full"></div>
+</div>
+</div>
+<div class="p-4 flex gap-2">
+<button class="flex-1 bg-error/10 text-error py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="cancel">cancel</span>
+                            إلغاء المزامنة
+                        </button>
+</div>
+</div>
+<!-- Device Card 5 -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+<div class="p-5 flex justify-between items-start">
+<div class="flex flex-col items-end">
+<span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold flex items-center gap-1 mb-2">
+<span class="w-2 h-2 rounded-full bg-green-500"></span>
+                                متصل بالشبكة
+                            </span>
+<h3 class="text-xl font-bold text-primary">مدخل الموظفين - خلفي</h3>
+<p class="text-sm text-outline font-mono">ID: ZK-REAR-005</p>
+</div>
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-3xl" data-icon="door_front">door_front</span>
+</div>
+</div>
+<div class="px-5 py-4 bg-surface-container-low grid grid-cols-2 gap-4">
+<div class="text-right">
+<span class="text-xs text-outline block">عنوان IP</span>
+<span class="text-sm font-mono font-bold text-on-surface">192.168.1.115</span>
+</div>
+<div class="text-right">
+<span class="text-xs text-outline block">المنفذ (Port)</span>
+<span class="text-sm font-mono font-bold text-on-surface">4370</span>
+</div>
+</div>
+<div class="p-4 flex gap-2">
+<button class="flex-1 bg-primary text-white py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="sync">sync</span>
+                            مزامنة
+                        </button>
+<button class="px-3 py-2 bg-surface-container text-primary rounded-lg hover:bg-surface-container-high">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</div>
+</div>
+<!-- Add New Device Placeholder Card -->
+<div class="border-2 border-dashed border-outline-variant rounded-xl flex flex-col items-center justify-center p-8 hover:bg-white transition-all group cursor-pointer">
+<div class="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center text-outline group-hover:bg-primary-fixed group-hover:text-primary transition-colors mb-4">
+<span class="material-symbols-outlined text-4xl" data-icon="add_to_queue">add_to_queue</span>
+</div>
+<h3 class="font-bold text-primary-container">إضافة جهاز ZKTeco جديد</h3>
+<p class="text-sm text-outline text-center mt-2 px-4">قم بربط جهاز بصمة جديد بالمنظومة من خلال عنوان IP والمنفذ</p>
+</div>
+</div>
+<!-- Detailed Logs / Activity Table -->
+<div class="mt-12 bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+<div class="p-6 border-b border-surface-container flex justify-between items-center flex-row-reverse">
+<h3 class="text-xl font-bold text-primary font-headline">آخر عمليات المزامنة</h3>
+<button class="text-sm text-primary font-bold flex items-center gap-1 hover:underline">
+<span>عرض السجل الكامل</span>
+<span class="material-symbols-outlined text-sm" data-icon="arrow_back">arrow_back</span>
+</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-right border-collapse">
+<thead class="bg-surface-container-low text-outline text-sm uppercase">
+<tr>
+<th class="px-6 py-4 font-bold">الوقت</th>
+<th class="px-6 py-4 font-bold">اسم الجهاز</th>
+<th class="px-6 py-4 font-bold">العملية</th>
+<th class="px-6 py-4 font-bold">الحالة</th>
+<th class="px-6 py-4 font-bold">السجلات المضافة</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container">
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-6 py-4 text-sm">اليوم، 10:45 ص</td>
+<td class="px-6 py-4 font-medium text-primary">المدخل الرئيسي</td>
+<td class="px-6 py-4 text-sm">مزامنة سجلات الحضور</td>
+<td class="px-6 py-4">
+<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">ناجحة</span>
+</td>
+<td class="px-6 py-4 font-mono font-bold">+124</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-6 py-4 text-sm">اليوم، 09:30 ص</td>
+<td class="px-6 py-4 font-medium text-primary">مبنى الإدارة</td>
+<td class="px-6 py-4 text-sm">تحديث بيانات الموظفين</td>
+<td class="px-6 py-4">
+<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">ناجحة</span>
+</td>
+<td class="px-6 py-4 font-mono font-bold">+0</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-6 py-4 text-sm">أمس، 05:20 م</td>
+<td class="px-6 py-4 font-medium text-primary">مستودع (ب)</td>
+<td class="px-6 py-4 text-sm">مزامنة دورية</td>
+<td class="px-6 py-4">
+<span class="bg-error-container text-error px-3 py-1 rounded-full text-xs font-bold">فشلت (Timeout)</span>
+</td>
+<td class="px-6 py-4 font-mono font-bold text-error">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</main>
+</div>
+<!-- Mobile Bottom NavBar (Visible on Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-surface-container h-16 flex justify-around items-center px-2 z-50">
+<button class="flex flex-col items-center gap-1 text-outline">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-[10px]">الرئيسية</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-primary font-bold">
+<span class="material-symbols-outlined" data-icon="devices" data-weight="fill" style="font-variation-settings: 'FILL' 1;">devices</span>
+<span class="text-[10px]">الأجهزة</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-outline">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="text-[10px]">الموظفين</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-outline">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="text-[10px]">الإعدادات</span>
+</button>
+</nav>
+<!-- Floating Action Button (FAB) - For adding a device on mobile -->
+<button class="md:hidden fixed bottom-20 left-6 w-14 h-14 bg-secondary-container text-on-secondary-container rounded-full shadow-xl flex items-center justify-center z-50 border-4 border-white">
+<span class="material-symbols-outlined text-3xl" data-icon="add">add</span>
+</button>
+</body></html>

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>إدارة الإجازات - منظومة الخوارزمي</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@100;200;300;400;500;600;700&amp;family=Tajawal:wght@200;300;400;500;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#fcd400",
+                        "on-tertiary-container": "#9692b4",
+                        "surface": "#fcf8fb",
+                        "surface-variant": "#e5e1e5",
+                        "on-secondary-fixed": "#221b00",
+                        "tertiary-container": "#2d2b47",
+                        "on-surface-variant": "#47464d",
+                        "outline": "#78767e",
+                        "surface-container-low": "#f7f2f6",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed-variant": "#464364",
+                        "secondary": "#705d00",
+                        "on-secondary-container": "#6e5c00",
+                        "on-background": "#1c1b1e",
+                        "background": "#fcf8fb",
+                        "inverse-primary": "#c7c2ea",
+                        "surface-dim": "#ddd9dc",
+                        "error": "#ba1a1a",
+                        "primary-container": "#2d2a4a",
+                        "surface-bright": "#fcf8fb",
+                        "on-primary-container": "#9691b7",
+                        "secondary-fixed-dim": "#e9c400",
+                        "on-surface": "#1c1b1e",
+                        "on-primary": "#ffffff",
+                        "surface-tint": "#5e5a7d",
+                        "on-error": "#ffffff",
+                        "primary-fixed-dim": "#c7c2ea",
+                        "secondary-fixed": "#ffe16d",
+                        "error-container": "#ffdad6",
+                        "primary": "#181534",
+                        "tertiary-fixed-dim": "#c7c3e6",
+                        "tertiary": "#181631",
+                        "primary-fixed": "#e4dfff",
+                        "on-tertiary-fixed": "#1a1833",
+                        "on-tertiary-fixed-variant": "#464461",
+                        "surface-container-high": "#ebe7ea",
+                        "outline-variant": "#c9c5ce",
+                        "on-secondary-fixed-variant": "#544600",
+                        "on-secondary": "#ffffff",
+                        "inverse-surface": "#313033",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#e5e1e5",
+                        "inverse-on-surface": "#f4eff3",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed": "#1a1736",
+                        "surface-container": "#f1edf0",
+                        "tertiary-fixed": "#e3dfff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Tajawal", "sans-serif"],
+                        "body": ["IBM Plex Sans Arabic", "sans-serif"],
+                        "label": ["IBM Plex Sans Arabic", "sans-serif"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            background-color: #fcf8fb;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<!-- TopNavBar (Shared Component) -->
+<nav class="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm flex flex-row-reverse justify-between items-center px-6 h-16 w-full font-['Tajawal'] text-right">
+<div class="flex items-center gap-4 flex-row-reverse">
+<img alt="منظومة الخوارزمي" class="h-10 w-auto" src="https://lh3.googleusercontent.com/aida/ADBb0uiXxiKfhSqahH6SpTEm86zAlX07dHTGBqTeLB7fNxeGKhIKKITnCRfuAq6hB1g1aKizIzjG2OEzX_X8FYJL_Z4zCuZgTXV6XE17IQ5WA7L-mCplDB_c01ueFeOleoUfci7b87nppusjYmqMaQICr9fSv8Hxv-IMcppWLMzH79X8fhuyzqNDYj9ZgWVXEt8NslXsDEBaY-8OnexhghLxc0Xr8sDfzTITOMQDpo38PZ4YyGgG_WWyQAVEwiiVSmYYkFHpTaHp2wJEvw"/>
+<span class="text-xl font-bold text-[#181534] dark:text-white">منظومة الخوارزمي</span>
+</div>
+<div class="flex items-center gap-6 flex-row-reverse">
+<div class="relative flex items-center bg-surface-container rounded-full px-4 py-1.5 transition-all duration-300 ease-in-out hover:bg-slate-100">
+<span class="material-symbols-outlined text-outline">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-48 text-right font-['Tajawal']" placeholder="بحث عن طلبات..." type="text"/>
+</div>
+<button class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-300">
+<span class="material-symbols-outlined text-[#181534] dark:text-[#2D2A4A]">notifications</span>
+</button>
+<button class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-300">
+<span class="material-symbols-outlined text-[#181534] dark:text-[#2D2A4A]">person</span>
+</button>
+</div>
+</nav>
+<!-- SideNavBar (Shared Component) -->
+<aside class="fixed right-0 top-0 h-full w-64 z-40 bg-[#181534] dark:bg-black shadow-xl flex flex-col pt-20 pb-4 rtl font-['IBM_Plex_Sans_Arabic'] text-right">
+<div class="flex flex-col gap-1 px-2 mb-8">
+<a class="flex flex-row-reverse items-center gap-3 text-slate-300 p-3 mx-2 hover:bg-[#2D2A4A] hover:text-white transition-all duration-300" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-medium">لوحة التحكم</span>
+</a>
+<a class="flex flex-row-reverse items-center gap-3 text-slate-300 p-3 mx-2 hover:bg-[#2D2A4A] hover:text-white transition-all duration-300" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-medium">الموظفين</span>
+</a>
+<a class="flex flex-row-reverse items-center gap-3 text-slate-300 p-3 mx-2 hover:bg-[#2D2A4A] hover:text-white transition-all duration-300" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-medium">الجداول الزمنية</span>
+</a>
+<a class="flex flex-row-reverse items-center gap-3 text-slate-300 p-3 mx-2 hover:bg-[#2D2A4A] hover:text-white transition-all duration-300" href="#">
+<span class="material-symbols-outlined">devices</span>
+<span class="font-medium">الأجهزة</span>
+</a>
+<a class="flex flex-row-reverse items-center gap-3 bg-[#2D2A4A] text-[#fcd400] rounded-lg p-3 mx-2 scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">event_busy</span>
+<span class="font-medium">الإجازات</span>
+</a>
+<a class="flex flex-row-reverse items-center gap-3 text-slate-300 p-3 mx-2 hover:bg-[#2D2A4A] hover:text-white transition-all duration-300" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-medium">التقارير</span>
+</a>
+</div>
+<div class="mt-auto border-t border-slate-700/50 pt-4 px-2">
+<a class="flex flex-row-reverse items-center gap-3 text-slate-300 p-3 mx-2 hover:bg-[#2D2A4A] hover:text-white transition-all duration-300" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-medium">الإعدادات</span>
+</a>
+<button class="w-full flex flex-row-reverse items-center gap-3 text-error p-3 mx-2 hover:bg-red-500/10 rounded-lg transition-all duration-300 mt-2">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-medium">تسجيل خروج</span>
+</button>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="mr-64 pt-20 p-8 min-h-screen">
+<header class="mb-10 text-right flex flex-row-reverse justify-between items-start"><div class="flex gap-3 mt-1">
+<button class="flex items-center gap-2 bg-[#fcd400] text-[#181534] px-5 py-2.5 rounded-lg font-bold text-sm shadow-sm hover:shadow-md transition-all active:scale-95">
+<span class="material-symbols-outlined text-xl">add</span>
+<span>اضافة اجازة موظف</span>
+</button>
+<button class="flex items-center gap-2 bg-[#2D2A4A] text-white px-5 py-2.5 rounded-lg font-bold text-sm shadow-sm hover:shadow-md transition-all active:scale-95">
+<span class="material-symbols-outlined text-xl">add</span>
+<span>اضافة عطلة رسمية</span>
+</button>
+</div>
+<h1 class="text-3xl font-extrabold text-primary mb-2 font-headline">إدارة الإجازات والعطلات</h1>
+<p class="text-on-surface-variant font-body">مراجعة طلبات الإجازات وجدولة العطلات الرسمية للموظفين.</p>
+</header>
+<!-- Summary Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm border-r-4 border-amber-500 flex flex-col justify-between h-32 group hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start">
+<div class="bg-amber-100 p-2 rounded-full text-amber-700">
+<span class="material-symbols-outlined">pending_actions</span>
+</div>
+<span class="text-xs font-bold text-outline uppercase tracking-wider">قيد الانتظار</span>
+</div>
+<div>
+<div class="text-3xl font-black text-amber-700">12</div>
+<div class="text-xs text-on-surface-variant">طلبات تحتاج للمراجعة</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm border-r-4 border-green-500 flex flex-col justify-between h-32 group hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start">
+<div class="bg-green-100 p-2 rounded-full text-green-700">
+<span class="material-symbols-outlined">check_circle</span>
+</div>
+<span class="text-xs font-bold text-outline uppercase tracking-wider">الموافق عليها</span>
+</div>
+<div>
+<div class="text-3xl font-black text-green-700">145</div>
+<div class="text-xs text-on-surface-variant">إجازات تم اعتمادها هذا الشهر</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm border-r-4 border-error flex flex-col justify-between h-32 group hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start">
+<div class="bg-error-container p-2 rounded-full text-on-error-container">
+<span class="material-symbols-outlined">cancel</span>
+</div>
+<span class="text-xs font-bold text-outline uppercase tracking-wider">المرفوضة</span>
+</div>
+<div>
+<div class="text-3xl font-black text-error">8</div>
+<div class="text-xs text-on-surface-variant">طلبات لم يتم قبولها</div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Vacation Requests Table -->
+<div class="lg:col-span-2 bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden border border-surface-container">
+<div class="p-6 border-b border-surface-container flex justify-between items-center bg-surface-container-low">
+<h2 class="text-xl font-bold text-primary font-headline">طلبات الإجازة الأخيرة</h2>
+<div class="flex gap-2">
+<button class="bg-primary text-white text-xs px-4 py-2 rounded-full font-bold hover:bg-primary-container transition-colors">إضافة طلب</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-right border-collapse">
+<thead>
+<tr class="bg-surface-container-lowest text-outline border-b border-surface-container-low">
+<th class="px-6 py-4 font-semibold text-sm">الموظف</th>
+<th class="px-6 py-4 font-semibold text-sm">نوع الإجازة</th>
+<th class="px-6 py-4 font-semibold text-sm">الفترة</th>
+<th class="px-6 py-4 font-semibold text-sm">الحالة</th>
+<th class="px-6 py-4 font-semibold text-sm">إجراءات</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container">
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3 flex-row-reverse">
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-bold overflow-hidden">
+<img alt="Portrait" class="object-cover w-full h-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYBfu2_UbzOgIl_GBZmDnQV-oAVM9fqCX_g638nKemG-X9jMkOxIDe_eqA3MRA55wUpqKs9HAiAiiJ2S_eDl8p3BPuMq8rjl1ykTqqNO0ISpDzbTngHn9efXPuhTI5k800bI2ZSRLahZzV3L-1uCUiWJRAHV0W6wS3ErM3LeITiD08l17r97nFA6I1yYUDq00glS9u6JTZd3_La8RjX9x2wRYrLa4rBdUpsv1RxfKu4KpMJbkeJ2IEnte80bSMDlLhrGC11i9Q_xw"/>
+</div>
+<div>
+<div class="font-bold text-primary text-sm">أحمد محمود</div>
+<div class="text-[10px] text-outline">مهندس برمجيات</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="text-sm font-medium text-on-surface">إجازة سنوية</span>
+</td>
+<td class="px-6 py-4">
+<div class="text-xs font-medium">12 - 14 أكتوبر</div>
+<div class="text-[10px] text-outline">3 أيام</div>
+</td>
+<td class="px-6 py-4">
+<span class="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-[10px] font-bold">قيد الانتظار</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex gap-2 flex-row-reverse">
+<button class="p-1 hover:text-green-600 transition-colors"><span class="material-symbols-outlined text-sm">done</span></button>
+<button class="p-1 hover:text-red-600 transition-colors"><span class="material-symbols-outlined text-sm">close</span></button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3 flex-row-reverse">
+<div class="w-10 h-10 rounded-full bg-secondary-fixed flex items-center justify-center text-secondary font-bold overflow-hidden">
+<img alt="Portrait" class="object-cover w-full h-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUQkjOM5wagNymTLHQyRaiW8gE4Op5fOeqH9ecNWri_x6D83kY3MQibYAf-faewmKMTN_DOOMWXhnAE6HV68Z5TDfRFqIb8_RwvKIlwWEuCDF0HSb6QChFkZKjLJEwcGEzjKfOwb9Z6Th-OXNUc5JMjRbsQnvY1wWgta_i_weW0MLJS3uiOkAjRLyYWvR07YzG6Gb6Xdxgx6HuyTE-MKBK1ayAJIyLWkPTxdG2eAui4Gha3d96CL7DciwU1f23aoGxMoeqmFpRcsY"/>
+</div>
+<div>
+<div class="font-bold text-primary text-sm">سارة عبدالرحمن</div>
+<div class="text-[10px] text-outline">مصممة واجهات</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="text-sm font-medium text-on-surface">إجازة مرضية</span>
+</td>
+<td class="px-6 py-4">
+<div class="text-xs font-medium">10 أكتوبر</div>
+<div class="text-[10px] text-outline">يوم واحد</div>
+</td>
+<td class="px-6 py-4">
+<span class="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-[10px] font-bold">قيد الانتظار</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex gap-2 flex-row-reverse">
+<button class="p-1 hover:text-green-600 transition-colors"><span class="material-symbols-outlined text-sm">done</span></button>
+<button class="p-1 hover:text-red-600 transition-colors"><span class="material-symbols-outlined text-sm">close</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Calendar Side Card -->
+<div class="flex flex-col gap-8">
+<!-- Mini Calendar Widget -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm border border-surface-container">
+<div class="flex justify-between items-center mb-6 flex-row-reverse">
+<h3 class="text-lg font-bold text-primary font-headline">أكتوبر 2023</h3>
+<div class="flex gap-1">
+<button class="p-1 hover:bg-surface-container rounded transition-colors"><span class="material-symbols-outlined text-sm">chevron_right</span></button>
+<button class="p-1 hover:bg-surface-container rounded transition-colors"><span class="material-symbols-outlined text-sm">chevron_left</span></button>
+</div>
+</div>
+<div class="grid grid-cols-7 gap-1 text-center mb-2">
+<span class="text-[10px] font-bold text-outline uppercase">ح</span>
+<span class="text-[10px] font-bold text-outline uppercase">ن</span>
+<span class="text-[10px] font-bold text-outline uppercase">ث</span>
+<span class="text-[10px] font-bold text-outline uppercase">ر</span>
+<span class="text-[10px] font-bold text-outline uppercase">خ</span>
+<span class="text-[10px] font-bold text-outline uppercase">ج</span>
+<span class="text-[10px] font-bold text-outline uppercase">س</span>
+</div>
+<div class="grid grid-cols-7 gap-1 text-center">
+<!-- Simplified Calendar Days -->
+<span class="h-8 flex items-center justify-center text-xs text-outline/30">29</span>
+<span class="h-8 flex items-center justify-center text-xs text-outline/30">30</span>
+<span class="h-8 flex items-center justify-center text-xs font-medium rounded-full hover:bg-surface-container transition-colors">1</span>
+<span class="h-8 flex items-center justify-center text-xs font-medium rounded-full hover:bg-surface-container transition-colors">2</span>
+<span class="h-8 flex items-center justify-center text-xs font-medium rounded-full hover:bg-surface-container transition-colors">3</span>
+<span class="h-8 flex items-center justify-center text-xs font-medium rounded-full hover:bg-surface-container transition-colors">4</span>
+<span class="h-8 flex items-center justify-center text-xs font-bold rounded-full bg-secondary-container text-on-secondary-container shadow-sm">5</span>
+<span class="h-8 flex items-center justify-center text-xs font-medium rounded-full hover:bg-surface-container transition-colors">6</span>
+<span class="h-8 flex items-center justify-center text-xs font-medium rounded-full hover:bg-surface-container transition-colors">7</span>
+<span class="h-8 flex items-center justify-center text-xs font-medium rounded-full hover:bg-surface-container transition-colors">8</span>
+<span class="h-8 flex items-center justify-center text-xs font-medium rounded-full hover:bg-surface-container transition-colors">9</span>
+<span class="h-8 flex items-center justify-center text-xs font-medium rounded-full hover:bg-surface-container transition-colors">10</span>
+<span class="h-8 flex items-center justify-center text-xs font-medium rounded-full hover:bg-surface-container transition-colors">11</span>
+<span class="h-8 flex items-center justify-center text-xs font-medium rounded-full hover:bg-surface-container transition-colors">12</span>
+<!-- ... rest of days -->
+</div>
+<div class="mt-6 pt-4 border-t border-surface-container">
+<div class="flex items-center gap-2 flex-row-reverse mb-3">
+<div class="w-2 h-2 rounded-full bg-secondary-container"></div>
+<span class="text-xs font-bold text-primary">العطلات الرسمية القادمة:</span>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between items-center flex-row-reverse text-[10px]">
+<span class="font-medium">المولد النبوي الشريف</span>
+<span class="text-outline">12 ربيع الأول</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Discipline Chart (Visual Consistency with Screen 11) -->
+<div class="bg-primary-container rounded-xl p-6 text-center text-white relative overflow-hidden">
+<div class="relative z-10">
+<h3 class="text-sm font-bold mb-4">معدل الإجازات المستهلكة</h3>
+<div class="relative w-32 h-32 mx-auto flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-90">
+<circle cx="64" cy="64" fill="transparent" r="56" stroke="rgba(255,255,255,0.1)" stroke-width="8"></circle>
+<circle cx="64" cy="64" fill="transparent" r="56" stroke="#fcd400" stroke-dasharray="351" stroke-dashoffset="105" stroke-width="8"></circle>
+</svg>
+<div class="absolute flex flex-col">
+<span class="text-2xl font-black">70%</span>
+<span class="text-[8px] opacity-70">المعدل السنوي</span>
+</div>
+</div>
+<p class="mt-4 text-[10px] opacity-80 leading-relaxed">بقاء معدل الإجازات ضمن النطاق الآمن لضمان استمرارية العمل.</p>
+</div>
+<div class="absolute -bottom-8 -right-8 w-32 h-32 bg-secondary-container/10 rounded-full blur-2xl"></div>
+</div>
+</div>
+</div>
+</main>
+<!-- FAB -->
+<button class="fixed bottom-8 left-8 w-14 h-14 bg-secondary-container text-on-secondary-container rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform z-50">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+</body></html>

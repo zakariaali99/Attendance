@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>إدارة الإجازات والعطلات - منظومة الخوارزمي</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "outline": "#78767e",
+                        "on-tertiary-container": "#9692b4",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed": "#221b00",
+                        "tertiary-fixed": "#e3dfff",
+                        "secondary-container": "#fcd400",
+                        "inverse-primary": "#c7c2ea",
+                        "on-primary-fixed": "#1a1736",
+                        "secondary": "#705d00",
+                        "on-primary-fixed-variant": "#464364",
+                        "on-error": "#ffffff",
+                        "outline-variant": "#c9c5ce",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed-dim": "#c7c3e6",
+                        "on-surface": "#1c1b1e",
+                        "error-container": "#ffdad6",
+                        "surface-variant": "#e5e1e5",
+                        "tertiary": "#181631",
+                        "surface-dim": "#ddd9dc",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed": "#ffe16d",
+                        "surface-bright": "#fcf8fb",
+                        "on-tertiary": "#ffffff",
+                        "background": "#fcf8fb",
+                        "on-primary-container": "#9691b7",
+                        "on-secondary-container": "#6e5c00",
+                        "on-tertiary-fixed-variant": "#464461",
+                        "inverse-on-surface": "#f4eff3",
+                        "surface-container-lowest": "#ffffff",
+                        "surface": "#fcf8fb",
+                        "on-surface-variant": "#47464d",
+                        "primary-container": "#2d2a4a",
+                        "surface-container": "#f1edf0",
+                        "surface-container-highest": "#e5e1e5",
+                        "primary": "#181534",
+                        "secondary-fixed-dim": "#e9c400",
+                        "primary-fixed": "#e4dfff",
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#2d2b47",
+                        "on-secondary-fixed-variant": "#544600",
+                        "surface-container-low": "#f7f2f6",
+                        "on-tertiary-fixed": "#1a1833",
+                        "surface-tint": "#5e5a7d",
+                        "on-background": "#1c1b1e",
+                        "inverse-surface": "#313033",
+                        "surface-container-high": "#ebe7ea",
+                        "primary-fixed-dim": "#c7c2ea"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    fontFamily: {
+                        "headline": ["'IBM Plex Sans Arabic'", "sans-serif"],
+                        "body": ["'IBM Plex Sans Arabic'", "sans-serif"],
+                        "label": ["'IBM Plex Sans Arabic'", "sans-serif"]
+                    },
+                    boxShadow: {
+                        'ambient': '0px 8px 32px 0px rgba(28, 27, 30, 0.06)',
+                    },
+                    backgroundImage: {
+                        'primary-gradient': 'linear-gradient(135deg, #181534 0%, #2D2A4A 100%)',
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'IBM Plex Sans Arabic', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen antialiased">
+<!-- Shared Component Base (Adapted with Design System Tokens & RTL logic) -->
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<!-- TopAppBar (Glassmorphic, Logo Right) -->
+<header class="sticky top-0 z-50 flex items-center justify-between whitespace-nowrap bg-surface/80 backdrop-blur-xl px-10 py-4 shadow-ambient">
+<div class="flex items-center gap-4 text-on-surface">
+<!-- Using requested Logo -->
+<div class="size-10 bg-primary-container rounded-full flex items-center justify-center">
+<img alt="Al-Khawarizmi Logo" class="size-6 object-contain" data-alt="Minimalist abstract geometric logo representing a fingerprint and clock dial in gold and navy colors" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB01ZNSx8JrZlUrh63MNY_Dkpp3cDDy0gvHmq7NWXm2KFDHW3WOnXH-MHabOyOZ_wZ-3wForppydjfFLR8U-hNkHEa-r1OxUBPPSZzbRCEpFpGzd_Yb_41T3WfZM1VBTd_p_zwhOCZrOkmh17rrlUf46gFglt7ogrICRvMnJJm6M-8UAKMMfD1Pi1VQXDDVg1fiG2caJALROaggxW8-JJWGuWwpDH5Awjf_aedlJT6nOog-uGXyiBMnalmF5ZYh17fT-6ZRwuUFZ78"/>
+</div>
+<h1 class="text-on-primary-fixed-variant text-xl font-bold leading-tight tracking-[-0.015em] font-headline">منظومة الخوارزمي</h1>
+</div>
+<div class="flex items-center gap-4 text-on-surface">
+<div class="flex items-center gap-2">
+<span class="text-sm font-semibold text-on-surface-variant">إدارة الإجازات والعطلات</span>
+</div>
+<div class="bg-surface-container-highest bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 shadow-ambient" data-alt="Profile picture placeholder of an HR administrator wearing professional attire" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA9V0CmKBG73gkukU3j_V4xZx8pXwP-lDAAE0UwHvq9yNqJeLY35I2Ez0xrrk5C-Zf27-CMuE3CsVlKrPn09ZjWxbUY-dRHXMqJeNMpkZjxNjjQrxLh9CFQeHyy_dw4eNSmRvTAi1_aOOdtRPznQCc363CGGcmMvUqunDcVJ2Cy39j3TeW4_RUqAduawU3RAkbNCI7IiwYmSK1F8sSpbFpgwQhySddy-IPwsQoewlkei8Xh4nI7Dc2vSigoX4sYLZ_7bhKPbtu4pns");'></div>
+</div>
+</header>
+<div class="px-4 md:px-10 flex flex-1 justify-center py-8">
+<div class="layout-content-container flex flex-col lg:flex-row gap-12 w-full max-w-[1440px] flex-1">
+<!-- Left Sidebar: Calendar (Intentional Asymmetry) -->
+<aside class="flex flex-col w-full lg:w-[360px] shrink-0 gap-6">
+<div class="bg-surface-container-low rounded-xl p-6 shadow-ambient">
+<h2 class="text-on-surface text-2xl font-bold leading-tight tracking-[-0.015em] pb-4 font-headline border-b-0">العطلات الرسمية</h2>
+<div class="flex flex-col gap-4">
+<div class="flex items-center justify-between bg-surface-container rounded-lg p-2">
+<button class="hover:bg-surface-container-highest rounded-full p-1 transition-colors">
+<div class="text-on-surface flex size-8 items-center justify-center" data-icon="CaretRight">
+<svg fill="currentColor" height="18px" viewbox="0 0 256 256" width="18px" xmlns="http://www.w3.org/2000/svg">
+<path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"></path>
+</svg>
+</div>
+</button>
+<p class="text-primary text-base font-bold leading-tight flex-1 text-center font-headline">أكتوبر 2023</p>
+<button class="hover:bg-surface-container-highest rounded-full p-1 transition-colors">
+<div class="text-on-surface flex size-8 items-center justify-center" data-icon="CaretLeft">
+<svg fill="currentColor" height="18px" viewbox="0 0 256 256" width="18px" xmlns="http://www.w3.org/2000/svg">
+<path d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z"></path>
+</svg>
+</div>
+</button>
+</div>
+<div class="grid grid-cols-7 gap-y-2">
+<p class="text-on-surface-variant text-[13px] font-bold leading-normal flex h-10 w-full items-center justify-center">ح</p>
+<p class="text-on-surface-variant text-[13px] font-bold leading-normal flex h-10 w-full items-center justify-center">ن</p>
+<p class="text-on-surface-variant text-[13px] font-bold leading-normal flex h-10 w-full items-center justify-center">ث</p>
+<p class="text-on-surface-variant text-[13px] font-bold leading-normal flex h-10 w-full items-center justify-center">ر</p>
+<p class="text-on-surface-variant text-[13px] font-bold leading-normal flex h-10 w-full items-center justify-center">خ</p>
+<p class="text-on-surface-variant text-[13px] font-bold leading-normal flex h-10 w-full items-center justify-center">ج</p>
+<p class="text-on-surface-variant text-[13px] font-bold leading-normal flex h-10 w-full items-center justify-center">س</p>
+<button class="h-10 w-full text-on-surface col-start-4 text-sm font-medium hover:bg-surface-container-high rounded-full transition-colors"><div class="flex size-full items-center justify-center">1</div></button>
+<button class="h-10 w-full text-on-surface text-sm font-medium hover:bg-surface-container-high rounded-full transition-colors"><div class="flex size-full items-center justify-center">2</div></button>
+<button class="h-10 w-full text-on-surface text-sm font-medium hover:bg-surface-container-high rounded-full transition-colors"><div class="flex size-full items-center justify-center">3</div></button>
+<button class="h-10 w-full text-on-surface text-sm font-medium hover:bg-surface-container-high rounded-full transition-colors"><div class="flex size-full items-center justify-center">4</div></button>
+<button class="h-10 w-full text-on-primary-fixed text-sm font-medium"><div class="flex size-full items-center justify-center rounded-full bg-primary-container shadow-ambient">5</div></button>
+<button class="h-10 w-full text-on-surface text-sm font-medium hover:bg-surface-container-high rounded-full transition-colors"><div class="flex size-full items-center justify-center">6</div></button>
+<button class="h-10 w-full text-on-surface text-sm font-medium hover:bg-surface-container-high rounded-full transition-colors"><div class="flex size-full items-center justify-center">7</div></button>
+<button class="h-10 w-full text-on-surface text-sm font-medium hover:bg-surface-container-high rounded-full transition-colors"><div class="flex size-full items-center justify-center">8</div></button>
+<button class="h-10 w-full text-on-surface text-sm font-medium hover:bg-surface-container-high rounded-full transition-colors"><div class="flex size-full items-center justify-center">9</div></button>
+<button class="h-10 w-full text-on-surface text-sm font-medium hover:bg-surface-container-high rounded-full transition-colors"><div class="flex size-full items-center justify-center">10</div></button>
+<button class="h-10 w-full text-on-surface text-sm font-medium hover:bg-surface-container-high rounded-full transition-colors"><div class="flex size-full items-center justify-center">11</div></button>
+<button class="h-10 w-full text-on-surface text-sm font-medium hover:bg-surface-container-high rounded-full transition-colors"><div class="flex size-full items-center justify-center">12</div></button>
+<button class="h-10 w-full text-on-surface text-sm font-medium hover:bg-surface-container-high rounded-full transition-colors"><div class="flex size-full items-center justify-center">13</div></button>
+<button class="h-10 w-full text-on-surface text-sm font-medium hover:bg-surface-container-high rounded-full transition-colors"><div class="flex size-full items-center justify-center">14</div></button>
+<button class="h-10 w-full text-on-surface text-sm font-medium hover:bg-surface-container-high rounded-full transition-colors"><div class="flex size-full items-center justify-center">15</div></button>
+<button class="h-10 w-full text-on-surface text-sm font-medium hover:bg-surface-container-high rounded-full transition-colors"><div class="flex size-full items-center justify-center">16</div></button>
+<button class="h-10 w-full text-on-surface text-sm font-medium hover:bg-surface-container-high rounded-full transition-colors"><div class="flex size-full items-center justify-center">17</div></button>
+<button class="h-10 w-full text-on-surface text-sm font-medium hover:bg-surface-container-high rounded-full transition-colors"><div class="flex size-full items-center justify-center">18</div></button>
+<button class="h-10 w-full text-on-surface text-sm font-medium hover:bg-surface-container-high rounded-full transition-colors"><div class="flex size-full items-center justify-center">19</div></button>
+<button class="h-10 w-full text-on-surface text-sm font-medium hover:bg-surface-container-high rounded-full transition-colors"><div class="flex size-full items-center justify-center">20</div></button>
+<button class="h-10 w-full text-on-surface text-sm font-medium hover:bg-surface-container-high rounded-full transition-colors"><div class="flex size-full items-center justify-center">21</div></button>
+<button class="h-10 w-full text-on-surface text-sm font-medium hover:bg-surface-container-high rounded-full transition-colors"><div class="flex size-full items-center justify-center">22</div></button>
+<button class="h-10 w-full text-on-surface text-sm font-medium hover:bg-surface-container-high rounded-full transition-colors"><div class="flex size-full items-center justify-center">23</div></button>
+<button class="h-10 w-full text-on-surface text-sm font-medium hover:bg-surface-container-high rounded-full transition-colors"><div class="flex size-full items-center justify-center">24</div></button>
+<button class="h-10 w-full text-on-surface text-sm font-medium hover:bg-surface-container-high rounded-full transition-colors"><div class="flex size-full items-center justify-center">25</div></button>
+<button class="h-10 w-full text-on-surface text-sm font-medium hover:bg-surface-container-high rounded-full transition-colors"><div class="flex size-full items-center justify-center">26</div></button>
+<button class="h-10 w-full text-on-surface text-sm font-medium hover:bg-surface-container-high rounded-full transition-colors"><div class="flex size-full items-center justify-center">27</div></button>
+<button class="h-10 w-full text-on-surface text-sm font-medium hover:bg-surface-container-high rounded-full transition-colors"><div class="flex size-full items-center justify-center">28</div></button>
+<button class="h-10 w-full text-on-surface text-sm font-medium hover:bg-surface-container-high rounded-full transition-colors"><div class="flex size-full items-center justify-center">29</div></button>
+<button class="h-10 w-full text-on-surface text-sm font-medium hover:bg-surface-container-high rounded-full transition-colors"><div class="flex size-full items-center justify-center">30</div></button>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content: Vacation Requests -->
+<main class="flex flex-col flex-1 gap-6">
+<h2 class="text-on-surface text-3xl font-bold leading-tight font-headline">طلبات الإجازة</h2>
+<!-- Tabs (Adapted to No-Line rule) -->
+<div class="bg-surface-container-lowest rounded-xl shadow-ambient p-2 flex gap-2">
+<a class="flex flex-col items-center justify-center bg-surface-container-highest rounded-lg text-primary py-3 flex-1 transition-colors" href="#">
+<p class="text-primary text-sm font-bold leading-normal">قيد الانتظار</p>
+</a>
+<a class="flex flex-col items-center justify-center hover:bg-surface-container text-on-surface-variant rounded-lg py-3 flex-1 transition-colors" href="#">
+<p class="text-on-surface-variant text-sm font-bold leading-normal">موافق عليها</p>
+</a>
+<a class="flex flex-col items-center justify-center hover:bg-surface-container text-on-surface-variant rounded-lg py-3 flex-1 transition-colors" href="#">
+<p class="text-on-surface-variant text-sm font-bold leading-normal">مرفوضة</p>
+</a>
+</div>
+<!-- Requests List -->
+<div class="flex flex-col gap-4">
+<!-- Request Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-5 shadow-ambient flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden group">
+<!-- Subtle Ghost Border equivalent on hover via background shift -->
+<div class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+<div class="flex items-center gap-4 z-10">
+<div class="bg-surface-container bg-center bg-no-repeat aspect-square bg-cover rounded-full size-12 shadow-sm" data-alt="Portrait of a male employee with short dark hair in a business casual shirt" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCYBfu2_UbzOgIl_GBZmDnQV-oAVM9fqCX_g638nKemG-X9jMkOxIDe_eqA3MRA55wUpqKs9HAiAiiJ2S_eDl8p3BPuMq8rjl1ykTqqNO0ISpDzbTngHn9efXPuhTI5k800bI2ZSRLahZzV3L-1uCUiWJRAHV0W6wS3ErM3LeITiD08l17r97nFA6I1yYUDq00glS9u6JTZd3_La8RjX9x2wRYrLa4rBdUpsv1RxfKu4KpMJbkeJ2IEnte80bSMDlLhrGC11i9Q_xw");'></div>
+<div class="flex flex-col">
+<h3 class="text-on-surface text-base font-bold">أحمد محمود</h3>
+<span class="text-on-surface-variant text-sm">مهندس برمجيات • م-4092</span>
+</div>
+</div>
+<div class="flex flex-col gap-1 flex-1 md:px-8 z-10">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-sm">event</span>
+<span class="text-on-surface font-semibold text-sm">إجازة سنوية (3 أيام)</span>
+</div>
+<span class="text-on-surface-variant text-sm">12 أكتوبر 2023 - 14 أكتوبر 2023</span>
+</div>
+<div class="flex items-center gap-3 w-full md:w-auto justify-end z-10">
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-xs font-bold tracking-wide">قيد الانتظار</span>
+<button class="bg-primary-gradient text-on-primary px-4 py-2 rounded-md text-sm font-semibold hover:shadow-ambient transition-shadow">موافقة</button>
+<button class="bg-surface-container-highest text-on-surface px-4 py-2 rounded-md text-sm font-semibold hover:bg-surface-variant transition-colors">رفض</button>
+</div>
+</div>
+<!-- Request Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-5 shadow-ambient flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden group">
+<div class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+<div class="flex items-center gap-4 z-10">
+<div class="bg-surface-container bg-center bg-no-repeat aspect-square bg-cover rounded-full size-12 shadow-sm" data-alt="Portrait of a female employee wearing a neutral colored hijab and glasses" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCUQkjOM5wagNymTLHQyRaiW8gE4Op5fOeqH9ecNWri_x6D83kY3MQibYAf-faewmKMTN_DOOMWXhnAE6HV68Z5TDfRFqIb8_RwvKIlwWEuCDF0HSb6QChFkZKjLJEwcGEzjKfOwb9Z6Th-OXNUc5JMjRbsQnvY1wWgta_i_weW0MLJS3uiOkAjRLyYWvR07YzG6Gb6Xdxgx6HuyTE-MKBK1ayAJIyLWkPTxdG2eAui4Gha3d96CL7DciwU1f23aoGxMoeqmFpRcsY");'></div>
+<div class="flex flex-col">
+<h3 class="text-on-surface text-base font-bold">سارة عبدالرحمن</h3>
+<span class="text-on-surface-variant text-sm">مصممة واجهات • م-3105</span>
+</div>
+</div>
+<div class="flex flex-col gap-1 flex-1 md:px-8 z-10">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-sm">medical_services</span>
+<span class="text-on-surface font-semibold text-sm">إجازة مرضية (يوم واحد)</span>
+</div>
+<span class="text-on-surface-variant text-sm">10 أكتوبر 2023</span>
+</div>
+<div class="flex items-center gap-3 w-full md:w-auto justify-end z-10">
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-xs font-bold tracking-wide">قيد الانتظار</span>
+<button class="bg-primary-gradient text-on-primary px-4 py-2 rounded-md text-sm font-semibold hover:shadow-ambient transition-shadow">موافقة</button>
+<button class="bg-surface-container-highest text-on-surface px-4 py-2 rounded-md text-sm font-semibold hover:bg-surface-variant transition-colors">رفض</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+</div>
+</div>
+</div>
+</body></html>

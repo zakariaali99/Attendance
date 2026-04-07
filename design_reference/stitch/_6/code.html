@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>إعداد وردية جديدة - منظومة الخوارزمي</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&amp;family=Manrope:wght@800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "background": "#fcf8fb",
+                    "surface-dim": "#ddd9dc",
+                    "surface-variant": "#e5e1e5",
+                    "on-error": "#ffffff",
+                    "outline-variant": "#c9c5ce",
+                    "on-secondary-container": "#6e5c00",
+                    "on-surface-variant": "#47464d",
+                    "surface": "#fcf8fb",
+                    "primary-fixed": "#e4dfff",
+                    "inverse-surface": "#313033",
+                    "error-container": "#ffdad6",
+                    "on-tertiary-fixed": "#1a1833",
+                    "tertiary-container": "#2d2b47",
+                    "on-error-container": "#93000a",
+                    "surface-bright": "#fcf8fb",
+                    "secondary-fixed": "#ffe16d",
+                    "on-tertiary-container": "#9692b4",
+                    "on-primary-fixed-variant": "#464364",
+                    "secondary": "#705d00",
+                    "surface-container": "#f1edf0",
+                    "primary": "#181534",
+                    "on-secondary-fixed-variant": "#544600",
+                    "on-primary": "#ffffff",
+                    "outline": "#78767e",
+                    "inverse-primary": "#c7c2ea",
+                    "inverse-on-surface": "#f4eff3",
+                    "tertiary-fixed-dim": "#c7c3e6",
+                    "error": "#ba1a1a",
+                    "primary-container": "#2d2a4a",
+                    "surface-tint": "#5e5a7d",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-low": "#f7f2f6",
+                    "on-secondary-fixed": "#221b00",
+                    "tertiary": "#181631",
+                    "on-surface": "#1c1b1e",
+                    "on-primary-fixed": "#1a1736",
+                    "on-background": "#1c1b1e",
+                    "secondary-fixed-dim": "#e9c400",
+                    "secondary-container": "#fcd400",
+                    "surface-container-high": "#ebe7ea",
+                    "primary-fixed-dim": "#c7c2ea",
+                    "surface-container-highest": "#e5e1e5",
+                    "on-primary-container": "#9691b7",
+                    "on-secondary": "#ffffff",
+                    "tertiary-fixed": "#e3dfff",
+                    "on-tertiary-fixed-variant": "#464461",
+                    "on-tertiary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["IBM Plex Sans Arabic", "sans-serif"],
+                    "body": ["IBM Plex Sans Arabic", "sans-serif"],
+                    "label": ["IBM Plex Sans Arabic", "sans-serif"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'IBM Plex Sans Arabic', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .step-active { color: #181534; font-weight: 700; border-right: 4px solid #fcd400; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<!-- SideNavBar -->
+<aside class="fixed right-0 h-screen w-64 bg-[#181534] dark:bg-slate-950 flex flex-col h-full py-8 z-50 transition-all">
+<div class="px-6 mb-10 flex flex-row-reverse items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-[#fcd400] flex items-center justify-center overflow-hidden">
+<img alt="Al-Khawarizmi Logo" class="w-full h-full object-cover" data-alt="Stylized gold and navy geometric logo representing mathematical precision and algorithmic patterns" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAIgEG00WptosEnRqExz11AHfKbsrdNghcbLNoiXrghb5MYPy0bl2WxKWryI4RU8BWi87Ns1NwV_ItylotN-cKz5F0rB5WxTwkEZpHtUGI1KAl5ezOAXILH-pTHi7GUsjcqka_z--FpRv2Qzigekr33wltmM6Ji84FE3VvwjVmZOGFIcVAJqnQiHkvg6HlDch_1PO2PI7l1_zQxqi-om8hRmLOjih5jKWlvxpGv_qn9Ao0UDtCXuefNkC3ggiZ46NDMLysfbbXTOVI"/>
+</div>
+<div class="text-right">
+<h1 class="text-2xl font-black text-[#fcd400]">الخوارزمي</h1>
+<p class="text-[10px] text-slate-400 font-medium tracking-wider">نظام إدارة الحضور</p>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-2">
+<a class="flex flex-row-reverse items-center gap-3 text-slate-300 px-4 py-3 hover:text-white hover:bg-[#2D2A4A]/50 transition-all hover:translate-x-[-4px] duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-sm font-medium">لوحة التحكم</span>
+</a>
+<a class="flex flex-row-reverse items-center gap-3 text-slate-300 px-4 py-3 hover:text-white hover:bg-[#2D2A4A]/50 transition-all hover:translate-x-[-4px] duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="text-sm font-medium">الموظفين</span>
+</a>
+<a class="flex flex-row-reverse items-center gap-3 text-slate-300 px-4 py-3 hover:text-white hover:bg-[#2D2A4A]/50 transition-all hover:translate-x-[-4px] duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="router">router</span>
+<span class="text-sm font-medium">الأجهزة</span>
+</a>
+<a class="flex flex-row-reverse items-center gap-3 text-slate-300 px-4 py-3 hover:text-white hover:bg-[#2D2A4A]/50 transition-all hover:translate-x-[-4px] duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="pending_actions">pending_actions</span>
+<span class="text-sm font-medium">سجلات الحضور</span>
+</a>
+<a class="flex flex-row-reverse items-center gap-3 bg-[#2D2A4A] text-[#fcd400] px-4 py-3 rounded-lg hover:translate-x-[-4px] duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="schedule">schedule</span>
+<span class="text-sm font-medium">إعدادات الوردية</span>
+</a>
+</nav>
+<div class="px-4 mt-auto border-t border-slate-700/50 pt-4">
+<a class="flex flex-row-reverse items-center gap-3 text-slate-300 px-4 py-3 hover:text-white hover:bg-[#2D2A4A]/50 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="text-sm font-medium">المساعدة</span>
+</a>
+<button class="w-full mt-4 flex flex-row-reverse items-center justify-center gap-2 bg-[#fcd400] text-[#181534] font-bold py-2.5 rounded-lg active:scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="text-sm">تسجيل خروج</span>
+</button>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<main class="mr-64 min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 right-64 h-16 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md z-40 shadow-[0px_8px_32px_rgba(24,21,52,0.06)] flex flex-row-reverse justify-between items-center px-8">
+<div class="flex flex-row-reverse items-center gap-4">
+<span class="text-xl font-bold text-[#181534] dark:text-slate-100">منظومة الخوارزمي</span>
+<div class="h-8 w-px bg-surface-container-high mx-2"></div>
+<h2 class="text-sm font-medium text-slate-500">إعداد وردية جديدة</h2>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden md:block">
+<input class="bg-surface-container-low border-none rounded-full h-10 px-4 pr-10 text-sm focus:ring-2 focus:ring-secondary/20 w-64 text-right" placeholder="بحث..." type="text"/>
+<span class="material-symbols-outlined absolute right-3 top-2.5 text-slate-400 text-sm">search</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100 transition-colors active:scale-95">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100 transition-colors active:scale-95">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-white text-xs font-bold border-2 border-white shadow-sm overflow-hidden">
+<img alt="User profile avatar" data-alt="Professional headshot of an administrator in a clean office setting, soft corporate lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAi35nvgKMlNyzU0Gigq1r5wAMGLFDG5dGk9idryEkx-HYDlnBgutsf-cpihZGEvpgkb8iRAyMONfZQX85EMS9KzbsK5l4MeSQV4ELOerFpCJCmdcwCU2jY_aMUcIhG7ifYpPyPsmV6-2M8OFCGC5iV_vMPzeGXPPoD5qHE3Np9Xf45vm5KPOcIOY612xoe0UT6kuEvLIvajj1raUPcG4Da-8ZpXGfA-zTrH2omI9tL9KGAnI6I2XraYgV9bPaPSwmuqojGToUYHHo"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Content Canvas -->
+<div class="pt-24 pb-12 px-8 flex gap-8">
+<!-- Left: Form Section (Asymmetric dominant focal point) -->
+<div class="flex-1 space-y-8">
+<!-- Header Section -->
+<section class="bg-surface-container-lowest p-8 rounded-xl shadow-sm border-r-4 border-[#fcd400]">
+<h3 class="text-2xl font-bold text-primary mb-2">تكوين وردية العمل الجديدة</h3>
+<p class="text-on-surface-variant text-sm">قم بتحديد المعايير الزمنية وقواعد الحضور لضمان دقة التقارير الخوارزمية.</p>
+</section>
+<!-- Core Hours: The Precise Layout -->
+<section class="bg-surface-container-lowest p-8 rounded-xl shadow-sm space-y-6" id="core-hours">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-8 h-8 bg-primary-container rounded flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-sm" data-icon="schedule">schedule</span>
+</div>
+<h4 class="text-lg font-bold text-primary">ساعات العمل الأساسية</h4>
+</div>
+<div class="grid grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="block text-sm font-semibold text-on-surface-variant">وقت بداية المناوبة</label>
+<input class="w-full bg-surface-container-high border-none rounded-xl h-12 px-4 focus:ring-2 focus:ring-secondary/20" type="time" value="08:00"/>
+</div>
+<div class="space-y-2">
+<label class="block text-sm font-semibold text-on-surface-variant">وقت نهاية المناوبة</label>
+<input class="w-full bg-surface-container-high border-none rounded-xl h-12 px-4 focus:ring-2 focus:ring-secondary/20" type="time" value="16:00"/>
+</div>
+</div>
+<div class="bg-surface-container-low p-4 rounded-xl flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary" data-icon="info">info</span>
+<span class="text-sm text-on-surface-variant">إجمالي ساعات العمل المتوقعة: <strong class="text-primary">8 ساعات</strong></span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-xs text-on-surface-variant">تكرار الوردية</span>
+<div class="flex gap-1">
+<span class="px-2 py-1 bg-primary text-white text-[10px] rounded">ح</span>
+<span class="px-2 py-1 bg-primary text-white text-[10px] rounded">ن</span>
+<span class="px-2 py-1 bg-primary text-white text-[10px] rounded">ث</span>
+<span class="px-2 py-1 bg-primary text-white text-[10px] rounded">ر</span>
+<span class="px-2 py-1 bg-primary text-white text-[10px] rounded">خ</span>
+<span class="px-2 py-1 bg-surface-variant text-on-surface-variant text-[10px] rounded">ج</span>
+<span class="px-2 py-1 bg-surface-variant text-on-surface-variant text-[10px] rounded">س</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Grace Periods -->
+<section class="bg-white p-8 rounded-xl shadow-sm space-y-6" id="grace-periods">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-8 h-8 bg-secondary-container rounded flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined text-sm" data-icon="timer">timer</span>
+</div>
+<h4 class="text-lg font-bold text-primary">فترات السماح (التأخير والانصراف)</h4>
+</div>
+<div class="grid grid-cols-2 gap-8">
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<label class="text-sm font-semibold text-on-surface-variant">سماحية التأخير الصباحي</label>
+<span class="text-xs font-bold text-secondary">15 دقيقة</span>
+</div>
+<input class="w-full h-2 bg-surface-container-high rounded-lg appearance-none cursor-pointer accent-[#fcd400]" type="range"/>
+<p class="text-[10px] text-slate-400">يتم تسجيل الموظف كمتأخر بعد تجاوز هذه المدة من وقت البداية.</p>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<label class="text-sm font-semibold text-on-surface-variant">سماحية الانصراف المبكر</label>
+<span class="text-xs font-bold text-secondary">5 دقائق</span>
+</div>
+<input class="w-full h-2 bg-surface-container-high rounded-lg appearance-none cursor-pointer accent-[#fcd400]" type="range"/>
+<p class="text-[10px] text-slate-400">لا يعتبر الانصراف مبكراً إذا غادر الموظف خلال هذه المدة.</p>
+</div>
+</div>
+</section>
+<!-- Overtime Rules -->
+<section class="bg-white p-8 rounded-xl shadow-sm space-y-6" id="overtime">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-8 h-8 bg-tertiary-container rounded flex items-center justify-center text-on-tertiary-container">
+<span class="material-symbols-outlined text-sm" data-icon="add_alarm">add_alarm</span>
+</div>
+<h4 class="text-lg font-bold text-primary">قواعد العمل الإضافي</h4>
+</div>
+<div class="space-y-6">
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl">
+<div>
+<p class="text-sm font-bold text-primary">احتساب العمل الإضافي تلقائياً</p>
+<p class="text-xs text-on-surface-variant">تفعيل نظام الخوارزمي لاحتساب الساعات الزائدة بعد نهاية الوردية.</p>
+</div>
+<div class="w-12 h-6 bg-[#fcd400] rounded-full relative shadow-inner">
+<div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full"></div>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-4">
+<div class="p-4 rounded-xl border border-outline-variant/30 text-center space-y-2">
+<label class="text-[10px] uppercase font-bold text-slate-400">معامل الساعة</label>
+<p class="text-xl font-bold text-primary">1.5x</p>
+</div>
+<div class="p-4 rounded-xl border border-outline-variant/30 text-center space-y-2">
+<label class="text-[10px] uppercase font-bold text-slate-400">الحد الأقصى اليومي</label>
+<p class="text-xl font-bold text-primary">4 س</p>
+</div>
+<div class="p-4 rounded-xl border border-outline-variant/30 text-center space-y-2">
+<label class="text-[10px] uppercase font-bold text-slate-400">الحد الأدنى للاحتساب</label>
+<p class="text-xl font-bold text-primary">30 د</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Actions -->
+<div class="flex items-center justify-end gap-4 py-6">
+<button class="px-8 py-3 rounded-xl text-primary font-bold hover:bg-surface-container-high transition-colors">إلغاء الأمر</button>
+<button class="px-12 py-3 rounded-xl bg-gradient-to-br from-[#181534] to-[#2D2A4A] text-white font-bold shadow-lg shadow-primary/20 active:scale-95 transition-all">حفظ وإعداد الوردية</button>
+</div>
+</div>
+<!-- Right: Secondary Metadata / Steps (Mathematical Scale) -->
+<div class="w-80 hidden lg:block sticky top-24 h-fit space-y-8">
+<!-- Summary Card -->
+<div class="bg-[#181534] text-white p-6 rounded-2xl shadow-xl overflow-hidden relative">
+<div class="absolute -bottom-4 -left-4 w-32 h-32 bg-secondary opacity-10 rounded-full blur-3xl"></div>
+<div class="relative z-10">
+<p class="text-xs text-slate-400 mb-6">ملخص الإعداد الحالي</p>
+<div class="space-y-4">
+<div class="flex justify-between items-end">
+<span class="text-[10px] text-slate-400">إجمالي ساعات الدوام</span>
+<span class="text-4xl font-black text-[#fcd400]">08:00</span>
+</div>
+<div class="h-1 bg-slate-700 rounded-full">
+<div class="h-full bg-[#fcd400] w-3/4 rounded-full"></div>
+</div>
+<div class="grid grid-cols-2 gap-2 pt-2">
+<div class="bg-white/5 p-3 rounded-lg">
+<p class="text-[10px] text-slate-400">أيام العمل</p>
+<p class="text-xs font-bold">5 أيام/أسبوع</p>
+</div>
+<div class="bg-white/5 p-3 rounded-lg">
+<p class="text-[10px] text-slate-400">السماحية</p>
+<p class="text-xs font-bold">20 دقيقة كلياً</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Navigation Guide -->
+<div class="space-y-4">
+<h5 class="text-xs font-bold text-slate-400 px-4">خطوات الإعداد</h5>
+<div class="space-y-1">
+<div class="p-4 rounded-xl step-active bg-white flex items-center gap-4">
+<span class="w-6 h-6 rounded-full bg-primary text-white text-[10px] flex items-center justify-center font-bold">01</span>
+<span class="text-sm">توقيت المناوبة</span>
+</div>
+<div class="p-4 rounded-xl text-slate-400 flex items-center gap-4 hover:bg-surface-container-low transition-colors">
+<span class="w-6 h-6 rounded-full bg-slate-200 text-slate-400 text-[10px] flex items-center justify-center font-bold">02</span>
+<span class="text-sm">معايير التأخير</span>
+</div>
+<div class="p-4 rounded-xl text-slate-400 flex items-center gap-4 hover:bg-surface-container-low transition-colors">
+<span class="w-6 h-6 rounded-full bg-slate-200 text-slate-400 text-[10px] flex items-center justify-center font-bold">03</span>
+<span class="text-sm">احتساب الإضافي</span>
+</div>
+</div>
+</div>
+<!-- Help Widget -->
+<div class="bg-secondary-container/30 p-6 rounded-2xl border border-[#fcd400]/20">
+<span class="material-symbols-outlined text-secondary mb-3" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
+<h6 class="text-sm font-bold text-primary mb-2">تلميحة الخوارزمي</h6>
+<p class="text-xs text-on-surface-variant leading-relaxed">
+                        توزيع الساعات بذكاء يقلل من الفجوات الزمنية في سجلات الحضور بنسبة تصل إلى 15%.
+                    </p>
+</div>
+</div>
+</div>
+</main>
+</body></html>

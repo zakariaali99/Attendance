@@ -2,7 +2,7 @@ from django.contrib.auth.views import LogoutView
 from django.urls import path, re_path
 from django.views.static import serve
 from HTI import settings
-from VIPAlert.views import *
+from VIPAlert.views import HomeView, LoginView, UsersListView, AddUserView, EditUserView
 
 
 app_name = "VIP"

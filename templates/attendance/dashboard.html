@@ -1,156 +1,302 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block title %}منظومة الخوارزمي - لوحة التحكم{% endblock %}
 
 {% block body %}
-<div class="container mt-5">
-    <h1 class="text-center mb-5 text-white">لوحة التحكم Overview</h1>
-
-    <div class="row g-4 mb-5">
-        <div class="col-md-3">
-            <div class="card bg-hti text-white shadow-sm border-0 h-100">
-                <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <h5 class="card-title">اجمالي الموظفين</h5>
-                    <p class="display-4 fw-bold mb-0">{{ total_employees }}</p>
-                </div>
-            </div>
+<header class="mb-10 text-right animate-fade-in-up">
+    <div class="flex flex-col md:flex-row-reverse justify-between items-start md:items-center gap-4">
+        <div>
+            <h1 class="text-3xl font-black text-primary dark:text-white mb-2 font-headline">مرحباً بك، {{ user.username|default:"مسؤول النظام" }}</h1>
+            <p class="text-on-surface-variant dark:text-slate-400 font-body flex items-center gap-2 flex-row-reverse">
+                <span class="material-symbols-outlined text-[18px]">calendar_today</span>
+                <span id="liveDateTime"></span>
+            </p>
         </div>
-        <div class="col-md-3">
-            <div class="card bg-hti text-white shadow-sm border-0 h-100">
-                <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <h5 class="card-title">حضور اليوم</h5>
-                    <p class="display-4 fw-bold mb-0 text-success">{{ today_workdays }}</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card bg-hti text-white shadow-sm border-0 h-100">
-                <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <h5 class="card-title">غياب اليوم</h5>
-                    <p class="display-4 fw-bold mb-0 text-danger">{{ absent }}</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card bg-hti text-white shadow-sm border-0 h-100">
-                <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <h5 class="card-title">أذونات اليوم</h5>
-                    <p class="display-4 fw-bold mb-0 text-warning">{{ today_exceptions }}</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row g-4 mb-5">
-        <!-- Anomaly Detection Panel -->
-        <div class="col-md-6">
-            <div class="card bg-hti text-white shadow-sm border-0 h-100">
-                <div class="card-header bg-transparent border-bottom border-glass d-flex align-items-center">
-                    <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>
-                    <h5 class="mb-0">تنبيهات غير عمالية (Anomaly)</h5>
-                </div>
-                <div class="card-body">
-                    {% if anomalies %}
-                    <ul class="list-group list-group-flush">
-                        {% for anomaly in anomalies %}
-                        <li
-                            class="list-group-item bg-transparent text-white border-bottom border-glass px-0 d-flex justify-content-between align-items-center">
-                            <span>{{ anomaly.name }}</span>
-                            <span class="badge bg-danger rounded-pill">تأخر {{ anomaly.late_count }} مرات مؤخراً</span>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                    {% else %}
-                    <p class="text-muted text-center my-4">لا توجد تنبيهات حالياً</p>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-
-        <!-- Quick Actions Panel -->
-        <div class="col-md-6">
-            <div class="card bg-hti text-white shadow-sm border-0 h-100">
-                <div class="card-header bg-transparent border-bottom border-glass d-flex align-items-center">
-                    <i class="bi bi-lightning-fill text-primary me-2"></i>
-                    <h5 class="mb-0">إجراءات سريعة</h5>
-                </div>
-                <div class="card-body d-grid gap-3">
-                    <a href="{% url 'Attendance:add' %}" class="btn btn-outline-primary text-start"><i
-                            class="bi bi-person-plus me-2"></i>إضافة موظف جديد</a>
-                    <a href="{% url 'Attendance:add_vacation' %}" class="btn btn-outline-success text-start"><i
-                            class="bi bi-calendar-plus me-2"></i>إضافة إجازة</a>
-                    <a href="{% url 'Attendance:add_exception' %}" class="btn btn-outline-warning text-start"><i
-                            class="bi bi-clock me-2"></i>إضافة إذن حضور/انصراف</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="d-flex justify-content-center gap-3">
-        <a href="{% url 'Attendance:list' %}" class="btn btn-primary btn-lg rounded-pill px-5 shadow-sm">قائمة
-            الموظفين</a>
-        <a href="{% url 'Attendance:report' %}"
-            class="btn btn-outline-light btn-lg rounded-pill px-5 shadow-sm">التقارير</a>
-        <button id="sync-btn" class="btn btn-success btn-lg rounded-pill px-5 shadow-sm">
-            <span id="sync-text">مزامنة الاجهزة (AJAX)</span>
-            <div class="spinner-border spinner-border-sm text-light ms-2 d-none" id="sync-spinner" role="status"></div>
+        <button id="sync-btn" class="group flex flex-row-reverse items-center gap-3 bg-secondary-container text-on-secondary-container px-6 py-3 rounded-2xl font-black shadow-lg shadow-secondary-container/20 hover:shadow-xl hover:shadow-secondary-container/30 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200">
+            <span class="material-symbols-outlined group-hover:rotate-180 transition-transform duration-500">sync</span>
+            <span>مزامنة بيانات الأجهزة</span>
         </button>
     </div>
+</header>
 
+<!-- Stats Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10 animate-fade-in-up" style="animation-delay: 0.1s;">
+    <!-- Total Employees -->
+    <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border-r-4 border-primary flex flex-col justify-between h-44 group hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+        <div class="flex justify-between items-start flex-row-reverse">
+            <div class="bg-primary/10 dark:bg-primary/20 p-3 rounded-2xl text-primary dark:text-primary-fixed">
+                <span class="material-symbols-outlined text-[28px]">group</span>
+            </div>
+            <span class="text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest">إجمالي الموظفين</span>
+        </div>
+        <div>
+            <div class="text-4xl font-black text-primary dark:text-white mb-1 counter" data-target="{{ count_employees|default:0 }}">0</div>
+            <div class="text-xs text-on-surface-variant dark:text-slate-400 font-bold">موظف مسجل حالياً</div>
+        </div>
+    </div>
+
+    <!-- Present Today -->
+    <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border-r-4 border-secondary-container flex flex-col justify-between h-44 group hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+        <div class="flex justify-between items-start flex-row-reverse">
+            <div class="bg-secondary-container/10 dark:bg-secondary-container/20 p-3 rounded-2xl text-secondary">
+                <span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+            </div>
+            <span class="text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest">حضور اليوم</span>
+        </div>
+        <div>
+            <div class="text-4xl font-black text-secondary mb-1 counter" data-target="{{ count_presents|default:0 }}">0</div>
+            <div class="text-xs text-on-surface-variant dark:text-slate-400 font-bold">موظف سجل دخول اليوم</div>
+        </div>
+    </div>
+
+    <!-- Absent Today -->
+    <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border-r-4 border-error flex flex-col justify-between h-44 group hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+        <div class="flex justify-between items-start flex-row-reverse">
+            <div class="bg-error/10 dark:bg-error/20 p-3 rounded-2xl text-error">
+                <span class="material-symbols-outlined text-[28px]">person_off</span>
+            </div>
+            <span class="text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest">غياب اليوم</span>
+        </div>
+        <div>
+            <div class="text-4xl font-black text-error mb-1 counter" data-target="{{ count_absents|default:0 }}">0</div>
+            <div class="text-xs text-on-surface-variant dark:text-slate-400 font-bold">لم يسجلوا حضور اليوم</div>
+        </div>
+    </div>
+
+    <!-- Permissions Today -->
+    <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border-r-4 border-amber-500 flex flex-col justify-between h-44 group hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+        <div class="flex justify-between items-start flex-row-reverse">
+            <div class="bg-amber-100 dark:bg-amber-900/30 p-3 rounded-2xl text-amber-700 dark:text-amber-400">
+                <span class="material-symbols-outlined text-[28px]">schedule</span>
+            </div>
+            <span class="text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest">أذونات اليوم</span>
+        </div>
+        <div>
+            <div class="text-4xl font-black text-amber-700 dark:text-amber-400 mb-1 counter" data-target="{{ count_permissions|default:0 }}">0</div>
+            <div class="text-xs text-on-surface-variant dark:text-slate-400 font-bold">حالات استثناء مسجلة</div>
+        </div>
+    </div>
 </div>
 
-<!-- Auto-Dismiss Alert Container -->
-<div id="alert-container" class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100"></div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10 animate-fade-in-up" style="animation-delay: 0.2s;">
+    <!-- Recent Alerts Table -->
+    <div class="lg:col-span-2 bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-surface-container dark:border-slate-800 overflow-hidden">
+        <div class="p-6 border-b border-surface-container dark:border-slate-800 flex justify-between items-center flex-row-reverse">
+            <h2 class="text-xl font-black text-primary dark:text-white font-headline flex items-center gap-2 flex-row-reverse">
+                <span class="material-symbols-outlined text-amber-500">warning</span>
+                تنبيهات النظام الأخيرة
+            </h2>
+            <div class="text-[10px] font-black bg-surface-container dark:bg-slate-800 text-outline dark:text-slate-400 px-3 py-1 rounded-full uppercase tracking-widest">آخر 30 يوم</div>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="w-full text-right border-collapse">
+                <thead>
+                    <tr class="bg-surface-container-low dark:bg-slate-800/50 text-outline dark:text-slate-500">
+                        <th class="px-6 py-4 font-black text-xs uppercase tracking-widest">الموظف</th>
+                        <th class="px-6 py-4 font-black text-xs uppercase tracking-widest">نوع التنبيه</th>
+                        <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">الإجراء</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-surface-container dark:divide-slate-800">
+                    {% if not anomalies %}
+                    <tr>
+                        <td colspan="3" class="px-6 py-12 text-center">
+                            <div class="flex flex-col items-center gap-3 opacity-20 dark:opacity-40">
+                                <span class="material-symbols-outlined text-[64px] text-green-500">verified</span>
+                                <p class="text-sm font-bold">لا توجد تنبيهات حالياً، النظام مستقر</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                        {% for anomaly in anomalies %}
+                        <tr class="hover:bg-surface-container-lowest dark:hover:bg-slate-800/30 transition-colors">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3 flex-row-reverse">
+                                    <div class="w-10 h-10 rounded-full bg-primary-container/20 dark:bg-slate-800 text-primary dark:text-white flex items-center justify-center font-black text-xs border border-white dark:border-slate-700 shadow-sm">
+                                        {{ anomaly.name|slice:":1"|upper }}
+                                    </div>
+                                    <div>
+                                        <div class="font-black text-primary dark:text-white text-sm">{{ anomaly.name }}</div>
+                                        <div class="text-[10px] text-outline font-bold">موظف مسجل</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex items-center gap-1.5 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider">
+                                    <span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span>
+                                    متأخر {{ anomaly.recent_late_count }} مرات
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <a href="{% url 'Attendance:records' anomaly.id %}" class="inline-flex items-center gap-1 text-xs font-black text-secondary hover:underline">
+                                    <span>عرض التفاصيل</span>
+                                    <span class="material-symbols-outlined text-[16px]">chevron_left</span>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 
+    <!-- Discipline Widget -->
+    <div class="flex flex-col gap-6">
+        <!-- Discipline Rate Card -->
+        <div class="bg-primary dark:bg-black rounded-3xl p-8 text-center text-white relative overflow-hidden shadow-2xl">
+            <div class="relative z-10">
+                <h3 class="text-sm font-black mb-8 opacity-80 uppercase tracking-widest font-headline">معدل الانضباط العام</h3>
+                <div class="relative w-44 h-44 mx-auto flex items-center justify-center">
+                    <svg class="w-full h-full transform -rotate-90">
+                        <circle cx="88" cy="88" r="78" fill="transparent" stroke="rgba(255,255,255,0.05)" stroke-width="12"></circle>
+                        <circle id="discipline-circle" cx="88" cy="88" r="78" fill="transparent" stroke="#fcd400" stroke-width="12" 
+                                stroke-dasharray="490" stroke-dashoffset="490" stroke-linecap="round" class="transition-all duration-1000 ease-out"></circle>
+                    </svg>
+                    <div class="absolute flex flex-col items-center">
+                        <span id="discipline-rate" class="text-5xl font-black">0%</span>
+                        <span class="text-[10px] font-bold opacity-50 uppercase tracking-widest mt-1">لهذا اليوم</span>
+                    </div>
+                </div>
+                <p class="mt-8 text-xs opacity-60 leading-relaxed font-body">يتم احتساب المعدل بناءً على حضور الموظفين مقارنة بالعدد الكلي المستهدف.</p>
+            </div>
+            <!-- Decorative circle -->
+            <div class="absolute -bottom-12 -right-12 w-48 h-48 bg-secondary-container/5 rounded-full blur-3xl"></div>
+        </div>
+
+        <!-- Quick Actions Card -->
+        <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border border-surface-container dark:border-slate-800">
+            <h3 class="text-xs font-black text-outline dark:text-slate-500 uppercase tracking-widest mb-6 text-right font-headline">إجراءات سريعة</h3>
+            <div class="grid grid-cols-1 gap-3">
+                <a href="{% url 'Attendance:add' %}" class="flex flex-row-reverse items-center justify-between p-4 bg-surface-container-low dark:bg-slate-800/50 rounded-2xl hover:bg-primary-container hover:text-secondary-container transition-all group">
+                    <div class="flex items-center gap-3 flex-row-reverse">
+                        <span class="material-symbols-outlined text-primary dark:text-white group-hover:text-secondary-container">person_add</span>
+                        <span class="text-sm font-black text-primary dark:text-white group-hover:text-secondary-container">إضافة موظف جديد</span>
+                    </div>
+                    <span class="material-symbols-outlined text-[16px] text-outline group-hover:text-secondary-container">chevron_left</span>
+                </a>
+                <a href="{% url 'Attendance:add_vacation' %}" class="flex flex-row-reverse items-center justify-between p-4 bg-surface-container-low dark:bg-slate-800/50 rounded-2xl hover:bg-primary-container hover:text-secondary-container transition-all group">
+                    <div class="flex items-center gap-3 flex-row-reverse">
+                        <span class="material-symbols-outlined text-primary dark:text-white group-hover:text-secondary-container">event_available</span>
+                        <span class="text-sm font-black text-primary dark:text-white group-hover:text-secondary-container">تسجيل إجازة</span>
+                    </div>
+                    <span class="material-symbols-outlined text-[16px] text-outline group-hover:text-secondary-container">chevron_left</span>
+                </a>
+                <a href="{% url 'Attendance:add_exception' %}" class="flex flex-row-reverse items-center justify-between p-4 bg-surface-container-low dark:bg-slate-800/50 rounded-2xl hover:bg-primary-container hover:text-secondary-container transition-all group">
+                    <div class="flex items-center gap-3 flex-row-reverse">
+                        <span class="material-symbols-outlined text-primary dark:text-white group-hover:text-secondary-container">more_time</span>
+                        <span class="text-sm font-black text-primary dark:text-white group-hover:text-secondary-container">إذن حضور</span>
+                    </div>
+                    <span class="material-symbols-outlined text-[16px] text-outline group-hover:text-secondary-container">chevron_left</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Raw data for JS -->
+<div id="stats-data" 
+    data-present="{{ count_presents|default:0 }}" 
+    data-total="{{ count_employees|default:0 }}"
+    style="display:none;"></div>
+
+{% endblock %}
+
+{% block scripts %}
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const syncBtn = document.getElementById("sync-btn");
-        const syncSpinner = document.getElementById("sync-spinner");
-        const alertContainer = document.getElementById("alert-container");
+    document.addEventListener('DOMContentLoaded', function() {
+        // Live Date Time Control
+        function updateClock() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+            const clockEl = document.getElementById('liveDateTime');
+            if (clockEl) clockEl.textContent = now.toLocaleDateString('ar-LY', options);
+        }
+        setInterval(updateClock, 60000);
+        updateClock();
 
-        syncBtn.addEventListener("click", function () {
-            // UI state
-            syncBtn.disabled = true;
-            syncSpinner.classList.remove('d-none');
-
-            fetch("{% url 'Attendance:sync_devices' %}", {
-                method: "GET",
-                headers: {
-                    "X-Requested-With": "XMLHttpRequest",
-                    "Accept": "application/json"
+        // Animated Counters
+        const counters = document.querySelectorAll('.counter');
+        counters.forEach(counter => {
+            const target = +counter.getAttribute('data-target');
+            const inc = target / 100;
+            let current = 0;
+            
+            const update = () => {
+                if (current < target) {
+                    current += inc;
+                    counter.innerText = Math.ceil(current);
+                    requestAnimationFrame(update);
+                } else {
+                    counter.innerText = target;
                 }
-            })
-                .then(response => response.json())
-                .then(data => {
-                    showAlert(data.message, data.status === 'success' ? 'success' : 'danger');
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                    showAlert("حدث خطأ أثناء الاتصال بالخادم", "danger");
-                })
-                .finally(() => {
-                    syncBtn.disabled = false;
-                    syncSpinner.classList.add('d-none');
-                });
+            };
+            update();
         });
 
-        function showAlert(message, type) {
-            const wrapper = document.createElement('div');
-            wrapper.innerHTML = `
-                <div class="alert alert-${type} alert-dismissible fade show shadow-sm" role="alert">
-                    ${message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            `;
-            alertContainer.append(wrapper);
+        // Discipline Rate Calculation & Animation
+        const statsEl = document.getElementById('stats-data');
+        if (statsEl) {
+            const present = +statsEl.getAttribute('data-present');
+            const total = +statsEl.getAttribute('data-total');
+            const rate = total > 0 ? Math.round((present / total) * 100) : 0;
+            
+            const rateEl = document.getElementById('discipline-rate');
+            const circle = document.getElementById('discipline-circle');
+            
+            if (rateEl && circle) {
+                // Number Counter
+                let currentRate = 0;
+                const rateInt = setInterval(() => {
+                    if (currentRate < rate) {
+                        currentRate++;
+                        rateEl.innerText = currentRate + '%';
+                    } else {
+                        clearInterval(rateInt);
+                    }
+                }, 20);
 
-            // Auto-dismiss after 4 seconds
-            setTimeout(() => {
-                const alertNode = wrapper.querySelector('.alert');
-                if (alertNode) {
-                    const bsAlert = new bootstrap.Alert(alertNode);
-                    bsAlert.close();
-                }
-            }, 4000);
+                // Circle Animation
+                const circumference = 490;
+                const offset = circumference - (rate / 100) * circumference;
+                setTimeout(() => {
+                    circle.style.strokeDashoffset = offset;
+                }, 300);
+            }
+        }
+
+        // Sync Button Logic
+        const syncBtn = document.getElementById("sync-btn");
+        if (syncBtn) {
+            syncBtn.addEventListener("click", function () {
+                const icon = this.querySelector('.material-symbols-outlined');
+                icon.classList.add('animate-spin');
+                this.querySelector('span:not(.material-symbols-outlined)').innerText = 'جاري المزامنة...';
+                this.classList.add('opacity-80', 'cursor-not-allowed');
+                this.disabled = true;
+
+                fetch("{% url 'Attendance:sync_devices' %}")
+                    .then(response => response.json())
+                    .then(() => {
+                        location.reload();
+                    })
+                    .catch(() => {
+                        alert("حدث خطأ أثناء المزامنة");
+                        location.reload();
+                    });
+            });
         }
     });
 </script>
+<style>
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    .animate-spin {
+        animation: spin 1s linear infinite;
+    }
+</style>
 {% endblock %}

@@ -1,82 +1,84 @@
 {% extends 'list_search_base.html' %}
 {% load static %}
-{% block add_url %}
-{% url 'Attendance:add' %}
-{% endblock %}
+
+{% block heading %}قائمة الموظفين{% endblock %}
+
+{% block add_url %}{% url 'Attendance:add' %}{% endblock %}
 
 {% block tabel %}
-<div class="col-12 text-start fs-6 mb-2 text-center">
-
-    <a href="{% url 'Attendance:report' %}" class="btn btn-outline-dark">تقرير </a>
-
-    <a href="{% url 'Attendance:profiles' %}" class="btn btn-outline-dark">انظمة العمل </a>
-
-    <a href="{% url 'Attendance:devices' %}" class="btn btn-outline-dark">الاجهزة</a>
-
-    <a href="{% url 'Attendance:sync_devices' %}" class="btn btn-outline-dark">مزامنة الاجهزة</a>
-
-    <a href="{% url 'Attendance:vacation' %}" class="btn btn-outline-dark">الاجازات</a>
-    <a href="{% url 'Attendance:vacation_types' %}" class="btn btn-outline-dark">انواع الاجازات</a>
-    <a href="{% url 'Attendance:exception' %}" class="btn btn-outline-dark"> الأذونات </a>
+<div class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-surface-container dark:border-slate-800 overflow-hidden animate-fade-in-up">
+    <div class="overflow-x-auto">
+        <table class="w-full text-right border-collapse">
+            <thead>
+                <tr class="bg-surface-container-low dark:bg-slate-800/50 text-outline dark:text-slate-500">
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest">بيانات الموظف</th>
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest">الرقم الوظيفي</th>
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest">نظام العمل</th>
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">رصيد الإجازات</th>
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-surface-container dark:divide-slate-800">
+                {% for employee in object_list %}
+                <tr class="hover:bg-surface-container-lowest dark:hover:bg-slate-800/30 transition-all duration-200">
+                    <td class="px-6 py-5">
+                        <div class="flex items-center gap-4 flex-row-reverse">
+                            <div class="w-12 h-12 rounded-2xl bg-primary-container/20 dark:bg-slate-800 text-primary dark:text-primary-fixed flex items-center justify-center font-black text-lg border border-white dark:border-slate-700 shadow-sm transition-transform group-hover:scale-110">
+                                {{ employee.name|slice:":1"|upper }}
+                            </div>
+                            <div>
+                                <div class="font-black text-primary dark:text-white text-base font-headline">{{ employee.name }}</div>
+                                <div class="text-[10px] text-outline font-bold flex items-center gap-1 flex-row-reverse">
+                                    <span class="material-symbols-outlined text-[12px]">contact_page</span>
+                                    <span>id: {{ employee.attendance_id }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-5">
+                        <span class="inline-flex items-center px-4 py-1.5 rounded-full bg-surface-container dark:bg-slate-800 text-primary dark:text-slate-300 font-bold text-xs border border-white dark:border-slate-700">
+                            {{ employee.attendance_id }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-5">
+                        <div class="flex items-center gap-2 flex-row-reverse font-bold text-xs text-primary dark:text-slate-300">
+                            <span class="material-symbols-outlined text-[18px] text-secondary">schedule</span>
+                            {{ employee.default_profile }}
+                        </div>
+                    </td>
+                    <td class="px-6 py-5 text-center">
+                        <div class="flex flex-col items-center">
+                            <span class="text-xl font-black text-primary dark:text-white">{{ employee.current_vacations }}</span>
+                            <span class="text-[9px] font-bold text-outline dark:text-slate-500 uppercase tracking-widest">أيام متبقية</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-5">
+                        <div class="flex items-center justify-center gap-2 flex-row-reverse">
+                            <a href="{% url 'Attendance:records' employee.id %}" 
+                               class="flex items-center gap-2 px-6 py-2.5 rounded-xl border border-surface-container dark:border-slate-700 text-primary dark:text-slate-200 font-black text-xs hover:bg-surface-container transition-all group shadow-sm">
+                                <span class="material-symbols-outlined text-[18px] group-hover:scale-110 transition-transform">list_alt</span>
+                                <span>السجل</span>
+                            </a>
+                            <a href="{% url 'Attendance:edit' employee.id %}" 
+                               class="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-primary text-white font-black text-xs hover:bg-black transition-all group shadow-lg shadow-primary/20">
+                                <span class="material-symbols-outlined text-[18px] group-hover:rotate-12 transition-transform">edit</span>
+                                <span>تعديل</span>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="px-6 py-16 text-center">
+                        <div class="flex flex-col items-center gap-4 opacity-30 dark:opacity-50">
+                            <span class="material-symbols-outlined text-[64px]">inbox_customize</span>
+                            <p class="text-base font-bold font-headline">لا يوجد موظفين مسجلين حالياً، قم بإضافة موظف جديد لتبدأ العمل.</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
-<div class="col-12 text-center fs-6">
-    <table id="employeeTable" class="table table-hover bg-white rounded-3 shadow-sm text-center">
-        <thead class="bg-light">
-            <tr>
-                <th scope="col">الاسم</th>
-                <th scope="col" class="d-none d-md-table-cell">رقم الموظف</th>
-                <th scope="col">الوردية</th>
-                <th scope="col">الاجازات</th>
-                <th scope="col">الاجراءات</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for employee in object_list %}
-            <tr>
-                <td class="align-middle">{{ employee.name }}</td>
-                <td class="d-none d-md-table-cell align-middle">{{ employee.attendance_id }}</td>
-                <td class="align-middle">{{ employee.default_profile }}</td>
-                <td class="align-middle">{{ employee.current_vacations }}</td>
-                <td class="align-middle">
-                    <div class="btn-group gap-2" role="group">
-                        <a href="{% url 'Attendance:edit' employee.id %}"
-                            class="btn btn-sm btn-outline-primary rounded-pill">تعديل</a>
-                        <a href="{% url 'Attendance:records' employee.id %}"
-                            class="btn btn-sm btn-outline-info rounded-pill"> سجل الحضور</a>
-                    </div>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-
-{% endblock %}
-
-{% block scripts %}
-<script src="{% static 'js/bundle2.js' %}"></script>
-<script>
-
-    let ZK = new ZKLib({
-        ip: '192.168.5.11',
-        port: 4370,
-        inport: 5200,
-        timeout: 5000,
-    });
-    console.log("ZKLIB loaded");
-    ZK.connect(function (err) {
-        if (err) throw err;
-
-        // read the time info from th device
-        ZK.getTime(function (err, t) {
-            // disconnect from the device
-            ZK.disconnect();
-
-            if (err) throw err;
-
-            console.log("Device clock's time is " + t.toString());
-        });
-    });
-
-</script>
 {% endblock %}

@@ -52,11 +52,13 @@ def default_date_range(view):
 def required_days(from_date, to_date):
     c = 0
     total = 0
-    for d in range(from_date.toordinal(), to_date.toordinal()):
+    # Include both from_date and to_date in the calculation
+    for d in range(from_date.toordinal(), to_date.toordinal() + 1):
         dt = date.fromordinal(d)
+        # Friday (4) and Saturday (5) are common weekend days in the region
         if dt.weekday() == 4 or dt.weekday() == 5:
-            c += 1;
-        total += 1;
+            c += 1
+        total += 1
 
     return total - c
 
@@ -111,12 +113,10 @@ class EditEmployeeView(UpdateView):
 class EmployeeView(ListView):
     template_name = "attendance/employee_list_view.html"
     model = Employee
-    success_url = reverse_lazy("Attendance:home")
+    success_url = reverse_lazy("Attendance:dashboard")
     permission_required = ("Attendance.can_view_employees",)
 
     def get(self, request, *args, **kwargs):
-        # if request.user.is_authenticated:
-        # return redirect("home")
         return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
@@ -130,7 +130,7 @@ class EmployeeView(ListView):
 class EmployeeRecordsView(DetailView):
     template_name = "attendance/reports/employee_report.html"
     model = Employee
-    success_url = reverse_lazy("Attendance:home")
+    success_url = reverse_lazy("Attendance:dashboard")
     permission_required = ("Attendance.can_view_employees",)
 
     def get_context_data(self, **kwargs):
@@ -154,9 +154,6 @@ class EmployeeRecordsView(DetailView):
         from_date, to_date = default_date_range(self)
         device = data_device(self)
         obj = super().get_object(queryset)
-        print("from_date", from_date)
-        print("to_date", to_date)
-        print("Date of things")
         wds = WorkDay.objects.filter(device=device)
         rcs = Record.objects.filter(device=device)
         if from_date:
@@ -206,12 +203,12 @@ class DeleteProfileView(DeleteView):
     template_name = "attendance/delete_form.html"
     model = Profile
     success_url = reverse_lazy("Attendance:profiles")
-
+    extra_context = {
+        "back_url": reverse_lazy("Attendance:profiles")
+    }
 
 class ReportView(TemplateView):
     template_name = "attendance/reports/monthly_report.html"
-    # if Profile.objects.all().count() == 0:
-    #     template_name = "attendance/employee_list_view.html"
 
     model = Employee
 
@@ -326,10 +323,10 @@ class ExportEmployeeReportView(DetailView):
         output = io.BytesIO()
         workbook = xlsxwriter.Workbook(output)
         worksheet = workbook.add_worksheet()
-        worksheet.write(0, 0, "Date")
-        worksheet.write(0, 1, "Work time")
-        worksheet.write(0, 2, "Over work time")
-        worksheet.write(0, 3, "Exit and return")
+        worksheet.write(0, 0, "التاريخ")
+        worksheet.write(0, 1, "ساعات العمل")
+        worksheet.write(0, 2, "العمل الإضافي")
+        worksheet.write(0, 3, "الخروج والعودة")
         for row_num, row in enumerate(employee.days()):
             # WorkDay.out_return_time
 
@@ -387,8 +384,6 @@ class VacationsView(ListView):
     form_class = Vacation
     model = Vacation
 
-    # success_url = reverse_lazy("Attendance:devices")
-
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
         data["search_form"] = FilterVacationsForm()
@@ -396,8 +391,6 @@ class VacationsView(ListView):
 
     def get_queryset(self):
         q = super().get_queryset()
-        print(q)
-        print(q.count())
         g = self.request.GET
 
         if g.get('employees', "") != "":
@@ -465,11 +458,20 @@ class EditVacationTypeView(UpdateView):
     template_name = "attendance/vacations/add_edit_vacation_type.html"
     form_class = AddVacationTypeForm
     model = VacationType
-    success_url = reverse_lazy("Attendance:vacation")
+    success_url = reverse_lazy("Attendance:vacation_types")
     permission_required = ('Attendance.can_create_employees',)
 
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
+
+
+class DeleteVacationTypeView(DeleteView):
+    template_name = "attendance/delete_form.html"
+    model = VacationType
+    success_url = reverse_lazy("Attendance:vacation_types")
+    extra_context = {
+        "back_url": reverse_lazy("Attendance:vacation_types")
+    }
 
 
 class VacationTypeView(ListView):
@@ -504,7 +506,6 @@ class DeleteVacationView(DeleteView):
 
 class ExceptionsView(ListView):
     template_name = "attendance/exceptions/exceptions_list_view.html"
-    # form_class = Vacation
     model = Exception
 
     def get_queryset(self):
@@ -521,8 +522,6 @@ class ExceptionsView(ListView):
             q = q.filter(date__gte=g.get('date', None))
 
         return q
-
-    # success_url = reverse_lazy("Attendance:devices")
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
@@ -613,25 +612,37 @@ class DashboardView(TemplateView):
         today_workdays = WorkDay.objects.filter(date=today)
         today_exceptions = Exception.objects.filter(date=today)
         
-        context['total_employees'] = total_employees.count()
-        context['today_workdays'] = today_workdays.count()
-        context['today_exceptions'] = today_exceptions.count()
-        context['absent'] = total_employees.count() - today_workdays.count()
+        context['count_employees'] = total_employees.count()
+        context['count_presents'] = today_workdays.count()
+        context['count_permissions'] = today_exceptions.count()
+        context['count_absents'] = total_employees.count() - today_workdays.count()
         
-        # Anomaly Detection: Employees late more than 3 times in the last 30 workdays
-        anomalies = []
+        # Anomaly Detection: Employees late more than 3 times in the last 30 days
         recent_date_limit = today - datetime.timedelta(days=30)
         
-        # We'll check employees with high late counts in recent WorkDays
-        # This is a bit heavy, so we limit to active employees
-        for emp in total_employees[:100]: # Limit for performance if many
-            recent_lates = WorkDay.objects.filter(employee=emp, date__gte=recent_date_limit).filter(Q(late__gt=0)).count()
-            if recent_lates > 3:
+        # Anomaly Detection: Employees late more than 3 times in the last 30 days
+        # Since 'late' is a property and not a DB field, we calculate it in Python
+        # We limit the search to active employees and recent workdays for performance
+        recent_date_limit = today - datetime.timedelta(days=30)
+        anomalies = []
+        
+        # We process a subset of employees to keep dashboard responsive
+        # In a production environment with many employees, this should be a background task or cached
+        for emp in Employee.objects.filter(active=False)[:50]:
+            recent_wds = WorkDay.objects.filter(employee=emp, date__gte=recent_date_limit)
+            late_count = 0
+            for wd in recent_wds:
+                if wd.late > 0:
+                    late_count += 1
+            
+            if late_count > 3:
                 anomalies.append({
+                    'id': emp.id,
                     'name': emp.name,
-                    'late_count': recent_lates,
-                    'id': emp.id
+                    'recent_late_count': late_count
                 })
         
-        context['anomalies'] = anomalies[:5] # Show top 5
+        anomalies.sort(key=lambda x: x['recent_late_count'], reverse=True)
+        context['anomalies'] = anomalies[:5] # Show top 5 anomalies
         return context
+

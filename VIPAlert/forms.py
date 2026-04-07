@@ -1,8 +1,7 @@
 from django import forms
-from django.contrib.auth.models import User, Permission
+from django.contrib.auth.models import Permission
 from django.forms import CheckboxSelectMultiple
-from django.forms.utils import ErrorList
-from VIPAlert.models import *
+from VIPAlert.models import User
 
 
 
@@ -88,12 +87,12 @@ class LoginForm(forms.Form):
 
     email.widget.attrs = {
         'class': 'form-control rounded-pill',
-        'placeholder': 'User name'
+        'placeholder': 'البريد الإلكتروني'
     }
 
     password.widget.attrs = {
         'class': 'form-control rounded-pill',
-        'placeholder': 'Password'
+        'placeholder': 'كلمة المرور'
     }
     def clean(self):
         self.clean_user()

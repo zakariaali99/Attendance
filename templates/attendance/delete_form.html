@@ -1,22 +1,41 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
+{% block title %}منظومة الخوارزمي - تأكيد الحذف{% endblock %}
+
 {% block body %}
-    <br>
-    <br>
-    <br>
-    <br>
+<div class="min-h-[70vh] flex items-center justify-center animate-fade-in-up">
+    <div class="w-full max-w-lg">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-surface-container dark:border-slate-800 p-8 md:p-12 text-center relative overflow-hidden">
+            <!-- Warning Icon Background -->
+            <div class="absolute -top-12 -left-12 w-48 h-48 bg-red-500/5 rounded-full blur-3xl opacity-50"></div>
+            <div class="absolute -bottom-12 -right-12 w-48 h-48 bg-amber-500/5 rounded-full blur-3xl opacity-50"></div>
 
-    <div class="container my-5">
-        <div class="col-6 mx-auto">
+            <div class="relative z-10">
+                <div class="w-24 h-24 bg-red-50 dark:bg-red-950/30 text-red-500 rounded-3xl flex items-center justify-center mx-auto mb-8 animate-bounce shadow-lg shadow-red-500/10">
+                    <span class="material-symbols-outlined text-[48px]">delete_forever</span>
+                </div>
 
-            <form method="post">{% csrf_token %}
-                <p>{% trans 'Are you sure you want to delete' %} "{{ object.id }} - {{ object }}"?</p>
-                <hr class="border-danger">
-                <a href="{% url 'Attendance:profiles' %}" class="btn btn-light mr-5">{% trans 'Back to list' %}</a>
-                <button class="btn btn-danger ml-5" type="submit" value="Confirm">{% trans 'Confirm' %}</button>
-{#                <input class="btn btn-danger" type="submit" value="Confirm">#}
-            </form>
+                <h1 class="text-2xl font-black text-primary dark:text-white mb-4 font-headline">هل أنت متأكد من الحذف؟</h1>
+                <p class="text-xs font-bold text-outline dark:text-slate-500 uppercase tracking-widest mb-8">سيتم إزالة السجل التالي نهائياً من قاعدة البيانات:</p>
+
+                <div class="bg-surface-container-low dark:bg-slate-800/50 rounded-2xl p-6 mb-10 border border-surface-container dark:border-slate-800">
+                    <div class="text-[10px] font-black text-outline dark:text-slate-500 mb-2 uppercase tracking-widest">معرف السجل</div>
+                    <div class="text-lg font-black text-primary dark:text-white font-headline">{{ object.id }} - {{ object }}</div>
+                </div>
+
+                <form method="post" class="flex flex-col md:flex-row-reverse items-center justify-center gap-4">
+                    {% csrf_token %}
+                    <button type="submit" class="w-full md:w-auto px-10 py-5 bg-red-600 hover:bg-red-700 text-white font-black rounded-2xl shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3">
+                        <span class="material-symbols-outlined">delete</span>
+                        <span>تأكيد الحذف النهائي</span>
+                    </button>
+                    <a href="{{ back_url|default:'#' }}" class="w-full md:w-auto px-10 py-5 bg-surface-container dark:bg-slate-800 text-primary dark:text-white font-black rounded-2xl hover:bg-surface-container-highest transition-all text-sm uppercase tracking-widest">
+                        تراجع وإلغاء
+                    </a>
+                </form>
+            </div>
         </div>
     </div>
+</div>
 {% endblock %}

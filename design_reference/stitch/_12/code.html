@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>الملف الشخصي - منظومة الخوارزمي</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&amp;family=Tajawal:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "tertiary-container": "#2d2b47",
+                "error": "#ba1a1a",
+                "primary-fixed": "#e4dfff",
+                "secondary-fixed-dim": "#e9c400",
+                "surface-container-highest": "#e5e1e5",
+                "primary": "#181534",
+                "surface-container": "#f1edf0",
+                "primary-container": "#2d2a4a",
+                "on-surface-variant": "#47464d",
+                "primary-fixed-dim": "#c7c2ea",
+                "surface-container-high": "#ebe7ea",
+                "on-background": "#1c1b1e",
+                "inverse-surface": "#313033",
+                "surface-tint": "#5e5a7d",
+                "on-tertiary-fixed": "#1a1833",
+                "surface-container-low": "#f7f2f6",
+                "on-secondary-fixed-variant": "#544600",
+                "error-container": "#ffdad6",
+                "tertiary-fixed-dim": "#c7c3e6",
+                "on-surface": "#1c1b1e",
+                "on-secondary": "#ffffff",
+                "outline-variant": "#c9c5ce",
+                "on-primary-fixed-variant": "#464364",
+                "on-error": "#ffffff",
+                "secondary": "#705d00",
+                "secondary-container": "#fcd400",
+                "on-primary-fixed": "#1a1736",
+                "inverse-primary": "#c7c2ea",
+                "tertiary-fixed": "#e3dfff",
+                "on-secondary-fixed": "#221b00",
+                "outline": "#78767e",
+                "on-tertiary-container": "#9692b4",
+                "on-error-container": "#93000a",
+                "surface-container-lowest": "#ffffff",
+                "surface": "#fcf8fb",
+                "on-tertiary-fixed-variant": "#464461",
+                "inverse-on-surface": "#f4eff3",
+                "on-secondary-container": "#6e5c00",
+                "on-primary-container": "#9691b7",
+                "background": "#fcf8fb",
+                "on-tertiary": "#ffffff",
+                "surface-bright": "#fcf8fb",
+                "secondary-fixed": "#ffe16d",
+                "on-primary": "#ffffff",
+                "surface-dim": "#ddd9dc",
+                "tertiary": "#181631",
+                "surface-variant": "#e5e1e5"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.125rem",
+                "lg": "0.25rem",
+                "xl": "0.5rem",
+                "full": "0.75rem"
+            },
+            "fontFamily": {
+                "headline": ["IBM Plex Sans Arabic"],
+                "body": ["IBM Plex Sans Arabic"],
+                "label": ["Tajawal"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'IBM Plex Sans Arabic', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-surface antialiased">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-slate-50/80 dark:bg-[#181534]/80 backdrop-blur-md shadow-sm h-16 px-6 flex flex-row-reverse justify-between items-center font-['IBM_Plex_Sans_Arabic'] text-sm">
+<div class="flex items-center gap-4">
+<span class="text-xl font-bold text-[#181534] dark:text-[#fcd400]">منظومة الخوارزمي</span>
+<img alt="Logo" class="h-10 w-auto" data-alt="Official geometric logo for Al-Khawarizmi system in navy and gold colors, professional Islamic geometric design" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCM5Sa9dXJsxRbkMOGtJrwAA2OGJSIQ_rKSvSkHBvSbazG1Ehon7t5g-Qqvdy-xsrXiYqqiO5QhM1Frzq7mElv5eiZ1aVlTSrI9tcpGgtlebK65R1BNQugyG4ISpJfRmQ24WMF-OJnxqmo_iDTZdNAMH5mlfGae9xHN9gh0OYK2Zjguq37x9U1Qox4bXhc8rbfRxDLBpSyJp4v9dpkm1JgVnF1rPMYCqjwRPM1Azezi09H4Cnuk_zgvfYHhY7ACUysuXgzJKTyZNw"/>
+</div>
+<div class="flex-1 max-w-xl mx-8 hidden md:block">
+<div class="relative flex items-center">
+<input class="w-full bg-surface-container-high border-none rounded-full px-4 py-2 text-right focus:ring-2 focus:ring-secondary" placeholder="بحث..." type="text"/>
+<span class="material-symbols-outlined absolute left-3 text-outline">search</span>
+</div>
+</div>
+<div class="flex items-center gap-4 flex-row-reverse">
+<div class="flex gap-2">
+<button class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-[#2D2A4A] transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-[#181534] dark:text-slate-100">notifications</span>
+</button>
+<button class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-[#2D2A4A] transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-[#181534] dark:text-slate-100">settings</span>
+</button>
+</div>
+<div class="h-10 w-10 rounded-full bg-primary-container overflow-hidden border-2 border-[#fcd400]">
+<img alt="صورة الملف الشخصي للمستخدم" data-alt="Professional portrait of a middle-aged Arab man with a short beard and neat haircut, wearing a crisp white shirt against a neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7apJw6kD2pQUZ-w9dyuYOZxPezNrMk72mzStPbayNyBULUY6W4F1XBXg7HSDZGxs7Lnm4Pyi_xVHO0N35oEk72P03DUNuBX_OZbqcMR4pX3d8o9QleP6VgF2Z1D3NVCEXUcWW-mlSFRZu5Kld0KwEovNLZoEvFMWmw3x5MRXLaAAc2cKRLJL1tCH_y6HIcNggt75tmu4_yl3RnWDfzzLdMfScjt0o6AXD2wU6qM_uEUvlCw5vuYUleZao082DLrhIzYuZ1eTTQNE"/>
+</div>
+</div>
+</header>
+<!-- SideNavBar -->
+<aside class="fixed right-0 top-0 h-full w-64 z-40 bg-[#181534] shadow-2xl shadow-[#181534]/50 hidden lg:flex flex-col pt-20 font-['Tajawal'] font-medium overflow-y-auto">
+<div class="px-6 py-4 flex flex-col items-center border-b border-slate-700/30 mb-4">
+<span class="text-[#fcd400] font-black text-lg">الخوارزمي</span>
+<span class="text-slate-400 text-xs">إدارة الموارد البشرية</span>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="text-slate-300 flex flex-row-reverse items-center gap-3 px-4 py-3 hover:bg-[#2D2A4A] hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>لوحة القيادة</span>
+</a>
+<a class="text-slate-300 flex flex-row-reverse items-center gap-3 px-4 py-3 hover:bg-[#2D2A4A] hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span>الموظفون</span>
+</a>
+<a class="text-slate-300 flex flex-row-reverse items-center gap-3 px-4 py-3 hover:bg-[#2D2A4A] hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="devices">devices</span>
+<span>الأجهزة</span>
+</a>
+<a class="text-slate-300 flex flex-row-reverse items-center gap-3 px-4 py-3 hover:bg-[#2D2A4A] hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="history_edu">history_edu</span>
+<span>سجلات الحضور</span>
+</a>
+<a class="text-slate-300 flex flex-row-reverse items-center gap-3 px-4 py-3 hover:bg-[#2D2A4A] hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="schedule">schedule</span>
+<span>الورديات</span>
+</a>
+<a class="text-slate-300 flex flex-row-reverse items-center gap-3 px-4 py-3 hover:bg-[#2D2A4A] hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="event_busy">event_busy</span>
+<span>الإجازات</span>
+</a>
+<a class="text-slate-300 flex flex-row-reverse items-center gap-3 px-4 py-3 hover:bg-[#2D2A4A] hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+<span>التقارير</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-slate-700/30">
+<a class="text-slate-300 flex flex-row-reverse items-center gap-3 px-4 py-3 hover:bg-[#2D2A4A] hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span>تسجيل الخروج</span>
+</a>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="lg:mr-64 pt-24 pb-12 px-6">
+<div class="max-w-6xl mx-auto space-y-8">
+<!-- Hero Header Section -->
+<section class="bg-primary-container rounded-xl overflow-hidden relative shadow-lg">
+<div class="absolute inset-0 opacity-10" style="background-image: linear-gradient(135deg, #181534 0%, #2D2A4A 100%);"></div>
+<div class="relative p-8 md:p-12 flex flex-col md:flex-row-reverse items-center gap-8">
+<div class="relative">
+<div class="h-32 w-32 md:h-40 md:w-40 rounded-full border-4 border-secondary overflow-hidden shadow-2xl">
+<img alt="أحمد محمد الشناوي" data-alt="Close up of a professional man in high quality office environment lighting with a warm subtle glow" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAML2O7Y7MUgukyMItwxmhpEk0fJvMXN04qexorcDYRKA873QqrlZW9OXbzu7fMgUOtvE_-jAkatMTTN_7p96sUSIjb419COjhKDF7xELlyAwsFnbbxTVb3WqxtfuAjmrnjmV2IPX9Qg2deO4gVVezcw7k3Zh7twrRCKXkiPaAKFKardYzT2gzu6-uRLciWShiBEFdms7nQJEbGw-utOitWxjrgfAdWPW8FiX3SPcXHBl_8c5ppuZW_al4Sux6Jw7TtKmNlUBcb8c0"/>
+</div>
+<div class="absolute bottom-2 left-2 bg-emerald-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 border-2 border-primary">
+<span class="w-2 h-2 bg-white rounded-full animate-pulse"></span>
+                            نشط الآن
+                        </div>
+</div>
+<div class="text-center md:text-right flex-1">
+<h1 class="text-3xl md:text-5xl font-black text-white mb-2 leading-tight">أحمد محمد الشناوي</h1>
+<p class="text-[#fcd400] text-lg md:text-xl font-medium mb-6">كبير مهندسي النظم - إدارة تقنية المعلومات</p>
+<div class="flex flex-wrap justify-center md:justify-start gap-4 flex-row-reverse">
+<button class="bg-secondary text-on-secondary px-8 py-3 rounded-lg font-bold shadow-md hover:brightness-110 transition-all active:scale-95 flex items-center gap-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">edit</span>
+                                تعديل الملف
+                            </button>
+<button class="bg-white/10 text-white backdrop-blur-md px-6 py-3 rounded-lg font-medium hover:bg-white/20 transition-all active:scale-95 flex items-center gap-2">
+<span class="material-symbols-outlined">print</span>
+                                طباعة التقرير
+                            </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Bento Grid Stats & Content -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- Metrics Card -->
+<div class="lg:col-span-2 space-y-6">
+<!-- Top Metrics -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border-r-4 border-secondary">
+<p class="text-outline text-sm mb-1 font-label">معدل الحضور الشهر</p>
+<h3 class="text-4xl font-black text-primary">98%</h3>
+<div class="mt-4 w-full bg-surface-container rounded-full h-1.5 overflow-hidden">
+<div class="bg-secondary h-full" style="width: 98%"></div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border-r-4 border-primary">
+<p class="text-outline text-sm mb-1 font-label">ساعات العمل الكلية</p>
+<h3 class="text-4xl font-black text-primary">164 <span class="text-lg font-normal">ساعة</span></h3>
+<p class="text-emerald-600 text-xs mt-2 flex items-center gap-1 flex-row-reverse">
+<span class="material-symbols-outlined text-xs">trending_up</span>
+                                +12% عن الشهر الماضي
+                            </p>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border-r-4 border-error">
+<p class="text-outline text-sm mb-1 font-label">ساعات التأخير</p>
+<h3 class="text-4xl font-black text-error">2.5 <span class="text-lg font-normal">ساعة</span></h3>
+<p class="text-outline text-xs mt-2">إجمالي 3 مرات هذا الشهر</p>
+</div>
+</div>
+<!-- Recent Activity -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
+<div class="flex justify-between items-center mb-6 flex-row-reverse">
+<h3 class="text-xl font-bold text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">history</span>
+                                النشاط الأخير
+                            </h3>
+<button class="text-primary text-sm font-medium underline underline-offset-4">عرض الكل</button>
+</div>
+<div class="space-y-4">
+<!-- Activity Item -->
+<div class="flex items-center gap-4 flex-row-reverse p-4 hover:bg-surface-container-low rounded-lg transition-colors">
+<div class="bg-emerald-100 text-emerald-700 p-2 rounded-lg">
+<span class="material-symbols-outlined">login</span>
+</div>
+<div class="flex-1 text-right">
+<p class="font-bold text-primary">تسجيل دخول (الحضور)</p>
+<p class="text-outline text-xs">مبنى أ - الدور الرابع | عبر تطبيق الجوال</p>
+</div>
+<div class="text-left">
+<p class="font-bold text-primary">08:02 ص</p>
+<p class="text-outline text-xs">اليوم، 24 أكتوبر</p>
+</div>
+</div>
+<!-- Activity Item -->
+<div class="flex items-center gap-4 flex-row-reverse p-4 hover:bg-surface-container-low rounded-lg transition-colors">
+<div class="bg-red-100 text-red-700 p-2 rounded-lg">
+<span class="material-symbols-outlined">logout</span>
+</div>
+<div class="flex-1 text-right">
+<p class="font-bold text-primary">تسجيل خروج (الانصراف)</p>
+<p class="text-outline text-xs">مبنى أ - البوابة الرئيسية | عبر البصمة</p>
+</div>
+<div class="text-left">
+<p class="font-bold text-primary">04:15 م</p>
+<p class="text-outline text-xs">أمس، 23 أكتوبر</p>
+</div>
+</div>
+<!-- Activity Item -->
+<div class="flex items-center gap-4 flex-row-reverse p-4 hover:bg-surface-container-low rounded-lg transition-colors">
+<div class="bg-emerald-100 text-emerald-700 p-2 rounded-lg">
+<span class="material-symbols-outlined">login</span>
+</div>
+<div class="flex-1 text-right">
+<p class="font-bold text-primary">تسجيل دخول (الحضور)</p>
+<p class="text-outline text-xs">مبنى أ - الدور الرابع | عبر تطبيق الجوال</p>
+</div>
+<div class="text-left">
+<p class="font-bold text-primary">07:58 ص</p>
+<p class="text-outline text-xs">أمس، 23 أكتوبر</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Weekly Shift -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
+<h3 class="text-xl font-bold text-primary mb-6 flex items-center gap-2 flex-row-reverse">
+<span class="material-symbols-outlined text-secondary">calendar_view_week</span>
+                            جدول الوردية الأسبوعي
+                        </h3>
+<div class="grid grid-cols-2 sm:grid-cols-7 gap-2">
+<div class="bg-primary text-white p-3 rounded-lg text-center">
+<p class="text-[10px] opacity-70">الأحد</p>
+<p class="font-bold text-sm">08-04</p>
+</div>
+<div class="bg-primary text-white p-3 rounded-lg text-center">
+<p class="text-[10px] opacity-70">الاثنين</p>
+<p class="font-bold text-sm">08-04</p>
+</div>
+<div class="bg-primary text-white p-3 rounded-lg text-center">
+<p class="text-[10px] opacity-70">الثلاثاء</p>
+<p class="font-bold text-sm">08-04</p>
+</div>
+<div class="bg-primary text-white p-3 rounded-lg text-center">
+<p class="text-[10px] opacity-70">الأربعاء</p>
+<p class="font-bold text-sm">08-04</p>
+</div>
+<div class="bg-primary text-white p-3 rounded-lg text-center">
+<p class="text-[10px] opacity-70">الخميس</p>
+<p class="font-bold text-sm">08-04</p>
+</div>
+<div class="bg-surface-container-high text-outline p-3 rounded-lg text-center">
+<p class="text-[10px]">الجمعة</p>
+<p class="font-bold text-sm">عطلة</p>
+</div>
+<div class="bg-surface-container-high text-outline p-3 rounded-lg text-center">
+<p class="text-[10px]">السبت</p>
+<p class="font-bold text-sm">عطلة</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Info Column -->
+<div class="space-y-6">
+<!-- Personal Info Card -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
+<h3 class="text-lg font-bold text-primary mb-6 border-b border-surface-container pb-2">المعلومات الشخصية</h3>
+<div class="space-y-5">
+<div class="text-right">
+<p class="text-outline text-xs mb-1 font-label">البريد الإلكتروني</p>
+<p class="text-primary font-medium">a.alshinawi@khawarizmi.sa</p>
+</div>
+<div class="text-right">
+<p class="text-outline text-xs mb-1 font-label">رقم الجوال</p>
+<p class="text-primary font-medium" dir="ltr">+966 50 123 4567</p>
+</div>
+<div class="text-right">
+<p class="text-outline text-xs mb-1 font-label">الإدارة</p>
+<p class="text-primary font-medium">إدارة تقنية المعلومات والبنية التحتية</p>
+</div>
+<div class="text-right">
+<p class="text-outline text-xs mb-1 font-label">تاريخ الانضمام</p>
+<p class="text-primary font-medium">15 يناير 2020</p>
+</div>
+<div class="text-right">
+<p class="text-outline text-xs mb-1 font-label">الجنسية</p>
+<p class="text-primary font-medium">سعودي</p>
+</div>
+<div class="text-right">
+<p class="text-outline text-xs mb-1 font-label">مقر العمل الرئيسي</p>
+<p class="text-primary font-medium">مقر الرياض - البرج الشمالي</p>
+</div>
+</div>
+</div>
+<!-- Security Settings Card -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
+<h3 class="text-lg font-bold text-primary mb-4">الأمان والخصوصية</h3>
+<div class="space-y-3">
+<button class="w-full flex justify-between items-center p-3 rounded-lg hover:bg-surface-container-low transition-all border border-surface-container flex-row-reverse group">
+<div class="flex items-center gap-3 flex-row-reverse">
+<div class="p-2 bg-surface-container rounded-lg text-primary">
+<span class="material-symbols-outlined">lock_reset</span>
+</div>
+<span class="text-primary font-medium">تغيير كلمة المرور</span>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:translate-x-1 transition-transform">chevron_left</span>
+</button>
+<button class="w-full flex justify-between items-center p-3 rounded-lg hover:bg-surface-container-low transition-all border border-surface-container flex-row-reverse group">
+<div class="flex items-center gap-3 flex-row-reverse">
+<div class="p-2 bg-surface-container rounded-lg text-primary">
+<span class="material-symbols-outlined">verified_user</span>
+</div>
+<div class="text-right">
+<span class="block text-primary font-medium">المصادقة الثنائية</span>
+<span class="text-[10px] text-emerald-600 font-bold">مفعلة بالبصمة</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:translate-x-1 transition-transform">chevron_left</span>
+</button>
+</div>
+</div>
+<!-- Map/Location Card -->
+<div class="rounded-xl overflow-hidden shadow-sm relative h-48 group">
+<div class="absolute inset-0 bg-black/20 z-10"></div>
+<img alt="Work Location Map" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="Satellite view of a modern urban business district in Riyadh with clean grid streets and glass skyscrapers" data-location="Riyadh" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7JrhaJYD3PuBkynrrMjfupHKxKe_QQxvUW9s6KvQ-SdSVqctX6teeIKDNg5OyJe8xWOFdxDOH6D1g0WTAzHWRNg-6ICOKM_OJ6ObPpLJ1UIF_BW1nJfmwKdX06o0gfO98E7dBebJKbLuk4wSV8AszAfhcDLYWgWg5CdWqNe34_s0Wj6_yNPvE2eKVPXNmruxT_G0a3TgWP0HAn4Tif4S_0cACL9AWF7soGjuGW6tXDvHZx4M-nVV59Nz59VXQIZU7Ckm2ZdIFxQE"/>
+<div class="absolute bottom-4 right-4 z-20 text-white">
+<p class="text-xs opacity-80">الموقع الجغرافي المسجل</p>
+<p class="font-bold flex items-center gap-1 flex-row-reverse">
+<span class="material-symbols-outlined text-sm">location_on</span>
+                                فرع الرياض الرئيسي
+                            </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- FAB for Quick Check-in (only for Mobile) -->
+<button class="md:hidden fixed bottom-20 left-6 h-14 w-14 bg-secondary text-on-secondary rounded-full shadow-2xl flex items-center justify-center z-50 hover:scale-110 transition-transform active:scale-95">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">fingerprint</span>
+</button>
+<!-- BottomNavBar (Visible only on Mobile) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-slate-50/95 backdrop-blur-md shadow-[0_-2px_10px_rgba(0,0,0,0.05)] h-16 flex justify-around items-center z-50">
+<a class="flex flex-col items-center text-outline gap-1" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[10px]">الرئيسية</span>
+</a>
+<a class="flex flex-col items-center text-outline gap-1" href="#">
+<span class="material-symbols-outlined">calendar_month</span>
+<span class="text-[10px]">الحضور</span>
+</a>
+<a class="flex flex-col items-center text-secondary font-bold gap-1" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="text-[10px]">الملف</span>
+</a>
+<a class="flex flex-col items-center text-outline gap-1" href="#">
+<span class="material-symbols-outlined">more_horiz</span>
+<span class="text-[10px]">المزيد</span>
+</a>
+</nav>
+</body></html>

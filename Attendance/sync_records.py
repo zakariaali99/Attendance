@@ -2,7 +2,7 @@ import calendar
 import os
 import sys
 from pathlib import Path
-
+from datetime import date
 import django
 from django.utils import timezone
 
@@ -10,85 +10,84 @@ from django.utils import timezone
 def sync_records(device=None, records=None):
     from Attendance.models import Record, Employee, WorkDay, ZKTDevice
 
-    # usrs = []
     days = dict()
     work_days = []
-    this_year = timezone.now().year
-    month = 12
-    _, last_day_in_the_month = calendar.monthrange(this_year, month)
-    workdays = WorkDay.objects.filter(device=device).order_by("-date").exclude(
-        date__gt=f"{this_year}-{month}-{last_day_in_the_month}")
-    workday = None
-    if workdays.count() > 0:
-        workday = workdays.first()
+    
+    # Get the latest existing workday for this device to avoid re-processing old records
+    workdays_query = WorkDay.objects.filter(device=device).order_by("-date")
+    workday = workdays_query.first()
 
     if records is None:
-        records = [r for r in Record.objects.all() if r.timestamp.date()]
-    # print("Records from data", records)
-    for r in records:
-        if workday is not None:
-
-            if r.timestamp.date() > workday.date:
-                if r.user_id not in days.keys():
-                    days[r.user_id] = [r.timestamp.date()]
-                else:
-                    if r.timestamp.date() not in days[r.user_id]:
-                        days[r.user_id].append(r.timestamp.date())
+        # Avoid pulling all records into memory at once if unnecessary
+        if workday:
+            records = Record.objects.filter(device=device, timestamp__date__gt=workday.date)
         else:
-            if r.user_id not in days.keys():
-                days[r.user_id] = [r.timestamp.date()]
-            else:
-                if r.timestamp.date() not in days[r.user_id]:
-                    days[r.user_id].append(r.timestamp.date())
+            records = Record.objects.filter(device=device)
 
-    for k, v in days.items():
+    # Accumulate unique [user_id: [dates]] pairs from the provided records
+    for r in records:
+        r_date = r.timestamp.date()
+        if workday is not None:
+            if r_date > workday.date:
+                if r.user_id not in days:
+                    days[r.user_id] = {r_date}
+                else:
+                    days[r.user_id].add(r_date)
+        else:
+            if r.user_id not in days:
+                days[r.user_id] = {r_date}
+            else:
+                days[r.user_id].add(r_date)
+
+    # Batch process new workdays for each employee
+    this_year = timezone.now().year
+    for attendance_id, unique_dates in days.items():
         try:
-            e = Employee.objects.filter(attendance_id__iexact=k).first()
-            for d in v:
+            employee = Employee.objects.filter(attendance_id__iexact=attendance_id).first()
+            if not employee:
+                print(f"Skipping: Employee with ID {attendance_id} not found.")
+                continue
+
+            for d in unique_dates:
+                # Sanity check for dates
                 if d.year < this_year + 5:
-                    try:
-                        print(k, d, e.name)
-                        w = WorkDay()
-                        w.setdate(d)
-                        w.employee = e
-                        w.device = device
+                    # Check if workday already exists for this employee on this date to prevent duplicates
+                    if not WorkDay.objects.filter(employee=employee, date=d).exists():
+                        w = WorkDay(date=d, employee=employee, device=device)
                         work_days.append(w)
-                    except:
-                        pass
-                # w.save()
-        except Employee.DoesNotExist:
-            print(f"User dose not exist. {k}")
-    WorkDay.objects.bulk_create(work_days)
-    print("Work days added", len(work_days))
+        except Exception as e:
+            print(f"Error processing workday for {attendance_id} on {d}: {e}")
+
+    if work_days:
+        WorkDay.objects.bulk_create(work_days)
+        print(f"Successfully generated {len(work_days)} new workdays for analysis.")
+    
     return days
 
 
 def sync_all(device):
     from Attendance.zkt import sync_attendance, sync_users
-    # جهاز الخروج اثناء الدوام - 192.168.100.202:4370
-    # الرئيسي - 192.168.100.201:4370
+    # 1. Sync employee list from device
     sync_users(device)
+    # 2. Sync raw attendance logs
     records, ts = sync_attendance(device)
+    # 3. Process records into analyzed WorkDay objects
     if records:
         sync_records(device, records=records)
 
-def sync_all_devices():
-    from Attendance.models import ZKTDevice, Record, WorkDay
 
+def sync_all_devices():
+    from Attendance.models import ZKTDevice
     for device in ZKTDevice.objects.all():
-        print(f"Syncing: {device.name} - {device.ip}:{device.port}")
+        print(f"--- Starting Sync for Device: {device.name} ({device.ip}) ---")
         try:
             sync_all(device)
         except Exception as e:
-            print(f"Failed to sync {device.name}: {e}")
+            print(f"ERROR: Failed to sync device {device.name}: {e}")
 
 
 if __name__ == '__main__':
+    # Initialize Django environment for standalone script execution
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "HTI.settings")
-    print('Python %s on %s' % (sys.version, sys.platform))
-    print('Django %s' % django.get_version())
-    BASE_DIR = Path(__file__).resolve().parent.parent
-    sys.path.extend([f'{BASE_DIR}'])
-    if 'setup' in dir(django):
-        django.setup()
+    django.setup()
     sync_all_devices()

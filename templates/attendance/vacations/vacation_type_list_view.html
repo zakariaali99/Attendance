@@ -1,70 +1,79 @@
 {% extends 'list_search_base.html' %}
 {% load static %}
 
+{% block title %}إعدادات أنواع الإجازات{% endblock %}
+
 {% block add_url %}
     {% url 'Attendance:add_vacation_type' %}
 {% endblock %}
 
-
 {% block search_box %}
-
+<div class="col-12 mb-4">
+    <p class="text-muted small">إدارة أنواع الإجازات المتاحة للموظفين (سنوية، مرضية، عرضية، إلخ)</p>
+</div>
 {% endblock %}
 
 {% block tabel %}
-    
-    <div class="col-12">
-       
+<div class="card border-0 shadow-lg rounded-24 overflow-hidden">
+    <div class="card-header bg-card-header py-3 px-4 border-bottom border-glass">
+        <h5 class="mb-0 fw-bold text-main">
+            <i class="bi bi-gear-fill ms-2 text-primary"></i> قائمة أنواع الإجازات
+        </h5>
     </div>
-    <div class="col-12 text-center fs-6">
-        <table class="table table-hover">
-            <thead class="bg-hti">
-              <tr>
-                <th scope="col">نوع الاجازة</th>
-                <th scope="col">-</th>
-              </tr>
-            </thead>
-            <tbody>
-                {% for vacation in object_list %}
-                  <tr>
-                    <th scope="row">{{ vacation.title }}</th>
-                    <td>
-                        <a href="{% url 'Attendance:edit_vacation_types' vacation.id %}" class="btn btn-link p-0 btn-lg fs-6">تعديل</a>
-                        <a href="{% url 'Attendance:delete_vacation_types' vacation.id %}" class="btn btn-link p-0 btn-lg fs-6">حذف</a>
-                    </td>
-                  </tr>
-                {% endfor %}
-             
-            </tbody>
-          </table>
-       
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr class="bg-light bg-opacity-50">
+                        <th class="px-4 py-3">مسمى نوع الإجازة</th>
+                        <th class="py-3 text-center">الخيارات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for vacation in object_list %}
+                    <tr class="transition">
+                        <td class="px-4 py-3">
+                            <div class="d-flex align-items-center">
+                                <div class="stats-icon bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center fw-bold ms-3"
+                                    style="width: 35px; height: 35px;">
+                                    <i class="bi bi-tag-fill small"></i>
+                                </div>
+                                <h6 class="mb-0 fw-bold text-main">{{ vacation.title }}</h6>
+                            </div>
+                        </td>
+                        <td class="text-center py-3">
+                            <div class="btn-group gap-2">
+                                <a href="{% url 'Attendance:edit_vacation_type' vacation.id %}" class="btn btn-sm btn-light btn-rounded px-3">
+                                    <i class="bi bi-pencil-square ms-1"></i> تعديل
+                                </a>
+                                <a href="{% url 'Attendance:delete_vacation_type' vacation.id %}" class="btn btn-sm btn-outline-danger btn-rounded px-3">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="2" class="text-center py-5">
+                            <div class="text-muted">
+                                <i class="bi bi-info-circle fs-1 d-block mb-3 opacity-20"></i>
+                                لم يتم تعريف أنواع إجازات بعد
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-
+</div>
 {% endblock %}
 
 {% block scripts %}
-    <script src="{% static 'js/bundle2.js' %}"></script>
-    <script>
-
-        let ZK = new ZKLib({
-            ip: '192.168.5.11',
-            port: 4370,
-            inport: 5200,
-            timeout: 5000,
-        });
-        console.log("ZKLIB loaded");
-        ZK.connect(function (err) {
-            if (err) throw err;
-
-            // read the time info from th device
-            ZK.getTime(function (err, t) {
-                // disconnect from the device
-                ZK.disconnect();
-
-                if (err) throw err;
-
-                console.log("Device clock's time is " + t.toString());
-            });
-        });
-
-    </script>
+<script>
+    // System ready
+    $(document).ready(function() {
+        console.log("Vacation types list ready");
+    });
+</script>
 {% endblock %}

@@ -1,13 +1,7 @@
-from io import StringIO,BytesIO
+from io import BytesIO
 from xhtml2pdf import pisa
 from django.template.loader import get_template
-from django.template import Context
 from django.http import HttpResponse
-from django.utils.safestring import SafeString
-# from cgi import escape
-from urllib.parse import *
-from Attendance.models import *
-from django.db.models import Q
 import pdfkit
 
 # pdfkit.from_url('https://www.delftstack.com/', 'sample.pdf')

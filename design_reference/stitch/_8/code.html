@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+
+<html class="light" dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>الملف الشخصي للمستخدم - منظومة الخوارزمي</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&amp;family=Tajawal:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration (The Precise Alchemist) -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary": "#ffffff",
+              "inverse-on-surface": "#f4eff3",
+              "surface-container-low": "#f7f2f6",
+              "surface-bright": "#fcf8fb",
+              "outline": "#78767e",
+              "tertiary-fixed": "#e3dfff",
+              "primary-fixed-dim": "#c7c2ea",
+              "tertiary-container": "#2d2b47",
+              "primary": "#181534",
+              "tertiary-fixed-dim": "#c7c3e6",
+              "on-error": "#ffffff",
+              "on-surface-variant": "#47464d",
+              "secondary-container": "#fcd400",
+              "primary-fixed": "#e4dfff",
+              "inverse-primary": "#c7c2ea",
+              "on-primary-fixed": "#1a1736",
+              "surface-container-highest": "#e5e1e5",
+              "on-tertiary-fixed-variant": "#464461",
+              "tertiary": "#181631",
+              "on-primary-fixed-variant": "#464364",
+              "surface-variant": "#e5e1e5",
+              "primary-container": "#2d2a4a",
+              "on-tertiary-container": "#9692b4",
+              "error": "#ba1a1a",
+              "on-background": "#1c1b1e",
+              "on-secondary-fixed-variant": "#544600",
+              "on-primary-container": "#9691b7",
+              "surface-tint": "#5e5a7d",
+              "background": "#fcf8fb",
+              "inverse-surface": "#313033",
+              "outline-variant": "#c9c5ce",
+              "secondary": "#705d00",
+              "on-secondary": "#ffffff",
+              "on-error-container": "#93000a",
+              "secondary-fixed": "#ffe16d",
+              "secondary-fixed-dim": "#e9c400",
+              "on-surface": "#1c1b1e",
+              "surface-dim": "#ddd9dc",
+              "on-secondary-container": "#6e5c00",
+              "on-secondary-fixed": "#221b00",
+              "surface": "#fcf8fb",
+              "on-tertiary-fixed": "#1a1833",
+              "on-tertiary": "#ffffff",
+              "surface-container": "#f1edf0",
+              "surface-container-lowest": "#ffffff",
+              "surface-container-high": "#ebe7ea",
+              "error-container": "#ffdad6"
+            },
+            borderRadius: {
+              "DEFAULT": "0.125rem",
+              "lg": "0.25rem",
+              "xl": "0.5rem",
+              "full": "0.75rem"
+            },
+            fontFamily: {
+              "headline": ["IBM Plex Sans Arabic", "sans-serif"],
+              "body": ["Tajawal", "sans-serif"],
+              "label": ["Tajawal", "sans-serif"]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body { font-family: 'Tajawal', sans-serif; background-color: theme('colors.background'); }
+        h1, h2, h3, h4, h5, h6 { font-family: 'IBM Plex Sans Arabic', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-panel {
+            background: rgba(252, 248, 251, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="text-on-surface antialiased bg-background">
+<!-- Brand Top Bar (Injected above shared component to satisfy logo requirement without breaking structure) -->
+<div class="w-full h-16 glass-panel fixed top-0 left-0 right-0 z-50 flex items-center px-8 border-b border-surface-container-high">
+<img alt="Al-Khawarizmi Logo" class="h-8 auto" data-alt="Geometric minimalist logo featuring a golden stylized Arabic letter 'Kha' enclosed in a deep navy blue square" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWZ07t0wB1QanY21ZNQeCqbYOVOvtyYgpld_Rpz_bvp0q9aE9be478BBFWtlSl5PMuRLXa9ySSZ4QEsPL6vKm6tcxY2y93paiXZibuSyC7CEUgaZ8DixCJTTtl4uYhf2lqZRN7tlSuRS-c01mWTEQgpk44AlCpCJLRVsPAdknXN25asfatAKUsgXWfHUi76rsbNWbq5ZJbrv0FJh774XAR6Cb8dd8Vt0Z1eBK7_7lxC5_obsvPY_Lhjri38dRamPQWe7GG-f8d4xo"/>
+<span class="mr-4 font-headline font-bold text-lg text-primary">منظومة الخوارزمي</span>
+</div>
+<!-- Wrapping shared component to push it below the fixed brand bar -->
+<div class="pt-16">
+<!-- SHARED COMPONENT START (Strict Application) -->
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-[#f9f9fa] group/design-root overflow-x-hidden" style='font-family: Manrope, "Noto Sans", sans-serif;'>
+<div class="layout-container flex h-full grow flex-col">
+<div class="px-40 flex flex-1 justify-center py-5">
+<div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#ecebef] px-10 py-3">
+<div class="flex items-center gap-4 text-[#131217]">
+<div class="size-4">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M39.475 21.6262C40.358 21.4363 40.6863 21.5589 40.7581 21.5934C40.7876 21.655 40.8547 21.857 40.8082 22.3336C40.7408 23.0255 40.4502 24.0046 39.8572 25.2301C38.6799 27.6631 36.5085 30.6631 33.5858 33.5858C30.6631 36.5085 27.6632 38.6799 25.2301 39.8572C24.0046 40.4502 23.0255 40.7407 22.3336 40.8082C21.8571 40.8547 21.6551 40.7875 21.5934 40.7581C21.5589 40.6863 21.4363 40.358 21.6262 39.475C21.8562 38.4054 22.4689 36.9657 23.5038 35.2817C24.7575 33.2417 26.5497 30.9744 28.7621 28.762C30.9744 26.5497 33.2417 24.7574 35.2817 23.5037C36.9657 22.4689 38.4054 21.8562 39.475 21.6262ZM4.41189 29.2403L18.7597 43.5881C19.8813 44.7097 21.4027 44.9179 22.7217 44.7893C24.0585 44.659 25.5148 44.1631 26.9723 43.4579C29.9052 42.0387 33.2618 39.5667 36.4142 36.4142C39.5667 33.2618 42.0387 29.9052 43.4579 26.9723C44.1631 25.5148 44.659 24.0585 44.7893 22.7217C44.9179 21.4027 44.7097 19.8813 43.5881 18.7597L29.2403 4.41187C27.8527 3.02428 25.8765 3.02573 24.2861 3.36776C22.6081 3.72863 20.7334 4.58419 18.8396 5.74801C16.4978 7.18716 13.9881 9.18353 11.5858 11.5858C9.18354 13.988 7.18717 16.4978 5.74802 18.8396C4.58421 20.7334 3.72865 22.6081 3.36778 24.2861C3.02574 25.8765 3.02429 27.8527 4.41189 29.2403Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h2 class="text-[#131217] text-lg font-bold leading-tight tracking-[-0.015em]">الملف الشخصي</h2>
+</div>
+<div class="flex flex-1 justify-end gap-8">
+<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded h-10 bg-[#ecebef] text-[#131217] gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5">
+<div class="text-[#131217]" data-icon="Gear" data-size="20px" data-weight="regular">
+<svg fill="currentColor" height="20px" viewbox="0 0 256 256" width="20px" xmlns="http://www.w3.org/2000/svg">
+<path d="M128,80a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Zm88-29.84q.06-2.16,0-4.32l14.92-18.64a8,8,0,0,0,1.48-7.06,107.21,107.21,0,0,0-10.88-26.25,8,8,0,0,0-6-3.93l-23.72-2.64q-1.48-1.56-3-3L186,40.54a8,8,0,0,0-3.94-6,107.71,107.71,0,0,0-26.25-10.87,8,8,0,0,0-7.06,1.49L130.16,40Q128,40,125.84,40L107.2,25.11a8,8,0,0,0-7.06-1.48A107.6,107.6,0,0,0,73.89,34.51a8,8,0,0,0-3.93,6L67.32,64.27q-1.56,1.49-3,3L40.54,70a8,8,0,0,0-6,3.94,107.71,107.71,0,0,0-10.87,26.25,8,8,0,0,0,1.49,7.06L40,125.84Q40,128,40,130.16L25.11,148.8a8,8,0,0,0-1.48,7.06,107.21,107.21,0,0,0,10.88,26.25,8,8,0,0,0,6,3.93l23.72,2.64q1.49,1.56,3,3L70,215.46a8,8,0,0,0,3.94,6,107.71,107.71,0,0,0,26.25,10.87,8,8,0,0,0,7.06-1.49L125.84,216q2.16.06,4.32,0l18.64,14.92a8,8,0,0,0,7.06,1.48,107.21,107.21,0,0,0,26.25-10.88,8,8,0,0,0,3.93-6l2.64-23.72q1.56-1.48,3-3L215.46,186a8,8,0,0,0,6-3.94,107.71,107.71,0,0,0,10.87-26.25,8,8,0,0,0-1.49-7.06Zm-16.1-6.5a73.93,73.93,0,0,1,0,8.68,8,8,0,0,0,1.74,5.48l14.19,17.73a91.57,91.57,0,0,1-6.23,15L187,173.11a8,8,0,0,0-5.1,2.64,74.11,74.11,0,0,1-6.14,6.14,8,8,0,0,0-2.64,5.1l-2.51,22.58a91.32,91.32,0,0,1-15,6.23l-17.74-14.19a8,8,0,0,0-5-1.75h-.48a73.93,73.93,0,0,1-8.68,0,8,8,0,0,0-5.48,1.74L100.45,215.8a91.57,91.57,0,0,1-15-6.23L82.89,187a8,8,0,0,0-2.64-5.1,74.11,74.11,0,0,1-6.14-6.14,8,8,0,0,0-5.1-2.64L46.43,170.6a91.32,91.32,0,0,1-6.23-15l14.19-17.74a8,8,0,0,0,1.74-5.48,73.93,73.93,0,0,1,0-8.68,8,8,0,0,0-1.74-5.48L40.2,100.45a91.57,91.57,0,0,1,6.23-15L69,82.89a8,8,0,0,0,5.1-2.64,74.11,74.11,0,0,1,6.14-6.14A8,8,0,0,0,82.89,69L85.4,46.43a91.32,91.32,0,0,1,15-6.23l17.74,14.19a8,8,0,0,0,5.48,1.74,73.93,73.93,0,0,1,8.68,0,8,8,0,0,0,5.48-1.74L155.55,40.2a91.57,91.57,0,0,1,15,6.23L173.11,69a8,8,0,0,0,2.64,5.1,74.11,74.11,0,0,1,6.14,6.14,8,8,0,0,0,5.1,2.64l22.58,2.51a91.32,91.32,0,0,1,6.23,15l-14.19,17.74A8,8,0,0,0,199.87,123.66Z"></path>
+</svg>
+</div>
+</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAvwvXzTLpQCme2nwwI4q-dFKC8wLiCvFwPm11G8GaBUDAj98eCwd8FS8oW6gQQNZQnUpVFrf1toblGrNJMLVFv3q3N-2whDd_5GH9XkA70o9rHOd3Q4VU-YAh920SPO70folMSAb0mbyEVbJ0lXO8aannidSqXiWB5yFPWspLxrmTPYgxMNoXtT9zspeZBKZAtUnnzySdRI7z0J_fJrQ9wqoCW82aNmW3P8DGYKwmrBpdHvzQsWlN0GBvNp3VWsSsqUrp0bBcNHh8");'></div>
+</div>
+</header>
+<div class="flex h-full min-h-[700px] flex-col justify-between bg-[#f9f9fa] p-4">
+<div class="flex flex-col gap-4">
+<div class="flex gap-3">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCtruSaycLJE7Eu9IkIWb_rX1pL5p9k4KJh3PxRe2RDXE1xOO45w2XG4Ogy4TQgNY59ytHJ2-sEZW5GjDuwL-y0QgfMF12_RKn-WU7p9F0r3LGXE6oDsBkdKzNHVB0yXsGFCFfRnWJn2wT5nDI-Lpj9JkG0Ro6jhE57d2444RUpG7hIvm-jcAU2t9kPwwa42K0WM-18lK5JzmejqeyY7XaPdGoigLqsQ63Cv2YTIbGfcoWzTfecZuDnojl_0zZFthMVGMI7wx6mWck");'></div>
+<div class="flex flex-col">
+<h1 class="text-[#131217] text-base font-medium leading-normal">John Doe</h1>
+<p class="text-[#69667f] text-sm font-normal leading-normal">Staff Member</p>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-3 px-3 py-2">
+<div class="text-[#131217]" data-icon="House" data-size="24px" data-weight="regular">
+<svg fill="currentColor" height="24px" viewbox="0 0 256 256" width="24px" xmlns="http://www.w3.org/2000/svg">
+<path d="M218.83,103.77l-80-75.48a1.14,1.14,0,0,1-.11-.11,16,16,0,0,0-21.53,0l-.11.11L37.17,103.77A16,16,0,0,0,32,115.55V208a16,16,0,0,0,16,16H96a16,16,0,0,0,16-16V160h32v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V115.55A16,16,0,0,0,218.83,103.77ZM208,208H160V160a16,16,0,0,0-16-16H112a16,16,0,0,0-16,16v48H48V115.55l.11-.1L128,40l79.9,75.43.11.1Z"></path>
+</svg>
+</div>
+<p class="text-[#131217] text-sm font-medium leading-normal">Home</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2">
+<div class="text-[#131217]" data-icon="Calendar" data-size="24px" data-weight="regular">
+<svg fill="currentColor" height="24px" viewbox="0 0 256 256" width="24px" xmlns="http://www.w3.org/2000/svg">
+<path d="M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM72,48v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80H48V48ZM208,208H48V96H208V208Zm-96-88v64a8,8,0,0,1-16,0V132.94l-4.42,2.22a8,8,0,0,1-7.16-14.32l16-8A8,8,0,0,1,112,120Zm59.16,30.45L152,176h16a8,8,0,0,1,0,16H136a8,8,0,0,1-6.4-12.8l28.78-38.37A8,8,0,1,0,145.07,132a8,8,0,1,1-13.85-8A24,24,0,0,1,176,136,23.76,23.76,0,0,1,171.16,150.45Z"></path>
+</svg>
+</div>
+<p class="text-[#131217] text-sm font-medium leading-normal">Schedule</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2">
+<div class="text-[#131217]" data-icon="Clock" data-size="24px" data-weight="regular">
+<svg fill="currentColor" height="24px" viewbox="0 0 256 256" width="24px" xmlns="http://www.w3.org/2000/svg">
+<path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm64-88a8,8,0,0,1-8,8H128a8,8,0,0,1-8-8V72a8,8,0,0,1,16,0v48h48A8,8,0,0,1,192,128Z"></path>
+</svg>
+</div>
+<p class="text-[#131217] text-sm font-medium leading-normal">Time Off</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 rounded bg-[#ecebef]">
+<div class="text-[#131217]" data-icon="User" data-size="24px" data-weight="fill">
+<svg fill="currentColor" height="24px" viewbox="0 0 256 256" width="24px" xmlns="http://www.w3.org/2000/svg">
+<path d="M230.93,220a8,8,0,0,1-6.93,4H32a8,8,0,0,1-6.92-12c15.23-26.33,38.7-45.21,66.09-54.16a72,72,0,1,1,73.66,0c27.39,8.95,50.86,27.83,66.09,54.16A8,8,0,0,1,230.93,220Z"></path>
+</svg>
+</div>
+<p class="text-[#131217] text-sm font-medium leading-normal">Profile</p>
+</div>
+</div>
+</div>
+</div>
+<div class="flex p-4 @container">
+<div class="flex w-full flex-col gap-4 items-center">
+<div class="flex gap-4 flex-col items-center">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full min-h-32 w-32" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC6NsxDl3slAVMEJaTLutiGLnyelagqCi0aiAsfKzZhK08shEVDak0B2_hsbzE1sXKxhdnrGKgTvhTKF1gwHpMQH1ooEGHG38X0-SAYxdeksjFAEw0eMVB-NSkzPpI6791FCRfBlg3LXr8nr-PjzJEDvsfr4g8P4mT7IpKjgZVzH_-lYC1pd7RQwRAcyfARgf5qIRlv4eOWSJJCfn9gJAaEitUvE4Ew1on6oTaQDokPD6AeCqxle4yoUGap38U0cmmYbwTvwh2WFxQ");'></div>
+<div class="flex flex-col items-center justify-center justify-center">
+<p class="text-[#131217] text-[22px] font-bold leading-tight tracking-[-0.015em] text-center">John Doe</p>
+<p class="text-[#69667f] text-base font-normal leading-normal text-center">Employee ID: 123456</p>
+</div>
+</div>
+</div>
+</div>
+<h2 class="text-[#131217] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">المعلومات الشخصية</h2>
+<div class="p-4 grid grid-cols-2">
+<div class="flex flex-col gap-1 border-t border-solid border-t-[#d8d7df] py-4 pr-2">
+<p class="text-[#69667f] text-sm font-normal leading-normal">Phone</p>
+<p class="text-[#131217] text-sm font-normal leading-normal">+1234567890</p>
+</div>
+<div class="flex flex-col gap-1 border-t border-solid border-t-[#d8d7df] py-4 pl-2">
+<p class="text-[#69667f] text-sm font-normal leading-normal">Email</p>
+<p class="text-[#131217] text-sm font-normal leading-normal">john.doe@company.com</p>
+</div>
+<div class="flex flex-col gap-1 border-t border-solid border-t-[#d8d7df] py-4 pr-2 col-span-2 pr-[50%]">
+<p class="text-[#69667f] text-sm font-normal leading-normal">Department</p>
+<p class="text-[#131217] text-sm font-normal leading-normal">Sales</p>
+</div>
+</div>
+<!-- NEW SECTIONS INJECTED HERE ALIGNING WITH DESIGN SYSTEM -->
+<div class="p-4 flex flex-col gap-8 bg-background rounded-t-xl mt-4 border-t border-surface-container-high/50">
+<!-- Section: Schedule Overview -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0_8px_32px_rgba(28,27,30,0.06)] relative overflow-hidden flex flex-col group hover:shadow-[0_12px_40px_rgba(28,27,30,0.08)] transition-shadow duration-300">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-secondary" data-icon="schedule">schedule</span>
+<h3 class="text-on-surface font-headline text-2xl font-bold">الجدول الزمني</h3>
+</div>
+<div class="flex flex-col md:flex-row gap-8 items-center md:items-start w-full">
+<!-- Intentional Asymmetry: Focus on the Alchemical Dial -->
+<div class="w-36 h-36 relative shrink-0">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
+<path class="text-surface-container-high" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="2.5"></path>
+<path class="text-secondary" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="80, 100" stroke-width="2.5"></path>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-primary font-headline text-3xl font-bold leading-none">32</span>
+<span class="text-on-surface-variant text-xs mt-1 font-medium">ساعة / 40</span>
+</div>
+</div>
+<div class="flex-1 flex flex-col gap-3 w-full">
+<div class="bg-surface-container-low rounded-lg p-4 flex flex-col justify-center">
+<p class="text-on-surface-variant text-sm font-medium mb-1">الوردية الافتراضية</p>
+<p class="text-primary font-headline font-bold text-lg">09:00 ص - 05:00 م</p>
+</div>
+<div class="bg-surface-container-low rounded-lg p-4 flex flex-col justify-center">
+<p class="text-on-surface-variant text-sm font-medium mb-1">أيام العمل</p>
+<p class="text-on-surface font-semibold text-base">الأحد - الخميس</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Section: Activity Log -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0_8px_32px_rgba(28,27,30,0.06)] flex flex-col">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-primary" data-icon="history">history</span>
+<h3 class="text-on-surface font-headline text-2xl font-bold">سجل النشاط</h3>
+</div>
+<div class="flex flex-col gap-3">
+<div class="flex items-center gap-4 bg-surface-container-low rounded-lg p-4 transition-colors hover:bg-surface-container">
+<div class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]" data-icon="login">login</span>
+</div>
+<div class="flex-1">
+<p class="text-on-surface font-semibold text-sm">تسجيل الدخول</p>
+<p class="text-on-surface-variant text-xs mt-0.5">اليوم، 08:55 ص</p>
+</div>
+<span class="px-3 py-1 rounded-full bg-secondary-container/20 text-secondary text-xs font-bold whitespace-nowrap">في الموعد</span>
+</div>
+<div class="flex items-center gap-4 bg-surface-container-low rounded-lg p-4 transition-colors hover:bg-surface-container">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]" data-icon="logout">logout</span>
+</div>
+<div class="flex-1">
+<p class="text-on-surface font-semibold text-sm">تسجيل الخروج</p>
+<p class="text-on-surface-variant text-xs mt-0.5">أمس، 05:05 م</p>
+</div>
+</div>
+<div class="flex items-center gap-4 bg-surface-container-low rounded-lg p-4 transition-colors hover:bg-surface-container">
+<div class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]" data-icon="login">login</span>
+</div>
+<div class="flex-1">
+<p class="text-on-surface font-semibold text-sm">تسجيل الدخول</p>
+<p class="text-on-surface-variant text-xs mt-0.5">أمس، 09:15 ص</p>
+</div>
+<span class="px-3 py-1 rounded-full bg-error-container text-on-error-container text-xs font-bold whitespace-nowrap">متأخر</span>
+</div>
+</div>
+</div>
+<!-- Section: Security -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0_8px_32px_rgba(28,27,30,0.06)] flex flex-col mb-8">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-primary" data-icon="shield_lock">shield_lock</span>
+<h3 class="text-on-surface font-headline text-2xl font-bold">الأمان</h3>
+</div>
+<form class="flex flex-col gap-4 w-full max-w-lg">
+<div class="flex flex-col gap-1.5">
+<label class="text-on-surface-variant text-sm font-medium">كلمة المرور الحالية</label>
+<input class="w-full bg-surface-container-high rounded-md px-4 py-3 text-sm text-on-surface outline-none border border-transparent focus:bg-surface-container-highest focus:border-outline-variant/30 transition-all duration-200 placeholder:text-outline" placeholder="••••••••" type="password"/>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-on-surface-variant text-sm font-medium">كلمة المرور الجديدة</label>
+<input class="w-full bg-surface-container-high rounded-md px-4 py-3 text-sm text-on-surface outline-none border border-transparent focus:bg-surface-container-highest focus:border-outline-variant/30 transition-all duration-200 placeholder:text-outline" placeholder="••••••••" type="password"/>
+</div>
+<div class="flex flex-col gap-1.5 mb-2">
+<label class="text-on-surface-variant text-sm font-medium">تأكيد كلمة المرور الجديدة</label>
+<input class="w-full bg-surface-container-high rounded-md px-4 py-3 text-sm text-on-surface outline-none border border-transparent focus:bg-surface-container-highest focus:border-outline-variant/30 transition-all duration-200 placeholder:text-outline" placeholder="••••••••" type="password"/>
+</div>
+<button class="mt-2 bg-gradient-to-br from-primary to-primary-container text-on-primary rounded-md px-6 py-3.5 font-bold text-sm text-center w-full shadow-sm hover:shadow-md transition-shadow" type="button">
+                        تحديث كلمة المرور
+                    </button>
+</form>
+</div>
+</div>
+<!-- END NEW SECTIONS -->
+</div>
+</div>
+</div>
+</div>
+<!-- SHARED COMPONENT END -->
+</div>
+</body></html>

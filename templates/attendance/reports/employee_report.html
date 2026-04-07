@@ -1,150 +1,201 @@
 {% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}منظومة الخوارزمي - سجل حركات {{ object.name }}{% endblock %}
 
 {% block body %}
-    <div class="row text-center mt-2 mb-1 text-success">
-        <div class="col"></div>
-        <div class="col-7" dir="rtl">
-            {{ object.attendance_id }} - {{ object.name }} - {{ object.phone }}
+<!-- Breadcrumb -->
+<nav class="flex flex-row-reverse items-center gap-2 mb-8 text-xs font-bold text-outline dark:text-slate-500 uppercase tracking-widest animate-fade-in-up">
+    <a href="{% url 'Attendance:dashboard' %}" class="hover:text-primary dark:hover:text-white transition-colors">الرئيسية</a>
+    <span class="material-symbols-outlined text-[14px]">chevron_left</span>
+    <a href="{% url 'Attendance:list' %}" class="hover:text-primary dark:hover:text-white transition-colors">الموظفين</a>
+    <span class="material-symbols-outlined text-[14px]">chevron_left</span>
+    <span class="text-primary dark:text-white">سجل الحركات التفصيلي</span>
+</nav>
+
+<!-- Employee Profile Header -->
+<header class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-surface-container dark:border-slate-800 p-8 mb-8 animate-fade-in-up">
+    <div class="flex flex-col md:flex-row-reverse justify-between items-center gap-6">
+        <div class="flex items-center gap-6 flex-row-reverse text-right">
+            <div class="w-24 h-24 rounded-3xl bg-primary text-white flex items-center justify-center font-black text-4xl shadow-xl shadow-primary/20 border-4 border-white dark:border-slate-800">
+                {{ object.name|slice:":1"|upper }}
+            </div>
+            <div>
+                <h1 class="text-3xl font-black text-primary dark:text-white mb-2 font-headline">{{ object.name }}</h1>
+                <div class="flex items-center gap-3 flex-row-reverse">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container dark:bg-slate-800 text-outline dark:text-slate-400 font-bold text-[10px] uppercase tracking-widest border border-white dark:border-slate-700 shadow-sm">
+                        <span class="material-symbols-outlined text-[14px]">id_card</span>
+                        {{ object.attendance_id }}
+                    </span>
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container dark:bg-slate-800 text-outline dark:text-slate-400 font-bold text-[10px] uppercase tracking-widest border border-white dark:border-slate-700 shadow-sm">
+                        <span class="material-symbols-outlined text-[14px]">schedule</span>
+                        {{ object.default_profile }}
+                    </span>
+                </div>
+            </div>
         </div>
-        <div class="col"></div>
-
+        <div class="flex items-center gap-3 flex-row-reverse">
+            <a href="{% url 'Attendance:export_employee_report' object.id %}?{{ request.GET.urlencode }}" class="flex flex-row-reverse items-center gap-2 bg-secondary-container text-on-secondary-container px-6 py-3 rounded-2xl font-black shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all">
+                <span class="material-symbols-outlined">download</span>
+                <span class="text-xs">تصدير Excel</span>
+            </a>
+            <a href="{% url 'Attendance:list' %}" class="flex flex-row-reverse items-center gap-2 bg-surface-container dark:bg-slate-800 text-primary dark:text-white px-6 py-3 rounded-2xl font-black shadow-sm hover:bg-surface-container-highest transition-all">
+                <span class="material-symbols-outlined">arrow_forward</span>
+                <span class="text-xs">العودة</span>
+            </a>
+        </div>
     </div>
-    <div class="row my-3"></div>
-    <div class="row text-center mt-2 mb-1 text-success">
-        {% if device.out_during_work %}
-            <div class="col"></div>
-            <div class="col-2 text-dark">
-                خروج اثناء الدوام
-            </div>
-            <div class="col"></div>
-        {% else %}
-            <div class="col"></div>
-            <div class="col-4">
-                <div class="progress mb-1 border ">
+</header>
 
-                    <div class="progress-bar border border-danger progress-bar-striped bg-warning"
-                         role="progressbar" style="width: 33%" aria-valuenow="33"
-                         aria-valuemin="0"
-                         aria-valuemax="100">فتح جلسة تلقائي
-                    </div>
-                    <div class="progress-bar border border-danger progress-bar-striped bg-info"
-                         role="progressbar" style="width: 33%" aria-valuenow="33"
-                         aria-valuemin="0"
-                         aria-valuemax="100">اغلاق جلسة تلقائي
-                    </div>
-                    <div class="progress-bar bg-success"
-                         role="progressbar" style="width: 34%" aria-valuenow="34"
-                         aria-valuemin="0"
-                         aria-valuemax="100">جلسة كاملة
-                    </div>
-
-                </div>
-            </div>
-            <div class="col"></div>
-        {% endif %}
+<!-- Quick Impact Stats -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 animate-fade-in-up" style="animation-delay: 0.1s;">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border border-surface-container dark:border-slate-800 flex items-center justify-between flex-row-reverse">
+        <div class="bg-primary/10 dark:bg-primary/20 p-4 rounded-2xl text-primary dark:text-primary-fixed">
+            <span class="material-symbols-outlined text-[32px]">timelapse</span>
+        </div>
+        <div class="text-right">
+            <div class="text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest mb-1">إجمالي ساعات العمل</div>
+            <div class="text-3xl font-black text-primary dark:text-white">{{ object.count_hours|default:"0" }}</div>
+        </div>
     </div>
+    <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border border-surface-container dark:border-slate-800 flex items-center justify-between flex-row-reverse">
+        <div class="bg-red-50 dark:bg-red-950/30 p-4 rounded-2xl text-red-600 dark:text-red-400">
+            <span class="material-symbols-outlined text-[32px]">warning</span>
+        </div>
+        <div class="text-right">
+            <div class="text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest mb-1">أيام التأخير المسجلة</div>
+            <div class="text-3xl font-black text-red-600 dark:text-red-400">{{ object.late_days_count|default:"0" }}</div>
+        </div>
+    </div>
+    <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border border-surface-container dark:border-slate-800 flex items-center justify-between flex-row-reverse">
+        <div class="bg-green-50 dark:bg-green-950/30 p-4 rounded-2xl text-green-600 dark:text-green-400">
+            <span class="material-symbols-outlined text-[32px]">event_available</span>
+        </div>
+        <div class="text-right">
+            <div class="text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest mb-1">نسبة الحضور الفعلي</div>
+            <div class="text-3xl font-black text-green-600 dark:text-green-400">{{ object.all_days_count|default:"0" }}</div>
+        </div>
+    </div>
+</div>
 
-
-    <form>
-        <div class="container-fluid mb-3">
-            <div class="row">
-                <div class="col-auto p-0 ms-5">
-                    <p class="p-0 m-0">-</p>
-                    <a href="{% url 'Attendance:records_export' object.id %}?{{ old_q }}"
-                       class="btn btn-light bg-white border-0 rounded-pill">تصدير</a>
-                    <button type="submit" class="btn btn-secondary border-0  rounded-pill"
-                            id="inputGroup-sizing-lg">تصفية
-                    </button>
-
-                </div>
-                <div class="col-4">
-                    <div class="row text-center">
-                        <div class="col-6">
-                            من
-                            {{ form.from_date }}
-                        </div>
-                        <div class="col-6">
-                            الي
-                            {{ form.to_date }}
-                        </div>
-                    </div>
-
-
-                </div>
-
-                <div class="col-2 p-0 mx-5">
-                    الجهاز
-                    {{ form.device }}
-                </div>
-                <div class="col-auto">
-                    <a href="{% url 'Attendance:permission' object.id %}" class="btn btn-danger ml-2  mt-4"> Add
-                        Permission</a>
-
-                </div>
-                <div class="col-auto">
-                    <a href="{% url 'Attendance:permission' object.id %}" class="btn btn-danger ml-2  mt-4"> Add
-                        Vacation</a>
-
-                </div>
-
-
-            </div>
+<!-- Filter Bar -->
+<div class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-surface-container dark:border-slate-800 p-6 mb-8 animate-fade-in-up" style="animation-delay: 0.2s;">
+    <form method="get" class="flex flex-col md:flex-row-reverse items-end gap-6">
+        <div class="w-full md:w-1/3 space-y-2">
+            <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">من تاريخ</label>
+            {{ form.from_date|add_class:"form-control" }}
+        </div>
+        <div class="w-full md:w-1/3 space-y-2">
+            <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">إلى تاريخ</label>
+            {{ form.to_date|add_class:"form-control" }}
+        </div>
+        <div class="w-full md:w-1/3">
+            <button type="submit" class="w-full py-4 bg-primary dark:bg-white text-white dark:text-primary font-black rounded-2xl shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined">refresh</span>
+                <span>تحديث التقرير</span>
+            </button>
         </div>
     </form>
-    <table class="table">
-        <thead>
-        <tr>
-            <th scope="col"></th>
-            <th scope="col">اليوم</th>
-            <th scope="col">الساعة</th>
-            <th scope="col">ساعات العمل</th>
-            <th scope="col">الساعات الاضافية</th>
-            <th scope="col">الاذونات</th>
-            <th scope="col">التأخير(بالدقائق)</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for day in object.days %}
-            <tr>
-                <td>{{ day.date }} </td>
-                <td>
-                    {% for shift in day.shifts %}
-                        {{ shift.name }} <br/>
-                    {% endfor %}
-                </td>
-                <td>{{ day.work }} </td>
-                <td>{{ day.overwork }}</td>
-                <td>
-                    {% for e in day.work_day_exceptions %}
-                        {{ e.type }}
-                    {% endfor %}
-                </td>
-                <td>{{ day.late_min }}</td>
-                {% comment %} <td></td> {% endcomment %}
+</div>
 
+<!-- Detailed Records Table -->
+<div class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-surface-container dark:border-slate-800 overflow-hidden animate-fade-in-up" style="animation-delay: 0.3s;">
+    <div class="p-6 border-b border-surface-container dark:border-slate-800 flex justify-between items-center flex-row-reverse">
+        <h2 class="text-xl font-black text-primary dark:text-white font-headline flex items-center gap-2 flex-row-reverse">
+            <span class="material-symbols-outlined text-secondary">database</span>
+            سجل الحركات التفصيلي
+        </h2>
+        <div class="text-[10px] font-black bg-surface-container dark:bg-slate-800 text-outline dark:text-slate-400 px-3 py-1 rounded-full uppercase tracking-widest">
+            {{ days|length }} يوم حضور
+        </div>
+    </div>
+    
+    <div class="overflow-x-auto">
+        <table class="w-full text-right border-collapse" id="recordsTable">
+            <thead>
+                <tr class="bg-surface-container-low dark:bg-slate-800/50 text-outline dark:text-slate-500">
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest">التاريخ واليوم</th>
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">ساعات العمل</th>
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">إضافي / استئذان</th>
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">حالة الحضور</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-surface-container dark:divide-slate-800">
+                {% for day in days %}
+                <tr class="hover:bg-surface-container-lowest dark:hover:bg-slate-800/30 transition-all duration-200">
+                    <td class="px-6 py-5">
+                        <div class="font-black text-primary dark:text-white text-sm font-headline">{{ day.get_formatted_date }}</div>
+                        <div class="text-[10px] text-outline font-bold">{{ day.date|date:"l" }}</div>
+                    </td>
+                    <td class="px-6 py-5 text-center">
+                        <span class="text-lg font-black text-primary dark:text-white">{{ day.work }}</span>
+                        <span class="text-[9px] font-bold text-outline dark:text-slate-500 uppercase tracking-widest mr-1">ساعة</span>
+                    </td>
+                    <td class="px-6 py-5 text-center">
+                        <div class="flex items-center justify-center gap-2 flex-row-reverse">
+                            {% if day.overwork > 0 %}
+                            <span class="bg-green-50 dark:bg-green-950/20 text-green-600 dark:text-green-400 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border border-green-100 dark:border-green-900/50">
+                                + {{ day.overwork }} إضافي
+                            </span>
+                            {% endif %}
+                            {% if day.out_return_time > 0 %}
+                            <span class="bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border border-red-100 dark:border-red-900/50">
+                                - {{ day.out_return_time }} خروج
+                            </span>
+                            {% endif %}
+                            {% if not day.overwork and not day.out_return_time %}
+                            <span class="text-outline dark:text-slate-600 opacity-30">—</span>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td class="px-6 py-5 text-center">
+                        {% if day.late > 0 %}
+                        <span class="inline-flex items-center gap-1.5 bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border border-amber-100 dark:border-amber-900/50">
+                            <span class="w-1.5 h-1.5 bg-amber-500 rounded-full"></span>
+                            تأخير {{ day.late_min|floatformat:0 }} دقيقة
+                        </span>
+                        {% else %}
+                        <span class="inline-flex items-center gap-1.5 bg-green-50 dark:bg-green-950/20 text-green-600 dark:text-green-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border border-green-100 dark:border-green-900/50">
+                            <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+                            منضبط
+                        </span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="px-6 py-16 text-center">
+                        <div class="flex flex-col items-center gap-4 opacity-30 dark:opacity-50">
+                            <span class="material-symbols-outlined text-[64px]">calendar_today</span>
+                            <p class="text-base font-bold font-headline">لا توجد حركات مسجلة لهذا الموظف في الفترة المختارة.</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
 
-            </tr>
-
-
-        {% endfor %}
-
-
-        </tbody>
-    </table>
-
-    {% comment %} {% for day in object.days %} {% endcomment %}
-    {% comment %} <div class="row"> {% endcomment %}
-    {% comment %} <div class="col"> {% endcomment %}
-    {% comment %} {{ day.date }}  {% endcomment %}
-    {% comment %} - {{ day.overwork }} {% endcomment %}
-    {% comment %} </div> {% endcomment %}
-    {% comment %} <div class="col-8"> {% endcomment %}
-    {% comment %} {% for shift in day.shifts %} <div>{{ shift.name }}</div> {% endfor %} / {{ day.work }} / {{ day.late_min }} {% endcomment %}
-    {% comment %} {% include 'attendance/reports/progress_bar.html' with day=day %} {% endcomment %}
-    {% comment %} </div> {% endcomment %}
-    {% comment %} <div class="col"></div> {% endcomment %}
-    {% comment %} </div> {% endcomment %}
-    {% comment %} {% endfor %} {% endcomment %}
-
-    <div class="my-5"></div>
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        if ($.fn.dataTable) {
+            $('#recordsTable').DataTable({
+                "order": [[ 0, "desc" ]],
+                "pageLength": 31,
+                "dom": '<"flex justify-between items-center mb-6"f>rt<"flex justify-between items-center mt-6"ip>',
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Arabic.json",
+                    "search": "",
+                    "searchPlaceholder": "ابحث في السجل الحالي..."
+                }
+            });
+            // Restyle search input
+            $('.dataTables_filter input').addClass('block w-80 py-2.5 pr-10 pl-4 bg-surface-container-low dark:bg-slate-800 border-none rounded-xl text-xs font-bold text-primary dark:text-white placeholder:text-outline focus:ring-2 focus:ring-secondary-container transition-all');
+        }
+    });
+</script>
 {% endblock %}

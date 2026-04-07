@@ -2,52 +2,82 @@
 {% load static %}
 
 {% block body %}
-    <br>
-    <br>
-    <br>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col"></div>
-            <div class="col-4">
-                <div class="card text-center py-5">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-12 border-bottom">
-                                <img height="100" src="{% static 'imgs/user.svg' %}" alt="">
-                                <p>Login</p>
-                            </div>
-                            <div class="col-12">
-                                <br>
-                                {% if form.errors %}
-                                <h6 class="text-danger">خطا في البريد الالكتروني او كلمة المرور</h4>
-                                {% endif %}
-                                <br>
-                                <form method="post">
-                                    {% csrf_token %}
-                                    <div class="input-group mb-3">
-{#                                        <span class="input-group-text" id="basic-addon1">Email</span>#}
-                                        {{ form.email }}
-{#                                        <input type="email" class="form-control rounded-pill" placeholder="Email"#}
-{#                                               aria-label="Email"#}
-{#                                               aria-describedby="basic-addon1">#}
-                                    </div>
+<div class="fixed inset-0 flex items-center justify-center p-4 bg-background dark:bg-slate-950 overflow-hidden">
+    <!-- Background dynamic elements -->
+    <div class="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary-container/10 rounded-full blur-[120px] animate-pulse"></div>
+    <div class="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-secondary-container/10 rounded-full blur-[120px] animate-pulse" style="animation-delay: 2s;"></div>
 
-                                     <div class="input-group mb-3">
-{#                                        <span class="input-group-text" id="basic-addon1">Password</span>#}
-                                         {{ form.password }}
-{#                                        <input type="password" class="form-control rounded-pill" placeholder="Password"#}
-{#                                               aria-label="Email"#}
-{#                                               aria-describedby="basic-addon1">#}
-                                    </div>
+    <div class="w-full max-w-md z-10">
+        <!-- Login Card -->
+        <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-surface-container dark:border-slate-800 p-8 sm:p-10 animate-fade-in-up">
+            
+            <div class="text-center mb-10">
+                <div class="inline-flex p-5 rounded-full bg-surface-container dark:bg-slate-800 mb-6 border border-white dark:border-slate-700 shadow-inner relative group">
+                    <img src="{% static 'imgs/logo.png' %}" alt="Logo" class="w-20 h-20 drop-shadow-xl transition-transform group-hover:scale-110 duration-500">
+                    <div class="absolute -inset-1 bg-secondary-container/20 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </div>
+                <h1 class="text-3xl font-black text-primary dark:text-white mb-2 font-headline">تسجيل الدخول</h1>
+                <p class="text-on-surface-variant dark:text-slate-400 text-sm font-body">منظومة الخوارزمي - دقة وأداء في إدارة الحضور</p>
+            </div>
 
-                                    <button type="submit" class="btn btn-primary">دخول</button>
-                                </form>
-                            </div>
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold text-outline dark:text-slate-500 uppercase tracking-wider pr-2">اسم المستخدم</label>
+                    <div class="relative group">
+                        <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none transition-colors group-focus-within:text-secondary-container text-outline">
+                            <span class="material-symbols-outlined text-[20px]">person</span>
                         </div>
+                        <input type="text" name="username" required 
+                            class="block w-full py-4 pr-12 pl-4 bg-surface-container-low dark:bg-slate-800/50 border-none rounded-2xl text-primary dark:text-white placeholder:text-outline/50 focus:ring-2 focus:ring-secondary-container transition-all group-hover:bg-surface-container dark:group-hover:bg-slate-800"
+                            placeholder="أدخل اسم المستخدم...">
                     </div>
                 </div>
+
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold text-outline dark:text-slate-500 uppercase tracking-wider pr-2">كلمة المرور</label>
+                    <div class="relative group">
+                        <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none transition-colors group-focus-within:text-secondary-container text-outline">
+                            <span class="material-symbols-outlined text-[20px]">lock</span>
+                        </div>
+                        <input type="password" name="password" required 
+                            class="block w-full py-4 pr-12 pl-4 bg-surface-container-low dark:bg-slate-800/50 border-none rounded-2xl text-primary dark:text-white placeholder:text-outline/50 focus:ring-2 focus:ring-secondary-container transition-all group-hover:bg-surface-container dark:group-hover:bg-slate-800"
+                            placeholder="أدخل كلمة المرور...">
+                    </div>
+                </div>
+
+                {% if form.errors %}
+                <div class="flex items-center gap-3 p-4 bg-red-50 dark:bg-red-950/30 rounded-2xl border border-red-100 dark:border-red-900/50 animate-shake text-red-600 dark:text-red-400">
+                    <span class="material-symbols-outlined">error</span>
+                    <p class="text-sm font-bold">اسم المستخدم أو كلمة المرور غير صحيحة</p>
+                </div>
+                {% endif %}
+
+                <button type="submit" 
+                    class="w-full py-4 bg-secondary-container text-on-secondary-container font-black rounded-2xl shadow-lg shadow-secondary-container/20 hover:shadow-xl hover:shadow-secondary-container/30 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2">
+                    <span>دخول الأن</span>
+                    <span class="material-symbols-outlined">login</span>
+                </button>
+            </form>
+
+            <div class="mt-8 pt-8 border-t border-surface-container dark:border-slate-800 text-center">
+                <p class="text-[10px] text-outline dark:text-slate-600 font-bold uppercase tracking-widest">
+                    تم التطوير بواسطة الخوارزمي ذ.م.م © 2026
+                </p>
             </div>
-            <div class="col"></div>
         </div>
     </div>
+</div>
+
+<style>
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        20%, 60% { transform: translateX(-4px); }
+        40%, 80% { transform: translateX(4px); }
+    }
+    .animate-shake {
+        animation: shake 0.4s ease-in-out;
+    }
+</style>
 {% endblock %}

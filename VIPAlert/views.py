@@ -1,15 +1,10 @@
 from django.contrib.auth import login
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.contrib.auth.models import User
-from django.core.paginator import Paginator
-from django.db.models import Q
-from django.http import HttpRequest
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, ListView, UpdateView, CreateView, FormView, RedirectView, DeleteView
-from django.utils.translation import gettext_lazy as _
-from VIPAlert.forms import *
-from VIPAlert.models import *
+from django.views.generic import TemplateView, ListView, UpdateView, CreateView, FormView
+from VIPAlert.forms import LoginForm, UserForm
+from VIPAlert.models import User
 
 
 class HomeView(TemplateView):
@@ -38,7 +33,8 @@ class LoginView(FormView):
             return redirect("Attendance:list")
         return super().get(request, *args, **kwargs)
 
-class UsersListView(PermissionRequiredMixin,ListView):
+
+class UsersListView(PermissionRequiredMixin, ListView):
     template_name = "list_users.html"
     model = User
     permission_required = ("VIPAlert.can_edit_users",)

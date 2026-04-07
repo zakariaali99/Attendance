@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>إضافة جهاز جديد - منظومة الخوارزمي</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&amp;family=Manrope:wght@400;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "background": "#fcf8fb",
+                        "surface-dim": "#ddd9dc",
+                        "surface-variant": "#e5e1e5",
+                        "on-error": "#ffffff",
+                        "outline-variant": "#c9c5ce",
+                        "on-secondary-container": "#6e5c00",
+                        "on-surface-variant": "#47464d",
+                        "surface": "#fcf8fb",
+                        "primary-fixed": "#e4dfff",
+                        "inverse-surface": "#313033",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#1a1833",
+                        "tertiary-container": "#2d2b47",
+                        "on-error-container": "#93000a",
+                        "surface-bright": "#fcf8fb",
+                        "secondary-fixed": "#ffe16d",
+                        "on-tertiary-container": "#9692b4",
+                        "on-primary-fixed-variant": "#464364",
+                        "secondary": "#705d00",
+                        "surface-container": "#f1edf0",
+                        "primary": "#181534",
+                        "on-secondary-fixed-variant": "#544600",
+                        "on-primary": "#ffffff",
+                        "outline": "#78767e",
+                        "inverse-primary": "#c7c2ea",
+                        "inverse-on-surface": "#f4eff3",
+                        "tertiary-fixed-dim": "#c7c3e6",
+                        "error": "#ba1a1a",
+                        "primary-container": "#2d2a4a",
+                        "surface-tint": "#5e5a7d",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f7f2f6",
+                        "on-secondary-fixed": "#221b00",
+                        "tertiary": "#181631",
+                        "on-surface": "#1c1b1e",
+                        "on-primary-fixed": "#1a1736",
+                        "on-background": "#1c1b1e",
+                        "secondary-fixed-dim": "#e9c400",
+                        "secondary-container": "#fcd400",
+                        "surface-container-high": "#ebe7ea",
+                        "primary-fixed-dim": "#c7c2ea",
+                        "surface-container-highest": "#e5e1e5",
+                        "on-primary-container": "#9691b7",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed": "#e3dfff",
+                        "on-tertiary-fixed-variant": "#464461",
+                        "on-tertiary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["IBM Plex Sans Arabic", "Manrope"],
+                        "body": ["IBM Plex Sans Arabic", "Inter"],
+                        "label": ["IBM Plex Sans Arabic", "Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'IBM Plex Sans Arabic', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-background text-on-background selection:bg-secondary-container">
+<aside class="fixed right-0 h-screen w-64 bg-[#181534] dark:bg-slate-950 flex flex-col h-full py-8 font-['IBM_Plex_Sans_Arabic'] text-right z-[60] shadow-2xl">
+<div class="px-6 mb-10">
+<div class="flex flex-row-reverse items-center gap-3">
+<img alt="الخوارزمي" class="w-10 h-10 object-contain" data-alt="precise geometric brand logo for an analytical software company with navy and gold accents on a white background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJq6hFduDk_BoyaTdqViBl-yvTjovHIx-GVpynXQc1xAqcSlTnux064pbEhct4P_uy7YJWobVmIepVFh-98f7sEsd6CVmDeYa0L7X3utK04XwSsbSzZJ47YvbA5cS2QRmviYN_rQMFDaAxPWhzanlSsHyGUkqDkHO5Rhwq7FCzYUZ4HE7-vh40H9n2qMmZWaSyhWArMTVzjGjB5RI9ohL3RgtnfMFnFvOvtcxV8gT4i1efxu4aFIh2XIr7papp3yipxOFMVgJzJEY"/>
+<div class="text-right">
+<h1 class="text-2xl font-black text-[#fcd400]">الخوارزمي</h1>
+<p class="text-[10px] text-slate-400">نظام إدارة الحضور</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 px-3 space-y-2">
+<a class="flex flex-row-reverse items-center gap-3 text-slate-300 px-4 py-3 hover:text-white hover:bg-[#2D2A4A]/50 transition-all hover:translate-x-[-4px] duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-sm">لوحة التحكم</span>
+</a>
+<a class="flex flex-row-reverse items-center gap-3 text-slate-300 px-4 py-3 hover:text-white hover:bg-[#2D2A4A]/50 transition-all hover:translate-x-[-4px] duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="text-sm">الموظفين</span>
+</a>
+<a class="flex flex-row-reverse items-center gap-3 bg-[#2D2A4A] text-[#fcd400] px-4 py-3 rounded-lg font-bold" href="#">
+<span class="material-symbols-outlined" data-icon="router" style="font-variation-settings: 'FILL' 1;">router</span>
+<span class="text-sm">الأجهزة</span>
+</a>
+<a class="flex flex-row-reverse items-center gap-3 text-slate-300 px-4 py-3 hover:text-white hover:bg-[#2D2A4A]/50 transition-all hover:translate-x-[-4px] duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="pending_actions">pending_actions</span>
+<span class="text-sm">سجلات الحضور</span>
+</a>
+<a class="flex flex-row-reverse items-center gap-3 text-slate-300 px-4 py-3 hover:text-white hover:bg-[#2D2A4A]/50 transition-all hover:translate-x-[-4px] duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="schedule">schedule</span>
+<span class="text-sm">إعدادات الوردية</span>
+</a>
+</nav>
+<div class="px-3 mt-auto border-t border-slate-800/50 pt-4">
+<a class="flex flex-row-reverse items-center gap-3 text-slate-300 px-4 py-3 hover:text-white hover:bg-[#2D2A4A]/50 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="text-sm">المساعدة</span>
+</a>
+<button class="w-full mt-4 flex flex-row-reverse items-center justify-center gap-2 bg-red-500/10 text-red-400 py-3 rounded-xl hover:bg-red-500/20 transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="logout">logout</span>
+<span class="text-sm font-bold">تسجيل خروج</span>
+</button>
+</div>
+</aside>
+<header class="fixed top-0 right-64 left-0 h-16 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md z-50 shadow-[0px_8px_32px_rgba(24,21,52,0.06)] flex flex-row-reverse justify-between items-center px-6">
+<div class="flex items-center gap-4">
+<span class="text-xl font-bold text-[#181534] dark:text-slate-100">إضافة جهاز جديد</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="relative hidden md:block">
+<input class="bg-surface-container border-none rounded-full px-10 py-2 text-sm focus:ring-2 focus:ring-secondary/20 w-64 text-right" placeholder="بحث سريع..." type="text"/>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg" data-icon="search">search</span>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100 transition-colors active:scale-95 duration-200 text-slate-600">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100 transition-colors active:scale-95 duration-200 text-slate-600">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-white font-bold border-2 border-white shadow-sm overflow-hidden">
+<img alt="User profile avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8rZDocNTc41i0v8x3I8bvJuD0NRdH6VgIxScRofUVM_sSPsVFeG_4H1pI-SW-GiYdY5gYP50Jo6gGWUcRuW-B2ezlbJII-rwbZRzuhNt4vM0RwNfSJBsihyweH14unzoy1dyLPHyBB_IWMhSe4vdnymmCWUrMvOuT9H-QBwhcuVBaUW7ygcHoHo941aI8pCYh9qFe_aFIWAX53st7WpmF4tkG-fJFIfEaECcZKlMxRpmqxB0jHfUvBftPiNb12yFFZNR00OljniM"/>
+</div>
+</div>
+</header>
+<main class="mr-64 pt-24 pb-12 px-8 min-h-screen">
+<div class="max-w-4xl mx-auto">
+<nav aria-label="Breadcrumb" class="flex items-center gap-2 text-sm text-slate-500 mb-6">
+<a class="hover:text-primary transition-colors" href="#">الأجهزة</a>
+<span class="material-symbols-outlined text-xs" data-icon="chevron_left">chevron_left</span>
+<span class="text-primary font-bold">إضافة جهاز جديد</span>
+</nav>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<div class="lg:col-span-8 bg-surface-container-lowest rounded-xl p-8 shadow-[0px_4px_20px_rgba(24,21,52,0.03)] border-b-4 border-secondary/10">
+<div class="mb-8">
+<h2 class="text-xl font-bold text-primary mb-2">بيانات الاتصال بالجهاز</h2>
+<p class="text-slate-500 text-sm">أدخل تفاصيل التقنية للجهاز لربطه بنظام الخوارزمي المركزي.</p>
+</div>
+<form class="space-y-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="block text-sm font-semibold text-primary/80">اسم الجهاز</label>
+<input class="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary/10 transition-all text-right" placeholder="مثال: جهاز المدخل الرئيسي" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="block text-sm font-semibold text-primary/80">نوع الجهاز</label>
+<div class="relative">
+<select class="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 appearance-none focus:ring-2 focus:ring-primary/10 transition-all text-right">
+<option value="zkteco">ZKTeco (نظام البصمة)</option>
+<option value="face_id">بصمة الوجه</option>
+<option value="card_reader">قارئ بطاقات</option>
+</select>
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="md:col-span-2 space-y-2">
+<label class="block text-sm font-semibold text-primary/80">عنوان IP</label>
+<input class="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary/10 transition-all text-left font-mono" dir="ltr" placeholder="192.168.1.100" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="block text-sm font-semibold text-primary/80">المنفذ (Port)</label>
+<input class="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary/10 transition-all text-left font-mono" dir="ltr" placeholder="4370" type="text"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="block text-sm font-semibold text-primary/80">الموقع الجغرافي / الفرع</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low border-none rounded-xl px-12 py-3 focus:ring-2 focus:ring-primary/10 transition-all text-right" placeholder="مثال: المبنى الرئيسي - الدور الأرضي" type="text"/>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-primary/40" data-icon="location_on">location_on</span>
+</div>
+</div>
+<div class="pt-6 flex flex-row-reverse items-center justify-between gap-4">
+<button class="bg-gradient-to-br from-[#181534] to-[#2D2A4A] text-white px-10 py-3 rounded-xl font-bold shadow-lg hover:shadow-primary/20 active:scale-95 transition-all" type="submit">
+                                حفظ الجهاز الجديد
+                            </button>
+<button class="flex items-center gap-2 text-primary font-semibold hover:bg-slate-100 px-6 py-3 rounded-xl transition-all" type="button">
+                                إلغاء
+                            </button>
+</div>
+</form>
+</div>
+<div class="lg:col-span-4 space-y-6">
+<div class="bg-secondary-container/20 rounded-xl p-6 border border-secondary/10 relative overflow-hidden group">
+<div class="absolute -top-4 -left-4 w-24 h-24 bg-secondary/5 rounded-full blur-2xl group-hover:bg-secondary/10 transition-all"></div>
+<h3 class="font-bold text-primary mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" data-icon="bolt">bolt</span>
+                            اختبار الاتصال
+                        </h3>
+<p class="text-xs text-slate-600 mb-6 leading-relaxed">تأكد من أن الجهاز قيد التشغيل ومرتبط بنفس الشبكة قبل محاولة الاختبار.</p>
+<div class="bg-white/60 backdrop-blur rounded-lg p-4 mb-6 border border-white">
+<div class="flex items-center justify-between mb-2">
+<span class="text-xs font-bold text-slate-400">حالة الاختبار</span>
+<span class="text-[10px] bg-slate-200 text-slate-500 px-2 py-0.5 rounded-full">غير متصل</span>
+</div>
+<div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-0 transition-all duration-1000" id="test-progress"></div>
+</div>
+</div>
+<button class="w-full bg-secondary-container text-on-secondary-container py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:shadow-md transition-all active:scale-95">
+<span class="material-symbols-outlined" data-icon="sync">sync</span>
+                            بدء اختبار الاتصال
+                        </button>
+</div>
+<div class="bg-primary-container text-white rounded-xl p-6 shadow-xl relative overflow-hidden">
+<div class="absolute right-0 bottom-0 opacity-10 scale-150">
+<span class="material-symbols-outlined text-9xl" data-icon="verified_user">verified_user</span>
+</div>
+<h3 class="font-bold mb-3">دليل الإعداد السريع</h3>
+<ul class="space-y-3 text-sm text-slate-300">
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-secondary text-base" data-icon="check_circle">check_circle</span>
+<span>استخدم عنوان IP ثابت (Static) للجهاز.</span>
+</li>
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-secondary text-base" data-icon="check_circle">check_circle</span>
+<span>تأكد من فتح المنفذ 4370 في جدار الحماية.</span>
+</li>
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-secondary text-base" data-icon="check_circle">check_circle</span>
+<span>تحديث برنامج الجهاز (Firmware) لآخر إصدار.</span>
+</li>
+</ul>
+</div>
+<div class="bg-surface-container-low rounded-xl p-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-primary" data-icon="router">router</span>
+</div>
+<div>
+<h4 class="text-xs font-bold text-primary">المعرف التلقائي</h4>
+<p class="text-[10px] text-slate-500">سوف يتم توليد ID فريد عند الحفظ</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<section class="mt-12">
+<h3 class="text-lg font-bold text-primary mb-6">الأجهزة المضافة حديثاً</h3>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-white p-5 rounded-xl border-r-4 border-emerald-500 shadow-sm flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-600">
+<span class="material-symbols-outlined" data-icon="check">check</span>
+</div>
+<div class="text-right">
+<p class="text-xs font-bold text-primary">جهاز المكتب الإقليمي</p>
+<p class="text-[10px] text-slate-400">192.168.1.10</p>
+</div>
+</div>
+<span class="text-[10px] font-bold text-emerald-600">نشط</span>
+</div>
+<div class="bg-white p-5 rounded-xl border-r-4 border-amber-500 shadow-sm flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 bg-amber-50 rounded-full flex items-center justify-center text-amber-600">
+<span class="material-symbols-outlined" data-icon="warning">warning</span>
+</div>
+<div class="text-right">
+<p class="text-xs font-bold text-primary">بوابة المستودع</p>
+<p class="text-[10px] text-slate-400">10.0.0.55</p>
+</div>
+</div>
+<span class="text-[10px] font-bold text-amber-600">لا يوجد اتصال</span>
+</div>
+<div class="bg-white p-5 rounded-xl border-r-4 border-slate-300 shadow-sm flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 bg-slate-50 rounded-full flex items-center justify-center text-slate-400">
+<span class="material-symbols-outlined" data-icon="sync_disabled">sync_disabled</span>
+</div>
+<div class="text-right">
+<p class="text-xs font-bold text-primary">جهاز المعرض</p>
+<p class="text-[10px] text-slate-400">192.168.5.21</p>
+</div>
+</div>
+<span class="text-[10px] font-bold text-slate-400">معطل</span>
+</div>
+</div>
+</section>
+</div>
+</main>
+<div class="fixed bottom-8 left-8 z-[100] md:hidden">
+<button class="w-14 h-14 bg-secondary shadow-xl rounded-full flex items-center justify-center text-on-secondary-container hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl" data-icon="add">add</span>
+</button>
+</div>
+</body></html>

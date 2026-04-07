@@ -7,13 +7,13 @@ from django.utils.translation import gettext_lazy as _
 
 class Day(models.Model):
     days = [
-        (0, "Saturday"),
-        (1, "Sunday"),
-        (2, "Monday"),
-        (3, "Tuesday"),
-        (4, "Wednesday"),
-        (5, "Thursday"),
-        (6, "Friday"),
+        (0, "السبت"),
+        (1, "الأحد"),
+        (2, "الاثنين"),
+        (3, "الثلاثاء"),
+        (4, "الأربعاء"),
+        (5, "الخميس"),
+        (6, "الجمعة"),
     ]
     id = models.AutoField(primary_key=True)
     day = models.CharField(max_length=2, choices=days)
@@ -171,13 +171,13 @@ class Employee(models.Model):
     @property
     def count_overwork(self):
         if self.overwork_time is None:
-            wt = self.count_hours
+            self.count_hours
         return self.overwork_time
 
     @property
     def count_out(self):
         if self.out_return_time is None:
-            wt = self.count_hours
+            self.count_hours
         return self.out_return_time
 
     class Meta:
@@ -343,8 +343,8 @@ class Exception(models.Model):
 
 
 class ExtraWork(models.Model):
-    start = models.DateTimeField(null=False, default=timezone.now())
-    end = models.DateTimeField(null=True, default=timezone.now())
+    start = models.DateTimeField(null=False, default=timezone.now)
+    end = models.DateTimeField(null=True, default=timezone.now)
     employee = models.ForeignKey('Employee', on_delete=models.CASCADE)
     note = models.TextField()
 

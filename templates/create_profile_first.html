@@ -1,25 +1,36 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
+{% block title %}منظومة الخوارزمي - إعداد مطلوب{% endblock %}
+
 {% block body %}
-    <br>
-    <br>
-    <br>
-    <br>
+<div class="min-h-[70vh] flex items-center justify-center animate-fade-in-up">
+    <div class="w-full max-w-lg text-center">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-surface-container dark:border-slate-800 p-8 md:p-12 relative overflow-hidden">
+            <!-- Alert Background -->
+            <div class="absolute -top-12 -left-12 w-48 h-48 bg-amber-500/5 rounded-full blur-3xl opacity-50"></div>
+            
+            <div class="relative z-10">
+                <div class="w-24 h-24 bg-amber-50 dark:bg-amber-950/30 text-amber-600 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-lg shadow-amber-500/10">
+                    <span class="material-symbols-outlined text-[48px]">priority_high</span>
+                </div>
 
-    <div class="container-fluid my-5">
-        <div class="row"></div>
+                <h1 class="text-2xl font-black text-primary dark:text-white mb-4 font-headline">تنبيه: لا توجد أنظمة عمل مبدئية</h1>
+                <p class="text-xs font-bold text-outline dark:text-slate-500 uppercase tracking-widest leading-relaxed mb-10 px-8">
+                    قبل التمكن من عرض التقارير أو البدء في إدارة الكادر الوظيفي، يجب عليك إعداد نظام عمل (وردية) واحد على الأقل وتحديد مواقيت الحضور والانصراف.
+                </p>
 
-
-    <div class="col-12 text-center fs-3 ">
-
-<div class="col-auto"></div>
-                    <div class="  m-5">رجاء قم بإنشاء وردية اولا</div>
-                <a href="{% url 'Attendance:add_profile' %}" class="btn btn-light mr-5 border-danger">{% trans 'انشاء وردية' %}</a>
-                <div class="col-auto"></div>
-
+                <div class="space-y-4">
+                    <a href="{% url 'Attendance:add_profile' %}" class="w-full flex flex-row-reverse items-center justify-center gap-3 bg-primary dark:bg-white text-white dark:text-primary px-8 py-5 rounded-2xl font-black shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all">
+                        <span class="material-symbols-outlined">add_circle</span>
+                        <span>إضافة نظام عمل جديد (الوردية الأولى)</span>
+                    </a>
+                    <a href="{% url 'Attendance:dashboard' %}" class="block text-[10px] font-black text-outline hover:text-primary transition-colors uppercase tracking-widest py-2">
+                        العودة للوحة القيادة
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
-    </div>
+</div>
 {% endblock %}
-
-
