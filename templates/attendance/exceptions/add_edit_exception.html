@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load widget_tweaks %}
 
 {% block title %}منظومة الخوارزمي - تسجيل إذن حضور/انصراف{% endblock %}
 
@@ -63,15 +64,15 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div class="space-y-2">
                             <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">تاريخ الإذن</label>
-                            {{ form.date }}
+                            {% render_field form.date class="w-full bg-surface-container dark:bg-slate-800 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-primary dark:text-white focus:ring-2 focus:ring-secondary transition-all" type="date" %}
                         </div>
                         <div class="space-y-2">
                             <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">نوع الإذن / المبرر</label>
-                            {{ form.type }}
+                            {% render_field form.type class="w-full bg-surface-container dark:bg-slate-800 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-primary dark:text-white focus:ring-2 focus:ring-secondary transition-all" %}
                         </div>
                         <div class="md:col-span-2 space-y-2">
                             <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">سبب الإذن (ملاحظات تفصيلية)</label>
-                            {{ form.note }}
+                            {% render_field form.note class="w-full bg-surface-container dark:bg-slate-800 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-primary dark:text-white focus:ring-2 focus:ring-secondary transition-all" placeholder="اشرح سبب الاستثناء هنا..." %}
                         </div>
                     </div>
 

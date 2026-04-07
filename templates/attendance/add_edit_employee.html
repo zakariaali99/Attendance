@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load widget_tweaks %}
 
 {% block title %}منظومة الخوارزمي - {% if form.instance.pk %}تعديل بيانات{{ form.instance.name }}{% else %}إضافة موظف جديد{% endif %}{% endblock %}
 
@@ -77,13 +78,13 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="space-y-2">
+                        <div class="space-y-2 text-right">
                             <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">الاسم الكامل للموظف</label>
-                            {{ form.name }}
+                            {% render_field form.name class="w-full bg-surface-container dark:bg-slate-800 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-primary dark:text-white focus:ring-2 focus:ring-secondary transition-all text-right" placeholder="أدخل اسم الموظف الرباعي..." %}
                         </div>
-                        <div class="space-y-2">
+                        <div class="space-y-2 text-right">
                             <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">رقم الهاتف</label>
-                            {{ form.phone }}
+                            {% render_field form.phone class="w-full bg-surface-container dark:bg-slate-800 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-primary dark:text-white focus:ring-2 focus:ring-secondary transition-all text-right" placeholder="09xxxxxxxxx" %}
                         </div>
                     </div>
                 </div>
@@ -96,21 +97,21 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="space-y-2">
+                        <div class="space-y-2 text-right">
                             <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">المعرف الرقمي (Attendance ID)</label>
-                            {{ form.attendance_id }}
+                            {% render_field form.attendance_id class="w-full bg-surface-container dark:bg-slate-800 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-primary dark:text-white focus:ring-2 focus:ring-secondary transition-all text-right" %}
                         </div>
-                        <div class="space-y-2">
+                        <div class="space-y-2 text-right">
                             <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">نظام الدوام الافتراضي</label>
-                            {{ form.default_profile }}
+                            {% render_field form.default_profile class="w-full bg-surface-container dark:bg-slate-800 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-primary dark:text-white focus:ring-2 focus:ring-secondary transition-all text-right" %}
                         </div>
-                        <div class="space-y-2">
+                        <div class="space-y-2 text-right">
                             <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">رصيد الإجازات السنوية</label>
-                            {{ form.current_vacations }}
+                            {% render_field form.current_vacations class="w-full bg-surface-container dark:bg-slate-800 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-primary dark:text-white focus:ring-2 focus:ring-secondary transition-all text-right" %}
                         </div>
                         <div class="flex items-center gap-4 flex-row-reverse self-end mb-1">
                             <div class="flex items-center justify-center">
-                                {{ form.active }}
+                                {{ form.active|add_class:"w-6 h-6 rounded-lg bg-surface-container dark:bg-slate-800 border-surface-container dark:border-slate-700 text-secondary focus:ring-secondary cursor-pointer" }}
                             </div>
                             <div class="text-right">
                                 <label class="block text-[10px] font-black text-primary dark:text-white font-headline">حساب نشط</label>

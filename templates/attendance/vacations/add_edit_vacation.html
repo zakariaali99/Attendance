@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load widget_tweaks %}
 
 {% block title %}منظومة الخوارزمي - تسجيل إجازة جديدة{% endblock %}
 
@@ -70,21 +71,20 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div class="space-y-2">
                             <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">نوع الإجازة</label>
-                            {{ form.type }}
+                            {% render_field form.type class="w-full bg-surface-container dark:bg-slate-800 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-primary dark:text-white focus:ring-2 focus:ring-secondary transition-all" %}
                         </div>
                         <div class="space-y-2">
                             <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">ملاحظات إضافية (اختياري)</label>
-                            {{ form.note }}
+                            {% render_field form.note class="w-full bg-surface-container dark:bg-slate-800 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-primary dark:text-white focus:ring-2 focus:ring-secondary transition-all" placeholder="اكتب ملاحظاتك هنا..." %}
                         </div>
                         <div class="space-y-2">
                             <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">من تاريخ</label>
-                            {{ form.date }}
+                            {% render_field form.date class="w-full bg-surface-container dark:bg-slate-800 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-primary dark:text-white focus:ring-2 focus:ring-secondary transition-all" type="date" %}
                         </div>
                         <div class="space-y-2">
                             <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">إلى تاريخ (يشمل هذا التاريخ)</label>
-                            {{ form.to_date }}
+                            {% render_field form.to_date class="w-full bg-surface-container dark:bg-slate-800 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-primary dark:text-white focus:ring-2 focus:ring-secondary transition-all" type="date" %}
                         </div>
                     </div>
 
@@ -97,7 +97,7 @@
                     <div class="space-y-4">
                         <p class="text-[9px] text-outline font-bold text-right pr-2">يمكنك البحث واختيار موظف واحد أو أكثر من القائمة التالية:</p>
                         <div class="bg-surface-container-low dark:bg-slate-800/50 rounded-2xl p-4 max-h-64 overflow-y-auto border border-surface-container dark:border-slate-800 custom-scrollbar">
-                            {{ form.employees }}
+                            {% render_field form.employees class="w-full bg-transparent border-0 text-xs font-bold text-primary dark:text-white space-y-2 focus:ring-0" %}
                         </div>
                     </div>
                 </div>

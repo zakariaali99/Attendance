@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load widget_tweaks %}
 
 {% block title %}منظومة الخوارزمي - {% if object %}تعديل إعدادات {{ object.name }}{% else %}إضافة نظام عمل جديد{% endif %}{% endblock %}
 
@@ -29,7 +30,7 @@
                 
                 <div class="w-full md:w-80 space-y-2">
                     <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">مسمى النظام / الوردية</label>
-                    {{ form.name }}
+                    {% render_field form.name class="w-full bg-surface-container dark:bg-slate-800 border-0 rounded-2xl px-6 py-4 text-sm font-bold text-primary dark:text-white focus:ring-2 focus:ring-secondary transition-all text-right" placeholder="أدخل مسمى الوردية..." %}
                 </div>
             </div>
 
@@ -54,16 +55,16 @@
                     <div class="grid grid-cols-1 gap-6">
                         <div class="space-y-2">
                             <label class="block text-[10px] font-black text-outline dark:text-slate-500 pr-2 font-headline">وقت البداية الرسمي</label>
-                            {{ form.start_time }}
+                            {% render_field form.start_time class="w-full bg-surface-container-low dark:bg-slate-900/50 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-primary dark:text-white focus:ring-1 focus:ring-secondary transition-all" type="time" %}
                         </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div class="space-y-2">
                                 <label class="block text-[10px] font-black text-outline dark:text-slate-500 pr-2 font-headline">سماحية الحضور حتى</label>
-                                {{ form.allowed_start_time }}
+                                {% render_field form.allowed_start_time class="w-full bg-surface-container-low dark:bg-slate-900/50 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-primary dark:text-white focus:ring-1 focus:ring-secondary transition-all" type="time" %}
                             </div>
                             <div class="space-y-2">
                                 <label class="block text-[10px] font-black text-outline dark:text-slate-500 pr-2 font-headline">بدء احتساب التأخير</label>
-                                {{ form.calculate_start_time }}
+                                {% render_field form.calculate_start_time class="w-full bg-surface-container-low dark:bg-slate-900/50 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-primary dark:text-white focus:ring-1 focus:ring-secondary transition-all" type="time" %}
                             </div>
                         </div>
                     </div>
@@ -79,16 +80,16 @@
                     <div class="grid grid-cols-1 gap-6">
                         <div class="space-y-2">
                             <label class="block text-[10px] font-black text-outline dark:text-slate-500 pr-2 font-headline">وقت النهاية الرسمي</label>
-                            {{ form.end_time }}
+                            {% render_field form.end_time class="w-full bg-surface-container-low dark:bg-slate-900/50 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-primary dark:text-white focus:ring-1 focus:ring-secondary transition-all" type="time" %}
                         </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div class="space-y-2">
                                 <label class="block text-[10px] font-black text-outline dark:text-slate-500 pr-2 font-headline">سماحية الانصراف من</label>
-                                {{ form.allowed_end_time }}
+                                {% render_field form.allowed_end_time class="w-full bg-surface-container-low dark:bg-slate-900/50 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-primary dark:text-white focus:ring-1 focus:ring-secondary transition-all" type="time" %}
                             </div>
                             <div class="space-y-2">
                                 <label class="block text-[10px] font-black text-outline dark:text-slate-500 pr-2 font-headline">بدء احتساب المبكر</label>
-                                {{ form.calculate_end_time }}
+                                {% render_field form.calculate_end_time class="w-full bg-surface-container-low dark:bg-slate-900/50 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-primary dark:text-white focus:ring-1 focus:ring-secondary transition-all" type="time" %}
                             </div>
                         </div>
                     </div>
@@ -106,15 +107,15 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div class="space-y-2">
                             <label class="block text-[10px] font-black opacity-60 uppercase pr-2 font-headline">بداية نافذة تسجيل الحضور</label>
-                            {{ form.shift_start_time }}
+                            {% render_field form.shift_start_time class="w-full bg-white/10 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-white focus:ring-1 focus:ring-secondary transition-all" type="time" %}
                         </div>
                         <div class="space-y-2">
                             <label class="block text-[10px] font-black opacity-60 uppercase pr-2 font-headline">نهاية نافذة تسجيل الانصراف</label>
-                            {{ form.shift_end_time }}
+                            {% render_field form.shift_end_time class="w-full bg-white/10 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-white focus:ring-1 focus:ring-secondary transition-all" type="time" %}
                         </div>
                         <div class="flex flex-row-reverse items-center gap-4 self-end h-12 bg-white/5 rounded-2xl px-4 border border-white/10 group hover:border-secondary transition-all">
                             <div class="flex items-center justify-center">
-                                {{ form.shift_end_next_day }}
+                                {{ form.shift_end_next_day|add_class:"w-6 h-6 rounded-lg bg-white/10 border-white/20 text-secondary focus:ring-secondary cursor-pointer" }}
                             </div>
                             <label class="block text-[10px] font-black text-white font-headline group-hover:text-secondary pointer-events-none transition-colors">نهاية النافذة في اليوم التالي</label>
                         </div>
@@ -126,20 +127,20 @@
             <!-- Section: System Flags -->
             <div class="mt-10 grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="flex flex-row-reverse items-center justify-between p-4 bg-surface-container-low dark:bg-slate-800/50 rounded-2xl border border-surface-container dark:border-slate-800 group hover:border-secondary transition-all">
-                    <span class="text-[11px] font-black text-primary dark:text-white font-headline">انصراف اليوم التالي</span>
-                    {{ form.next_day }}
+                    <span class="text-[11px] font-black text-primary dark:text-white font-headline text-right">انصراف اليوم التالي</span>
+                    {{ form.next_day|add_class:"w-5 h-5 rounded bg-surface-container dark:bg-slate-800 border-surface-container dark:border-slate-700 text-secondary focus:ring-secondary" }}
                 </div>
                 <div class="flex flex-row-reverse items-center justify-between p-4 bg-surface-container-low dark:bg-slate-800/50 rounded-2xl border border-surface-container dark:border-slate-800 group hover:border-secondary transition-all">
-                    <span class="text-[11px] font-black text-primary dark:text-white font-headline">احتساب الإضافي</span>
-                    {{ form.extra }}
+                    <span class="text-[11px] font-black text-primary dark:text-white font-headline text-right">احتساب الإضافي</span>
+                    {{ form.extra|add_class:"w-5 h-5 rounded bg-surface-container dark:bg-slate-800 border-surface-container dark:border-slate-700 text-secondary focus:ring-secondary" }}
                 </div>
                 <div class="flex flex-row-reverse items-center justify-between p-4 bg-surface-container-low dark:bg-slate-800/50 rounded-2xl border border-surface-container dark:border-slate-800 group hover:border-secondary transition-all">
-                    <span class="text-[11px] font-black text-primary dark:text-white font-headline">رصيد بالأجر</span>
-                    {{ form.hourly }}
+                    <span class="text-[11px] font-black text-primary dark:text-white font-headline text-right">رصيد بالأجر</span>
+                    {{ form.hourly|add_class:"w-5 h-5 rounded bg-surface-container dark:bg-slate-800 border-surface-container dark:border-slate-700 text-secondary focus:ring-secondary" }}
                 </div>
                 <div class="flex flex-row-reverse items-center justify-between p-4 bg-surface-container-low dark:bg-slate-800/50 rounded-2xl border border-surface-container dark:border-slate-800 group hover:border-secondary transition-all">
-                    <span class="text-[11px] font-black text-primary dark:text-white font-headline">نشط حالياً</span>
-                    {{ form.active }}
+                    <span class="text-[11px] font-black text-primary dark:text-white font-headline text-right">نشط حالياً</span>
+                    {{ form.active|add_class:"w-5 h-5 rounded bg-surface-container dark:bg-slate-800 border-surface-container dark:border-slate-700 text-secondary focus:ring-secondary" }}
                 </div>
             </div>
         </div>

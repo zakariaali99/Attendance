@@ -1,110 +1,87 @@
 {% extends 'list_search_base.html' %}
 {% load static %}
-{% load widget_tweaks %}
 
-{% block add_url %}
-{% url 'Attendance:add_extra_work' %}
-{% endblock %}
+{% block title %}سجل العمل الإضافي - منظومة الخوارزمي{% endblock %}
 
-{% block title %}سجل العمل الإضافي{% endblock %}
+{% block heading %}سجل العمل الإضافي{% endblock %}
 
-{% block search_box %}
-<div class="card border-0 shadow-sm mb-5 animate-fade-in-up" style="animation-delay: 0.1s;">
-    <div class="card-body p-4">
-        <form class="row g-3 align-items-end">
-            <div class="col-md-3">
-                <label class="form-label small text-muted text-uppercase fw-bold mb-2">اسم الموظف</label>
-                {{ search_form.employees|add_class:"form-control bg-light border-0 py-2 rounded-3" }}
-            </div>
-            <div class="col-md-2">
-                <label class="form-label small text-muted text-uppercase fw-bold mb-2">نوع العمل</label>
-                {{ search_form.type|add_class:"form-control bg-light border-0 py-2 rounded-3" }}
-            </div>
-            <div class="col-md-2">
-                <label class="form-label small text-muted text-uppercase fw-bold mb-2">من تاريخ</label>
-                {{ search_form.date|add_class:"form-control bg-light border-0 py-2 rounded-3" }}
-            </div>
-            <div class="col-md-2">
-                <label class="form-label small text-muted text-uppercase fw-bold mb-2">إلى تاريخ</label>
-                {{ search_form.to_date|add_class:"form-control bg-light border-0 py-2 rounded-3" }}
-            </div>
-            <div class="col-md-3">
-                <button type="submit" class="btn btn-primary w-100 btn-rounded py-2 shadow-sm">
-                    <i class="bi bi-funnel ms-2"></i> تصفية النتائج
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-{% endblock %}
+{% block add_url %}{% url 'Attendance:add_extra_work' %}{% endblock %}
 
 {% block tabel %}
-<div class="card border-0 shadow-lg animate-fade-in-up" style="animation-delay: 0.2s;">
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead>
-                    <tr>
-                        <th class="px-4 py-3">الموظف</th>
-                        <th class="py-3">نوع العمل الإضافي</th>
-                        <th class="py-3">التاريخ</th>
-                        <th class="py-3">الملاحظات</th>
-                        <th class="px-4 py-3 text-center">الإجراءات</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for extra in object_list %}
-                    <tr class="transition">
-                        <td class="px-4 py-3">
-                            <div class="d-flex align-items-center">
-                                <div class="stats-icon bg-info bg-opacity-10 text-info rounded-circle d-flex align-items-center justify-content-center fw-bold ms-3"
-                                    style="width: 45px; height: 45px;">
-                                    {{ extra.employee.name.0 }}
-                                </div>
-                                <h6 class="mb-0 fw-bold text-main">{{ extra.employee.name }}</h6>
+<div class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-surface-container dark:border-slate-800 overflow-hidden animate-fade-in-up">
+    <div class="p-6 border-b border-surface-container dark:border-slate-800 flex justify-between items-center flex-row-reverse">
+        <h2 class="text-xl font-black text-primary dark:text-white font-headline flex items-center gap-2 flex-row-reverse">
+            <span class="material-symbols-outlined text-secondary">more_time</span>
+            استعراض طلبات العمل الإضافي
+        </h2>
+    </div>
+    
+    <div class="overflow-x-auto">
+        <table class="w-full text-right border-collapse">
+            <thead>
+                <tr class="bg-surface-container-low dark:bg-slate-800/50 text-outline dark:text-slate-500">
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-right">الموظف</th>
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">التاريخ</th>
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">النوع</th>
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">القيمة</th>
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-surface-container dark:divide-slate-800">
+                {% for extra in object_list %}
+                <tr class="hover:bg-surface-container-lowest dark:hover:bg-slate-800/30 transition-all duration-200">
+                    <td class="px-6 py-5">
+                        <div class="flex items-center gap-4 flex-row-reverse text-right">
+                            <div class="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-950/20 text-orange-600 dark:text-orange-400 flex items-center justify-center font-black text-xs border border-white dark:border-slate-700 shadow-sm transition-transform group-hover:scale-110">
+                                <span class="material-symbols-outlined text-[20px]">person_check</span>
                             </div>
-                        </td>
-                        <td class="py-3">
-                            <span class="badge bg-primary-light text-primary rounded-pill px-3 py-2">
-                                <i class="bi bi-plus-circle ms-1"></i> {{ extra.type }}
-                            </span>
-                        </td>
-                        <td class="py-3">
-                            <span class="badge bg-light text-muted border border-glass fw-normal px-3 py-2">
-                                <i class="bi bi-calendar-event ms-1"></i> {{ extra.date }}
-                            </span>
-                        </td>
-                        <td class="py-3">
-                            <span class="text-muted small">{{ extra.note|default:"---" }}</span>
-                        </td>
-                        <td class="px-4 py-3 text-center">
-                            <div class="btn-group gap-2">
-                                <a href="{% url 'Attendance:edit_extra_work' extra.id %}"
-                                    class="btn btn-sm btn-outline-primary btn-rounded px-3">
-                                    <i class="bi bi-pencil ms-1"></i> تعديل
-                                </a>
-                                <a href="{% url 'Attendance:delete_extra_work' extra.id %}"
-                                    class="btn btn-sm btn-outline-danger btn-rounded px-3"
-                                    onclick="return confirm('هل أنت متأكد من حذف هذا السجل؟')">
-                                    <i class="bi bi-trash ms-1"></i> حذف
-                                </a>
+                            <div>
+                                <div class="font-black text-primary dark:text-white text-sm font-headline">{{ extra.employee.name }}</div>
+                                <div class="text-[9px] text-outline font-bold">ID: {{ extra.employee.attendance_id }}</div>
                             </div>
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="5" class="text-center py-5">
-                            <div class="text-muted">
-                                <i class="bi bi-calendar-check fs-1 d-block mb-3 opacity-20"></i>
-                                لا توجد سجلات عمل إضافي تطابق معايير البحث
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-5 text-center">
+                        <span class="px-3 py-1.5 rounded-lg bg-surface-container dark:bg-slate-800 text-primary dark:text-slate-300 font-bold text-[11px] border border-white dark:border-slate-700">
+                            {{ extra.date|date:"Y-m-d" }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-5 text-center">
+                        <span class="text-[11px] font-black text-primary dark:text-white uppercase tracking-widest">{{ extra.type.title }}</span>
+                    </td>
+                    <td class="px-6 py-5 text-center">
+                        <div class="flex flex-col items-center">
+                            <span class="text-sm font-black text-green-600 dark:text-green-400">{{ extra.value }}</span>
+                            <span class="text-[8px] font-bold text-outline dark:text-slate-500 uppercase tracking-widest">ساعات / أيام</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-5">
+                        <div class="flex items-center justify-center gap-2 flex-row-reverse">
+                            <a href="{% url 'Attendance:edit_extra_work' extra.id %}" 
+                               class="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-primary text-white font-black text-xs hover:bg-black transition-all group shadow-lg shadow-primary/20">
+                                <span class="material-symbols-outlined text-[18px] group-hover:rotate-12 transition-transform">edit</span>
+                                <span>تعديل</span>
+                            </a>
+                            <a href="{% url 'Attendance:delete_extra_work' extra.id %}" 
+                               onclick="return confirm('هل أنت متأكد من حذف هذا السجل؟')"
+                               class="flex items-center justify-center w-10 h-10 rounded-xl border border-red-100 dark:border-red-900/50 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all">
+                                <span class="material-symbols-outlined text-[20px]">delete</span>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="px-6 py-16 text-center">
+                        <div class="flex flex-col items-center gap-4 opacity-30 dark:opacity-50">
+                            <span class="material-symbols-outlined text-[64px]">hourglass_empty</span>
+                            <p class="text-base font-bold font-headline">لا توجد سجلات عمل إضافي مضافة حتى الآن.</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 {% endblock %}
-

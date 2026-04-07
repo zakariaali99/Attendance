@@ -1,65 +1,72 @@
 {% extends 'list_search_base.html' %}
 {% load static %}
 
-{% block add_url %}
-{% url 'Attendance:add' %}
-{% endblock %}
+{% block title %}سجلات الحضور والإنصراف - منظومة الخوارزمي{% endblock %}
 
-{% block title %}سجلات الحضور والإنصراف{% endblock %}
+{% block heading %}سجلات الحضور والإنصراف{% endblock %}
+
+{% block add_url %}{% url 'Attendance:add' %}{% endblock %}
 
 {% block tabel %}
-<div class="card border-0 shadow-lg">
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table id="recordsTable" class="table table-hover align-middle mb-0">
-                <thead>
-                    <tr>
-                        <th class="px-4">بيانات الموظف</th>
-                        <th class="text-center">الرقم الوظيفي</th>
-                        <th class="text-center">خيارات العرض</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for employee in object_list %}
-                    <tr class="transition">
-                        <td class="px-4">
-                            <div class="d-flex align-items-center">
-                                <div class="stats-icon bg-info bg-opacity-10 text-info rounded-circle d-flex align-items-center justify-content-center fw-bold ms-3"
-                                    style="width: 45px; height: 45px; font-size: 1.1rem;">
-                                    {{ employee.name.0 }}
-                                </div>
-                                <h6 class="mb-0 fw-bold text-main">{{ employee.name }}</h6>
+<div class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-surface-container dark:border-slate-800 overflow-hidden animate-fade-in-up">
+    <div class="p-6 border-b border-surface-container dark:border-slate-800 flex justify-between items-center flex-row-reverse">
+        <h2 class="text-xl font-black text-primary dark:text-white font-headline flex items-center gap-2 flex-row-reverse">
+            <span class="material-symbols-outlined text-secondary">history</span>
+            استعراض سجلات الموظفين
+        </h2>
+    </div>
+    
+    <div class="overflow-x-auto">
+        <table class="w-full text-right border-collapse">
+            <thead>
+                <tr class="bg-surface-container-low dark:bg-slate-800/50 text-outline dark:text-slate-500">
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-right">الموظف</th>
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">الرقم الوظيفي</th>
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-surface-container dark:divide-slate-800">
+                {% for employee in object_list %}
+                <tr class="hover:bg-surface-container-lowest dark:hover:bg-slate-800/30 transition-all duration-200">
+                    <td class="px-6 py-5">
+                        <div class="flex items-center gap-4 flex-row-reverse text-right">
+                            <div class="w-10 h-10 rounded-xl bg-primary-container/10 text-primary dark:text-white flex items-center justify-center font-black text-xs border border-white dark:border-slate-700 shadow-sm">
+                                {{ employee.name|slice:":1"|upper }}
                             </div>
-                        </td>
-                        <td class="text-center">
-                            <span class="badge bg-light text-muted border border-glass rounded-pill px-3">{{ employee.attendance_id }}</span>
-                        </td>
-                        <td class="text-center px-4">
-                            <div class="btn-group gap-2">
-                                <a href="{% url 'Attendance:records' employee.id %}"
-                                    class="btn btn-sm btn-primary btn-rounded px-4 shadow-sm">
-                                    <i class="bi bi-clock-history ms-2"></i> عرض السجل التفصيلي
-                                </a>
-                                <a href="{% url 'Attendance:edit' employee.id %}"
-                                    class="btn btn-sm btn-outline-primary btn-rounded px-3">
-                                    <i class="bi bi-pencil-square"></i>
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="3" class="text-center py-5">
-                            <div class="text-muted">
-                                <i class="bi bi-person-x fs-1 d-block mb-3 opacity-20"></i>
-                                لا توجد سجلات حالياً
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                            <div class="font-black text-primary dark:text-white text-sm font-headline">{{ employee.name }}</div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-5 text-center">
+                        <span class="inline-flex items-center px-4 py-1.5 rounded-full bg-surface-container dark:bg-slate-800 text-primary dark:text-slate-300 font-bold text-xs border border-white dark:border-slate-700">
+                            #{{ employee.attendance_id }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-5">
+                        <div class="flex items-center justify-center gap-3 flex-row-reverse">
+                            <a href="{% url 'Attendance:records' employee.id %}" 
+                               class="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-primary text-white font-black text-xs hover:bg-black transition-all group shadow-lg shadow-primary/20">
+                                <span class="material-symbols-outlined text-[18px] group-hover:scale-110 transition-transform">visibility</span>
+                                <span>عرض السجل</span>
+                            </a>
+                            <a href="{% url 'Attendance:edit' employee.id %}" 
+                               class="flex items-center justify-center w-10 h-10 rounded-xl border border-surface-container dark:border-slate-700 text-primary dark:text-slate-200 hover:bg-surface-container transition-all">
+                                <span class="material-symbols-outlined text-[20px]">edit</span>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="px-6 py-16 text-center">
+                        <div class="flex flex-col items-center gap-4 opacity-30 dark:opacity-50">
+                            <span class="material-symbols-outlined text-[64px]">history_toggle_off</span>
+                            <p class="text-base font-bold font-headline">لا توجد بيانات موظفين لعرض سجلاتهم.</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
-{% endblock %}
+{% endblock %}

@@ -1,118 +1,140 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load widget_tweaks %}
+
+{% block title %}منظومة الخوارزمي - تسجيل عمل إضافي{% endblock %}
 
 {% block body %}
-<div class="row justify-content-center animate-fade-in-up">
-    <div class="col-lg-10">
-        <div class="d-flex align-items-center mb-5">
-            <a href="{% url 'Attendance:extra_work' %}" class="btn btn-outline-secondary btn-rounded px-3 ms-4 shadow-sm">
-                <i class="bi bi-arrow-right ms-2"></i> رجوع للسجل
-            </a>
-            <h2 class="mb-0 fw-bold text-main">إضافة سجل عمل إضافي</h2>
+<!-- Breadcrumb -->
+<nav class="flex flex-row-reverse items-center gap-2 mb-8 text-xs font-bold text-outline dark:text-slate-500 uppercase tracking-widest animate-fade-in-up">
+    <a href="{% url 'Attendance:dashboard' %}" class="hover:text-primary dark:hover:text-white transition-colors">الرئيسية</a>
+    <span class="material-symbols-outlined text-[14px]">chevron_left</span>
+    <a href="{% url 'Attendance:extra_work' %}" class="hover:text-primary dark:hover:text-white transition-colors">سجل العمل الإضافي</a>
+    <span class="material-symbols-outlined text-[14px]">chevron_left</span>
+    <span class="text-primary dark:text-white">إضافة سجل جديد</span>
+</nav>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade-in-up">
+    <!-- Form Side Info -->
+    <div class="lg:col-span-1 space-y-6 text-right">
+        <!-- Info Card -->
+        <div class="bg-primary dark:bg-black rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">
+            <div class="relative z-10">
+                <div class="flex items-center gap-3 flex-row-reverse mb-6">
+                    <span class="material-symbols-outlined text-secondary">manage_history</span>
+                    <h3 class="text-xs font-black uppercase tracking-widest font-headline">سياسة العمل الإضافي</h3>
+                </div>
+                <p class="text-[10px] opacity-70 font-bold leading-relaxed px-4">يُرجى إدراج التاريخ ونوع العمل الإضافي لضمان احتساب الساعات في الكشف المالي الشهري بشكل دقيق.</p>
+            </div>
+            <div class="absolute -bottom-8 -left-8 w-32 h-32 bg-white/5 rounded-full blur-2xl"></div>
         </div>
 
-        <div class="card border-0 shadow-lg overflow-hidden">
-            <div class="card-header bg-info py-4 border-0">
-                <h4 class="mb-0 text-white text-center fw-bold">
-                    <i class="bi bi-plus-circle ms-2"></i> تفاصيل العمل الإضافي
-                </h4>
-            </div>
-            <div class="card-body p-4 p-md-5">
-                <form method="post" class="needs-validation">
-                    {% csrf_token %}
-
-                    {% if form.errors %}
-                    <div class="alert alert-danger border-0 rounded-4 p-4 mb-4">
-                        <div class="d-flex align-items-center mb-2">
-                            <i class="bi bi-exclamation-triangle-fill ms-2 fs-5"></i>
-                            <h6 class="mb-0 fw-bold">يرجى مراجعة المدخلات:</h6>
-                        </div>
-                        {{ form.errors }}
-                    </div>
-                    {% endif %}
-
-                    <div class="row g-4">
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold text-muted small text-uppercase mb-2">
-                                <i class="bi bi-calendar-event ms-1 text-info"></i> التاريخ
-                            </label>
-                            {{ form.date }}
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold text-muted small text-uppercase mb-2">
-                                <i class="bi bi-tag ms-1 text-info"></i> نوع العمل الإضافي
-                            </label>
-                            {{ form.type }}
-                        </div>
-
-                        <div class="col-12">
-                            <label class="form-label fw-bold text-muted small text-uppercase mb-2">
-                                <i class="bi bi-pencil-square ms-1 text-info"></i> ملاحظات إضافية
-                            </label>
-                            {{ form.note }}
-                        </div>
-
-                        <div class="col-12 mt-5">
-                            <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-glass">
-                                <h6 class="text-main fw-bold text-uppercase mb-0">
-                                    <i class="bi bi-people ms-2 text-info"></i> اختيار الموظفين
-                                </h6>
-                                <div class="form-check form-switch ps-0 m-0">
-                                    <label class="form-check-label fw-bold small text-muted ms-5" for="employee_all">تحديد الكل</label>
-                                    <input type="checkbox" class="form-check-input ms-0" id="employee_all">
-                                </div>
-                            </div>
-                            
-                            <div class="bg-light bg-opacity-50 rounded-4 p-4 border border-glass" style="max-height: 300px; overflow-y: auto;">
-                                <div class="row g-3">
-                                    {% for e in form.employees.field.queryset.all %}
-                                    <div class="col-md-6 col-lg-4">
-                                        <div class="form-check p-2 rounded-3 hover-shadow transition border border-transparent">
-                                            <input name="employees" value="{{ e.id }}" type="checkbox" class="form-check-input ms-3" id="employee_{{ e.id }}">
-                                            <label class="form-check-label fw-600 small" for="employee_{{ e.id }}">
-                                                {{ e.name }}
-                                                <div class="text-muted" style="font-size: 0.75rem;">ID: {{ e.attendance_id }}</div>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-12 mt-5">
-                            <div class="d-flex gap-3">
-                                <button type="submit" class="btn btn-info btn-lg btn-rounded px-5 flex-grow-1 shadow-lg text-white">
-                                    <i class="bi bi-check2-circle ms-2"></i> حفظ السجل
-                                </button>
-                                <a href="{% url 'Attendance:extra_work' %}" class="btn btn-outline-secondary btn-lg btn-rounded px-5">
-                                    تجاهل
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
+        <!-- Note Card -->
+        <div class="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-surface-container dark:border-slate-800">
+            <h3 class="text-[11px] font-black text-primary dark:text-white uppercase tracking-widest mb-6 font-headline flex items-center gap-2 flex-row-reverse">
+                <span class="material-symbols-outlined text-secondary">info</span>
+                تنبيه إداري
+            </h3>
+            <p class="text-[10px] text-on-surface-variant dark:text-slate-400 font-bold leading-relaxed">الساعات المسجلة هنا تخضع للمراجعة النهائية قبل اعتماد المسيرات المالية.</p>
         </div>
     </div>
-</div>
 
-<style>
-    .form-check:hover {
-        background: var(--bg-card);
-        border-color: var(--border-glass) !important;
-    }
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-thumb { background: var(--border-glass); border-radius: 10px; }
-</style>
+    <!-- Main Form Content -->
+    <div class="lg:col-span-2">
+        <form method="post" class="space-y-8 h-full flex flex-col">
+            {% csrf_token %}
+            
+            <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-surface-container dark:border-slate-800 overflow-hidden flex-grow px-8 py-10">
+                
+                {% if form.errors %}
+                <div class="mb-8 p-4 bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/50 rounded-2xl">
+                    <div class="flex items-center gap-2 flex-row-reverse text-red-600 dark:text-red-400 font-black text-xs mb-2">
+                        <span class="material-symbols-outlined text-[18px]">error</span>
+                        <span>يرجى مراجعة البيانات المدخلة:</span>
+                    </div>
+                    <div class="text-right text-[10px] font-bold text-red-500 pr-6">
+                        {{ form.errors }}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Section: Entry Details -->
+                <div class="space-y-8">
+                    <div class="flex items-center gap-3 flex-row-reverse pb-2 border-b border-surface-container dark:border-slate-800">
+                        <span class="material-symbols-outlined text-secondary">history_edu</span>
+                        <h2 class="text-sm font-black text-primary dark:text-white uppercase tracking-widest font-headline">تفاصيل طلب العمل الإضافي</h2>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-right">
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-4 font-headline">تاريخ العمل</label>
+                            {% render_field form.date class="w-full bg-surface-container dark:bg-slate-800 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-primary dark:text-white focus:ring-2 focus:ring-secondary transition-all" type="date" %}
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-4 font-headline">تصنيف العمل</label>
+                            {% render_field form.type class="w-full bg-surface-container dark:bg-slate-800 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-primary dark:text-white focus:ring-2 focus:ring-secondary transition-all" %}
+                        </div>
+                        <div class="md:col-span-2 space-y-2">
+                            <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-4 font-headline">ملاحظات ومبررات (اختياري)</label>
+                            {% render_field form.note class="w-full bg-surface-container dark:bg-slate-800 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-primary dark:text-white focus:ring-2 focus:ring-secondary transition-all" placeholder="صِف طبيعة العمل المنجز..." rows="3" %}
+                        </div>
+                    </div>
+
+                    <!-- Section: Employees Selection -->
+                    <div class="flex items-center gap-3 flex-row-reverse pb-2 mt-12 border-b border-surface-container dark:border-slate-800">
+                        <span class="material-symbols-outlined text-secondary">groups_2</span>
+                        <h2 class="text-sm font-black text-primary dark:text-white uppercase tracking-widest font-headline">اختيار الموظفين المشمولين</h2>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center flex-row-reverse px-2">
+                            <p class="text-[9px] text-outline font-bold">يرجى تحديد الموظفين الذين قاموا بأداء العمل الإضافي في هذا اليوم:</p>
+                            <label class="flex items-center gap-2 flex-row-reverse cursor-pointer group">
+                                <input type="checkbox" id="employee_all" class="w-5 h-5 rounded bg-surface-container dark:bg-slate-800 border-surface-container dark:border-slate-700 text-secondary focus:ring-secondary cursor-pointer">
+                                <span class="text-[10px] font-black text-outline group-hover:text-primary transition-colors">تحديد الكل</span>
+                            </label>
+                        </div>
+                        
+                        <div class="bg-surface-container-low dark:bg-slate-800/50 rounded-3xl p-6 border border-surface-container dark:border-slate-800 max-h-[400px] overflow-y-auto custom-scrollbar">
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {% for e in form.employees.field.queryset.all %}
+                                <label class="flex items-center gap-4 p-4 rounded-2xl bg-white dark:bg-slate-900 border border-transparent shadow-sm hover:border-primary/20 hover:shadow-md transition-all cursor-pointer flex-row-reverse text-right group">
+                                    <input name="employees" value="{{ e.id }}" type="checkbox" class="employee-checkbox w-6 h-6 rounded-lg bg-surface-container dark:bg-slate-800 border-surface-container dark:border-slate-700 text-primary focus:ring-primary">
+                                    <div class="flex-grow">
+                                        <div class="text-[11px] font-black text-primary dark:text-white mb-0.5 group-hover:text-primary transition-colors">{{ e.name }}</div>
+                                        <div class="text-[9px] text-outline dark:text-slate-500 font-bold uppercase tracking-widest">Employee #{{ e.attendance_id }}</div>
+                                    </div>
+                                </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="flex flex-row-reverse items-center justify-between gap-4 mt-6">
+                <button type="submit" class="flex flex-row-reverse items-center gap-3 bg-primary dark:bg-white text-white dark:text-primary px-10 py-5 rounded-2xl font-black shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all">
+                    <span class="material-symbols-outlined">verified</span>
+                    <span>حفظ واعتماد العمل الإضافي</span>
+                </button>
+                <a href="{% url 'Attendance:extra_work' %}" class="text-xs font-black text-outline dark:text-slate-500 hover:text-red-500 transition-colors uppercase tracking-widest">إلغاء العملية</a>
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-    document.getElementById("employee_all").addEventListener('change', function() {
-        const checkboxes = document.querySelectorAll("input[name='employees']");
-        checkboxes.forEach(cb => cb.checked = this.checked);
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectAll = document.getElementById("employee_all");
+        if (selectAll) {
+            selectAll.addEventListener('change', function() {
+                const checkboxes = document.querySelectorAll(".employee-checkbox");
+                checkboxes.forEach(cb => cb.checked = this.checked);
+            });
+        }
     });
 </script>
 {% endblock %}

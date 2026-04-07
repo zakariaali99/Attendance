@@ -379,6 +379,14 @@ class AddDeviceView(CreateView):
         return super().get(request, *args, **kwargs)
 
 
+class DeleteDeviceView(DeleteView):
+    model = ZKTDevice
+    success_url = reverse_lazy("Attendance:devices")
+
+    def get(self, request, *args, **kwargs):
+        return self.delete(request, *args, **kwargs)
+
+
 class VacationsView(ListView):
     template_name = "attendance/vacations/vacations_list_view.html"
     form_class = Vacation

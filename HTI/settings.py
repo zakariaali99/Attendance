@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'VIPAlert',
     'Attendance',
     'rest_framework',
-    
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [

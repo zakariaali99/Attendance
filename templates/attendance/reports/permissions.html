@@ -1,92 +1,82 @@
 {% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}منظومة الخوارزمي - إضافة حركة يدوية{% endblock %}
 
 {% block body %}
-  <br>
-    <br>
-    <br>
-    <div class="container">
-        <div class="row">
-            <div class="col-12 text-center">
-                <h3>اضافة إذن</h3>
+<!-- Breadcrumb -->
+<nav class="flex flex-row-reverse items-center gap-2 mb-8 text-xs font-bold text-outline dark:text-slate-500 uppercase tracking-widest animate-fade-in-up">
+    <a href="{% url 'Attendance:dashboard' %}" class="hover:text-primary dark:hover:text-white transition-colors">الرئيسية</a>
+    <span class="material-symbols-outlined text-[14px]">chevron_left</span>
+    <a href="{% url 'Attendance:list' %}" class="hover:text-primary dark:hover:text-white transition-colors">قائمة الموظفين</a>
+    <span class="material-symbols-outlined text-[14px]">chevron_left</span>
+    <span class="text-primary dark:text-white">إضافة حركة حضور وانصراف</span>
+</nav>
+
+<div class="max-w-4xl mx-auto animate-fade-in-up">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-surface-container dark:border-slate-800 overflow-hidden">
+        <!-- Header -->
+        <div class="p-8 border-b border-surface-container dark:border-slate-800 bg-surface-container-low/50 dark:bg-slate-800/30 flex items-center gap-4 flex-row-reverse">
+            <div class="w-12 h-12 rounded-2xl bg-secondary-container/20 dark:bg-slate-800 text-secondary flex items-center justify-center border border-white dark:border-slate-700 shadow-sm">
+                <span class="material-symbols-outlined text-[24px]">history_edu</span>
             </div>
-            <div class="col"></div>
-            <div class="col-8">
-
-                <form method="post">
-
-                    {% csrf_token %}
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-12">
-                                {{ form.errors }}
-                                <div class="h1 text-center m-3">{{ employee.name }}</div>
-                            </div>
-
-                            <div class="col-4">
-                                <div class="mb-3 ">
-                                    <label for="{{ form.start_time.id_for_label }}" class="form-label">
-                                        التاريخ والوقت
-                                        </label>
-                                    {{ form.timestamp }}
-                                </div>
-                            </div>
-
-
-                            <div class="col-4">
-                                <div class="mb-3 ">
-                                    <label for="{{ form.type.id_for_label }}" class="form-label">نوع الاذن</label>
-                                    {{ form.status }}
-                                </div>
-                            </div>
-
-                            <div class="col-4">
-                                <div class="mb-3 ">
-                                    <label for="{{ form.type.id_for_label }}" class="form-label"> الجهاز</label>
-                                    {{ form.device }}
-                                </div>
-                            </div>
-
-
-
-                            <div class="col-12">
-                                <div class="mb-3">
-                                    <label for="{{ form.note.id_for_label }}" class="form-label">ملاحظات</label>
-                                    {{ form.note }}
-                                </div>
-                            </div>
-
-
-                            <div class='row'>
-                            <div class="col"></div>
-                            <div class="col-3 mt-2">
-                                <button type="submit" class="btn btn-primary w-100 rounded-pill">حفظ</button>
-                            </div>
-                            <div class="col"></div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
+            <div class="text-right">
+                <h2 class="text-xl font-black text-primary dark:text-white font-headline italic">إضافة حركة حضور/انصراف يدوية</h2>
+                <p class="text-[10px] text-outline dark:text-slate-500 font-bold uppercase tracking-widest mr-1">تسجيل الدخول للموظف: {{ employee.name }}</p>
             </div>
-            <div class="col"></div>
+        </div>
+
+        <form method="post" class="p-8 space-y-8">
+            {% csrf_token %}
+            
+            {% if form.errors %}
+            <div class="p-4 bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/50 rounded-2xl">
+                <div class="flex items-center gap-2 flex-row-reverse text-red-600 dark:text-red-400 font-black text-xs mb-2">
+                    <span class="material-symbols-outlined text-[18px]">error</span>
+                    <span>يرجى تصحيح الأخطاء التالية في الحركة:</span>
+                </div>
+                {{ form.errors }}
+            </div>
+            {% endif %}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-right">
+                <div class="space-y-2">
+                    <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-4 font-headline">التاريخ والوقت</label>
+                    {% render_field form.timestamp class="w-full bg-surface-container dark:bg-slate-800 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-primary dark:text-white focus:ring-2 focus:ring-secondary transition-all" %}
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-4 font-headline">الحالة (حضور/انصراف)</label>
+                    {% render_field form.status class="w-full bg-surface-container dark:bg-slate-800 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-primary dark:text-white focus:ring-2 focus:ring-secondary transition-all" %}
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-4 font-headline">الجهاز المعني</label>
+                    {% render_field form.device class="w-full bg-surface-container dark:bg-slate-800 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-primary dark:text-white focus:ring-2 focus:ring-secondary transition-all" %}
+                </div>
+                <div class="md:col-span-2 lg:col-span-3 space-y-2">
+                    <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-4 font-headline">ملاحظات توضيحية لسبب الإضافة اليدوية</label>
+                    {% render_field form.note class="w-full bg-surface-container dark:bg-slate-800 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-primary dark:text-white focus:ring-2 focus:ring-secondary transition-all" placeholder="ادخل سبب إضافة هذه الحركة يدوياً هنا..." %}
+                </div>
+            </div>
+
+            <div class="flex flex-row-reverse items-center justify-between gap-4 pt-8 border-t border-surface-container dark:border-slate-800">
+                <button type="submit" class="flex flex-row-reverse items-center gap-3 bg-secondary-container text-on-secondary-container px-10 py-4 rounded-2xl font-black shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all">
+                    <span class="material-symbols-outlined">save</span>
+                    <span>حفظ الحركة وتحديث السجل الآن</span>
+                </button>
+                <a href="{% url 'Attendance:records' employee.id %}" class="text-xs font-black text-outline dark:text-slate-500 hover:text-red-500 transition-colors uppercase tracking-widest">إلغاء وتجاهل</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="mt-8 p-6 bg-amber-50 dark:bg-amber-950/10 rounded-2xl border-r-4 border-amber-400 animate-fade-in-up" style="animation-delay: 0.1s;">
+    <div class="flex items-start gap-4 flex-row-reverse text-right">
+        <span class="material-symbols-outlined text-amber-500 mt-1">warning</span>
+        <div>
+            <p class="text-sm font-black text-amber-800 dark:text-amber-300 font-headline mb-1 italic">تنبيه المراجعة الإدارية</p>
+            <p class="text-[10px] text-amber-700/80 dark:text-amber-400 font-bold leading-relaxed">أي حركات تُضاف يدوياً ستظهر في السجل التفصيلي كـ "إدخال يدوي" وستتم مراجعتها من قِبل مدقق النظام للتأكد من المبررات المذكورة.</p>
         </div>
     </div>
-
-
-
-    <br>
-    <br>
-    <br>
-
-
-
-
+</div>
 {% endblock %}
-
-
-{% block scripts %}
-<script>
-    $("#employee_all").click(function () {
-        $("input[name='employees']").prop('checked', $(this).prop('checked'));
-    });
-
-</script>{% endblock %}

@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load widget_tweaks %}
 
 {% block title %}منظومة الخوارزمي - {% if form.instance.pk %}تعديل إعدادات {{ form.instance.name }}{% else %}إضافة جهاز بصمة جديد{% endif %}{% endblock %}
 
@@ -86,18 +87,18 @@
                     <div class="grid grid-cols-1 gap-8">
                         <div class="space-y-2">
                             <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">مسمى الجهاز (مثال: جهاز الاستقبال الرئيسي)</label>
-                            {{ form.name }}
+                            {% render_field form.name class="w-full bg-surface-container dark:bg-slate-800 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-primary dark:text-white focus:ring-2 focus:ring-secondary transition-all" %}
                         </div>
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div class="space-y-2">
                                 <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">عنوان الـ IP</label>
-                                {{ form.ip }}
+                                {% render_field form.ip class="w-full bg-surface-container dark:bg-slate-800 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-primary dark:text-white focus:ring-2 focus:ring-secondary transition-all" placeholder="192.168...." %}
                                 <p class="text-[8px] text-outline font-bold mt-1 pr-2">مثال: 192.168.1.201</p>
                             </div>
                             <div class="space-y-2">
                                 <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">رقم المنفذ (Port)</label>
-                                {{ form.port }}
+                                {% render_field form.port class="w-full bg-surface-container dark:bg-slate-800 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-primary dark:text-white focus:ring-2 focus:ring-secondary transition-all" %}
                             </div>
                         </div>
                     </div>
@@ -114,7 +115,7 @@
                                 <span class="text-xs font-black text-primary dark:text-white font-headline block">جهاز متابعة الخروج أثناء الدوام</span>
                                 <p class="text-[9px] text-outline font-bold">تفعيل هذا الخيار سيخصص الجهاز لرقابة حركات الخروج المؤقت أثناء العمل.</p>
                             </div>
-                            {{ form.out_during_work }}
+                            {{ form.out_during_work|add_class:"w-6 h-6 rounded-lg bg-surface-container dark:bg-slate-800 border-surface-container dark:border-slate-700 text-secondary focus:ring-secondary cursor-pointer" }}
                         </div>
                     </div>
                 </div>

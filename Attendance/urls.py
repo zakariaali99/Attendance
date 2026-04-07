@@ -12,7 +12,7 @@ urlpatterns = [
     path('edit/<int:pk>', EditEmployeeView.as_view(), name="edit"),
     path('records/<int:pk>', EmployeeRecordsView.as_view(), name="records"),
     path('permission/<str:pk>', AddPermission.as_view(), name="permission"),
-    path('records/<int:pk>/export', ExportEmployeeReportView.as_view(), name="records_export"),
+    path('records/<int:pk>/export', ExportEmployeeReportView.as_view(), name="export_employee_report"),
 
     path('profile/', ProfileListView.as_view(), name="profiles"),
     path('profile/create', AddProfileView.as_view(), name="add_profile"),
@@ -25,6 +25,8 @@ urlpatterns = [
     path('devices/sync', SyncDevicesView.as_view(), name="sync_devices"),
     path('devices/create', AddDeviceView.as_view(), name="add_devices"),
     path('devices/edit/<int:pk>', EditDeviceView.as_view(), name="edit_devices"),
+    path('devices/delete/<int:pk>', DeleteDeviceView.as_view(), name="delete_devices"),
+
     
     path('vacation/', AddVacationsView.as_view(), name="add_vacation"),
     path('vacation/view', VacationsView.as_view(), name="vacation"),

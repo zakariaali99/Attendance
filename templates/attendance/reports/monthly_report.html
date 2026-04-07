@@ -128,7 +128,7 @@
                         {% endif %}
                     </td>
                     <td class="px-6 py-5 text-center">
-                        <a href="{% url 'Attendance:records_view' employee.id %}?{{ old_q }}" class="inline-flex items-center gap-2 bg-surface-container dark:bg-slate-800 text-primary dark:text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary-container/20 transition-all border border-transparent hover:border-primary/20">
+                        <a href="{% url 'Attendance:records' employee.id %}?{{ old_q }}" class="inline-flex items-center gap-2 bg-surface-container dark:bg-slate-800 text-primary dark:text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary-container/20 transition-all border border-transparent hover:border-primary/20">
                             <span class="material-symbols-outlined text-[14px]">visibility</span>
                             <span>عرض السجل</span>
                         </a>

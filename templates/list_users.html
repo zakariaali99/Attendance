@@ -1,33 +1,79 @@
 {% extends 'list_search_base.html' %}
+{% load static %}
+
+{% block title %}إدارة المستخدمين - منظومة الخوارزمي{% endblock %}
+
+{% block heading %}المستخدمين وصلاحيات الإدارة{% endblock %}
 
 {% block add_url %}{% url 'VIP:add_user' %}{% endblock %}
+
 {% block tabel %}
-
-<div class="col-12 text-center fs-5">
-    <div class="container bg-hti rounded-pill">
-        <div class="row">
-            <div class="col-1">#</div>
-            <div class="col">الاسم</div>
-            <div class="col-3">البريد الإلكتروني</div>
-            <div class="col-2">مدير نعم/لا</div>
-        </div>
+<div class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-surface-container dark:border-slate-800 overflow-hidden animate-fade-in-up">
+    <div class="p-6 border-b border-surface-container dark:border-slate-800 flex justify-between items-center flex-row-reverse">
+        <h2 class="text-xl font-black text-primary dark:text-white font-headline flex items-center gap-2 flex-row-reverse">
+            <span class="material-symbols-outlined text-secondary">admin_panel_settings</span>
+            قائمة مدراء النظام
+        </h2>
     </div>
-
-    {% for user in object_list %}
-
-
-    <a href="{% url 'VIP:edit_user' user.id %}" class="btn btn-lg p-0 w-100">
-
-        <div class="container bg-light mt-1 rounded-pill">
-            <div class="row">
-                <div class="col-1">{{ user.id }}</div>
-                <div class="col">{{ user.name }}</div>
-                <div class="col-3">{{ user.email }}</div>
-                <div class="col-2">{% if user.is_admin %}نعم{% else %}لا{% endif %}</div>
-            </div>
-        </div>
-    </a>
-    {% endfor %}
+    
+    <div class="overflow-x-auto">
+        <table class="w-full text-right border-collapse">
+            <thead>
+                <tr class="bg-surface-container-low dark:bg-slate-800/50 text-outline dark:text-slate-500">
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-right">بيانات المستخدم</th>
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">البريد الإلكتروني</th>
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">الصلاحيات</th>
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-surface-container dark:divide-slate-800">
+                {% for user in object_list %}
+                <tr class="hover:bg-surface-container-lowest dark:hover:bg-slate-800/30 transition-all duration-200">
+                    <td class="px-6 py-5">
+                        <div class="flex items-center gap-4 flex-row-reverse text-right">
+                            <div class="w-10 h-10 rounded-xl {% if user.is_admin %}bg-secondary-container/20 text-secondary{% else %}bg-primary-container/10 text-primary{% endif %} dark:text-white flex items-center justify-center font-black text-xs border border-white dark:border-slate-700 shadow-sm">
+                                {{ user.name|slice:":1"|upper }}
+                            </div>
+                            <div class="font-black text-primary dark:text-white text-sm font-headline">{{ user.name }}</div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-5 text-center">
+                        <span class="text-xs font-bold text-outline dark:text-slate-400">{{ user.email }}</span>
+                    </td>
+                    <td class="px-6 py-5 text-center">
+                        {% if user.is_admin %}
+                        <span class="inline-flex items-center gap-1.5 bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border border-amber-100 dark:border-amber-900/50">
+                            <span class="material-symbols-outlined text-[14px]">shield_person</span>
+                            مدير نظام كامل
+                        </span>
+                        {% else %}
+                        <span class="inline-flex items-center gap-1.5 bg-surface-container dark:bg-slate-800 text-outline dark:text-slate-400 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border border-white dark:border-slate-700">
+                            مستخدم عادي
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-5">
+                        <div class="flex items-center justify-center gap-3 flex-row-reverse">
+                            <a href="{% url 'VIP:edit_user' user.id %}" 
+                               class="flex items-center gap-2 px-4 py-2 rounded-xl border border-surface-container dark:border-slate-700 text-primary dark:text-slate-200 font-black text-[10px] hover:bg-surface-container transition-all shadow-sm">
+                                <span class="material-symbols-outlined text-[16px]">edit</span>
+                                <span>تعديل</span>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="px-6 py-16 text-center">
+                        <div class="flex flex-col items-center gap-4 opacity-30 dark:opacity-50">
+                            <span class="material-symbols-outlined text-[64px]">people_alt</span>
+                            <p class="text-base font-bold font-headline">لا يوجد مستخدمين مسجلين في النظام.</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
-
 {% endblock %}

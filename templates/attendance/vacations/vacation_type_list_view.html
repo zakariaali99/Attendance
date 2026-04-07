@@ -14,57 +14,60 @@
 {% endblock %}
 
 {% block tabel %}
-<div class="card border-0 shadow-lg rounded-24 overflow-hidden">
-    <div class="card-header bg-card-header py-3 px-4 border-bottom border-glass">
-        <h5 class="mb-0 fw-bold text-main">
-            <i class="bi bi-gear-fill ms-2 text-primary"></i> قائمة أنواع الإجازات
-        </h5>
+<div class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-surface-container dark:border-slate-800 overflow-hidden animate-fade-in-up">
+    <div class="p-6 border-b border-surface-container dark:border-slate-800 flex justify-between items-center flex-row-reverse">
+        <h2 class="text-xl font-black text-primary dark:text-white font-headline flex items-center gap-2 flex-row-reverse">
+            <span class="material-symbols-outlined text-secondary">category</span>
+            قائمة أنواع الإجازات
+        </h2>
     </div>
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead>
-                    <tr class="bg-light bg-opacity-50">
-                        <th class="px-4 py-3">مسمى نوع الإجازة</th>
-                        <th class="py-3 text-center">الخيارات</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for vacation in object_list %}
-                    <tr class="transition">
-                        <td class="px-4 py-3">
-                            <div class="d-flex align-items-center">
-                                <div class="stats-icon bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center fw-bold ms-3"
-                                    style="width: 35px; height: 35px;">
-                                    <i class="bi bi-tag-fill small"></i>
-                                </div>
-                                <h6 class="mb-0 fw-bold text-main">{{ vacation.title }}</h6>
+    
+    <div class="overflow-x-auto">
+        <table class="w-full text-right border-collapse">
+            <thead>
+                <tr class="bg-surface-container-low dark:bg-slate-800/50 text-outline dark:text-slate-500">
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-right">مسمى نوع الإجازة</th>
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-surface-container dark:divide-slate-800">
+                {% for vacation in object_list %}
+                <tr class="hover:bg-surface-container-lowest dark:hover:bg-slate-800/30 transition-all duration-200">
+                    <td class="px-6 py-5">
+                        <div class="flex items-center gap-4 flex-row-reverse text-right">
+                            <div class="w-10 h-10 rounded-xl bg-primary-container/10 text-primary dark:text-white flex items-center justify-center font-black text-xs border border-white dark:border-slate-700 shadow-sm">
+                                <span class="material-symbols-outlined text-[18px]">label</span>
                             </div>
-                        </td>
-                        <td class="text-center py-3">
-                            <div class="btn-group gap-2">
-                                <a href="{% url 'Attendance:edit_vacation_type' vacation.id %}" class="btn btn-sm btn-light btn-rounded px-3">
-                                    <i class="bi bi-pencil-square ms-1"></i> تعديل
-                                </a>
-                                <a href="{% url 'Attendance:delete_vacation_type' vacation.id %}" class="btn btn-sm btn-outline-danger btn-rounded px-3">
-                                    <i class="bi bi-trash"></i>
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="2" class="text-center py-5">
-                            <div class="text-muted">
-                                <i class="bi bi-info-circle fs-1 d-block mb-3 opacity-20"></i>
-                                لم يتم تعريف أنواع إجازات بعد
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                            <div class="font-black text-primary dark:text-white text-sm font-headline">{{ vacation.title|default:vacation.name }}</div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-5">
+                        <div class="flex items-center justify-center gap-3 flex-row-reverse">
+                            <a href="{% url 'Attendance:edit_vacation_type' vacation.id %}" 
+                               class="flex items-center gap-2 px-4 py-2 rounded-xl border border-surface-container dark:border-slate-700 text-primary dark:text-slate-200 font-black text-[10px] hover:bg-surface-container transition-all shadow-sm">
+                                <span class="material-symbols-outlined text-[16px]">edit</span>
+                                <span>تعديل</span>
+                            </a>
+                            <a href="{% url 'Attendance:delete_vacation_type' vacation.id %}" 
+                               onclick="return confirm('هل أنت متأكد من حذف هذا النوع؟')"
+                               class="flex items-center justify-center w-9 h-9 rounded-xl border border-red-100 dark:border-red-950/20 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all">
+                                <span class="material-symbols-outlined text-[18px]">delete</span>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2" class="px-6 py-16 text-center">
+                        <div class="flex flex-col items-center gap-4 opacity-30 dark:opacity-50">
+                            <span class="material-symbols-outlined text-[64px]">list_alt</span>
+                            <p class="text-base font-bold font-headline">لم يتم تعريف أنواع إجازات بعد.</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 {% endblock %}

@@ -132,7 +132,7 @@
 <body class="bg-background text-on-surface dark:bg-slate-950 dark:text-slate-100 min-h-screen">
 
     <!-- TopNavBar -->
-    <nav class="fixed top-0 w-full z-50 glass-nav h-16 flex flex-row-reverse justify-between items-center px-6 font-headline">
+    <nav class="fixed top-0 w-full z-[100] glass-nav h-16 flex flex-row-reverse justify-between items-center px-6 font-headline">
         <div class="flex items-center gap-4 flex-row-reverse">
             <button id="sidebarToggle" class="p-2 lg:hidden rounded-full hover:bg-surface-container transition-colors focus:ring-2 focus:ring-secondary-container">
                 <span class="material-symbols-outlined text-primary dark:text-white">menu</span>
@@ -269,7 +269,7 @@
     </aside>
 
     <!-- Main Content Canvas -->
-    <main id="main-content" class="mr-64 pt-16 p-4 sm:p-8 min-h-screen main-content">
+    <main id="main-content" class="mr-64 pt-24 p-4 sm:p-8 min-h-screen main-content">
         <div class="max-w-[1600px] mx-auto animate-fade-in-up">
             {% block body %}{% endblock %}
         </div>
