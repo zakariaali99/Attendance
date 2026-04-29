@@ -12,11 +12,16 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
+import sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 from django.urls import reverse_lazy
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+# BASE_DIR adjusted for PyInstaller
+if getattr(sys, 'frozen', False):
+    BASE_DIR = Path(sys._MEIPASS)
+else:
+    BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -93,7 +98,8 @@ DATABASES = {
         # password -> Ht!V!p2021
         # db -> hti_vip
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        # Persistent DB path for desktop mode
+        'NAME': os.path.join(os.path.dirname(sys.executable), 'db.sqlite3') if (getattr(sys, 'frozen', False) and os.environ.get('DESKTOP_MODE') == '1') else os.path.join(BASE_DIR, 'db.sqlite3'),
         # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
         # 'NAME': 'hti_vip',
         # 'USER': 'hti',

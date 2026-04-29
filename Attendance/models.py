@@ -51,6 +51,7 @@ class Profile(models.Model):
     shift_end_time = models.TimeField(null=True, default=None)
     shift_end_next_day = models.BooleanField(default=False)
     by_finger_print_count = models.BooleanField(default=True)
+    late_threshold = models.IntegerField(default=15, help_text="Number of minutes after start_time to consider the employee late.")
 
     def __str__(self):
         return self.name
@@ -82,6 +83,15 @@ class Employee(models.Model):
 
     class Meta:
         ordering = ("id",)
+        permissions = [
+            ("can_view_employees", "View employees"),
+            ("can_view_employee_records", "View employee records"),
+            ("can_create_employees", "Add employees"),
+            ("can_delete_employees", "Delete employees"),
+            ("can_edit_employees", "Edit employees"),
+            ("can_edit_employees_records", "Edit employees records"),
+            ("can_edit_export_report", "Edit employees records"),
+        ]
 
     def __str__(self):
         return self.name
@@ -183,17 +193,6 @@ class Employee(models.Model):
     @property
     def out_return_count(self):
         return len([day for day in self.all_days if day.out_return_time > 0])
-
-    class Meta:
-        permissions = [
-            ("can_view_employees", "View employees"),
-            ("can_view_employee_records", "View employee records"),
-            ("can_create_employees", "Add employees"),
-            ("can_delete_employees", "Delete employees"),
-            ("can_edit_employees", "Edit employees"),
-            ("can_edit_employees_records", "Edit employees records"),
-            ("can_edit_export_report", "Edit employees records"),
-        ]
 
 
 attendance_choices = [

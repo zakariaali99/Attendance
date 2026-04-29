@@ -23,6 +23,7 @@ from Attendance.forms import *  # EditVacationForm, EmployeeForm, ProfileForm, D
 from Attendance.models import *
 from Attendance.sync_records import sync_all, sync_all_devices
 from Attendance.tasks import sync_all_devices_task
+from Attendance.import_records import import_records_from_xls
 from VIPAlert.models import User, SystemLog
 from VIPAlert.views import ensure_default_admin
 
@@ -282,6 +283,30 @@ class EditEmployeeView(PermissionRequiredMixin, UpdateView):
         return super().get(request, *args, **kwargs)
 
 
+class DeleteEmployeeView(PermissionRequiredMixin, DeleteView):
+    template_name = "attendance/delete_form.html"
+    model = Employee
+    success_url = reverse_lazy("Attendance:list")
+    permission_required = ('Attendance.can_delete_employees',)
+    raise_exception = True
+    extra_context = {
+        "back_url": reverse_lazy("Attendance:list")
+    }
+
+    def delete(self, request, *args, **kwargs):
+        obj = self.get_object()
+        SystemLog.objects.create(
+            user=self.request.user,
+            action="حذف موظف",
+            description=f"تم حذف الموظف: {obj.name} (رقم البصمة: {obj.attendance_id})",
+            ip_address=self.request.META.get('REMOTE_ADDR')
+        )
+        return super().delete(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        return self.delete(request, *args, **kwargs)
+
+
 class EmployeeView(PermissionRequiredMixin, ListView):
     template_name = "attendance/employee_list_view.html"
     model = Employee
@@ -359,27 +384,53 @@ class ProfileListView(ListView):
         return super().get(request, *args, **kwargs)
 
 
-class AddProfileView(CreateView):
+class AddProfileView(PermissionRequiredMixin, CreateView):
+    permission_required = ('Attendance.can_create_profiles',)
+    raise_exception = True
     template_name = "attendance/add_edit_profile.html"
     form_class = ProfileForm
     model = Profile
     success_url = reverse_lazy("Attendance:profiles")
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        SystemLog.objects.create(
+            user=self.request.user,
+            action="إضافة نظام دوام",
+            description=f"تم إضافة نظام دوام جديد: {self.object.name}",
+            ip_address=self.request.META.get('REMOTE_ADDR')
+        )
+        return response
+
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
 
-class EditProfileView(UpdateView):
+class EditProfileView(PermissionRequiredMixin, UpdateView):
+    permission_required = ('Attendance.can_edit_profiles',)
+    raise_exception = True
     template_name = "attendance/add_edit_profile.html"
     form_class = ProfileForm
     model = Profile
     success_url = reverse_lazy("Attendance:profiles")
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        SystemLog.objects.create(
+            user=self.request.user,
+            action="تعديل نظام دوام",
+            description=f"تم تعديل نظام الدوام: {self.object.name}",
+            ip_address=self.request.META.get('REMOTE_ADDR')
+        )
+        return response
+
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
 
-class DeleteProfileView(DeleteView):
+class DeleteProfileView(PermissionRequiredMixin, DeleteView):
+    permission_required = ('Attendance.can_delete_profiles',)
+    raise_exception = True
     template_name = "attendance/delete_form.html"
     model = Profile
     success_url = reverse_lazy("Attendance:profiles")
@@ -573,7 +624,9 @@ class DeviceListView(ListView):
         return super().get(request, *args, **kwargs)
 
 
-class EditDeviceView(UpdateView):
+class EditDeviceView(PermissionRequiredMixin, UpdateView):
+    permission_required = ('Attendance.can_edit_employees',)
+    raise_exception = True
     template_name = "attendance/add_edit_device.html"
     form_class = DeviceForm
     model = ZKTDevice
@@ -583,22 +636,49 @@ class EditDeviceView(UpdateView):
         return super().get(request, *args, **kwargs)
 
 
-class AddDeviceView(CreateView):
+class AddDeviceView(PermissionRequiredMixin, CreateView):
+    permission_required = ('Attendance.can_create_employees',)
+    raise_exception = True
     template_name = "attendance/add_edit_device.html"
     form_class = DeviceForm
     model = ZKTDevice
+    success_url = reverse_lazy("Attendance:devices")
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        SystemLog.objects.create(
+            user=self.request.user,
+            action="إضافة جهاز بصمة",
+            description=f"تم إضافة جهاز بصمة جديد: {self.object.name} ({self.object.ip})",
+            ip_address=self.request.META.get('REMOTE_ADDR')
+        )
+        return response
     success_url = reverse_lazy("Attendance:devices")
 
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
 
-class DeleteDeviceView(DeleteView):
+class DeleteDeviceView(PermissionRequiredMixin, DeleteView):
+    permission_required = ('Attendance.can_delete_employees',)
+    raise_exception = True
     model = ZKTDevice
     success_url = reverse_lazy("Attendance:devices")
+
+    def delete(self, request, *args, **kwargs):
+        obj = self.get_object()
+        SystemLog.objects.create(
+            user=self.request.user,
+            action="حذف جهاز بصمة",
+            description=f"تم حذف جهاز البصمة: {obj.name} ({obj.ip})",
+            ip_address=self.request.META.get('REMOTE_ADDR')
+        )
+        return super().delete(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         return self.delete(request, *args, **kwargs)
+
+
 
 
 class VacationsView(ListView):
@@ -614,18 +694,15 @@ class VacationsView(ListView):
     def get_queryset(self):
         q = super().get_queryset()
         g = self.request.GET
-
         if g.get('employees', "") != "":
             q = q.filter(employee_id=g.get('employees', None))
-
         if g.get('vacation_type', "") != "":
             q = q.filter(vacation_type_id=g.get('vacation_type', None))
-
         if g.get('date', "") != "":
             q = q.filter(date__gte=g.get('date', None))
-
         if g.get('to_date', "") != "":
             q = q.filter(date__lte=g.get('to_date', None))
+        return q
 
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
@@ -639,76 +716,25 @@ class AddVacationsView(PermissionRequiredMixin, FormView):
     permission_required = ('Attendance.can_create_employees',)
     raise_exception = True
 
-    def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        return super().post(request, *args, **kwargs)
-
     def form_valid(self, form):
-        for e in form.data.getlist("employees"):
-            v = Vacation(date=form.data["date"],
-                         to_date=form.data["to_date"],
-                         note=form.data["note"],
-                         vacation_type_id=form.data["type"],
-                         employee_id=e
-                         )
+        date = form.cleaned_data['date']
+        to_date = form.cleaned_data['to_date']
+        vacation_type = form.cleaned_data['type']
+        employees = form.cleaned_data['employees']
+        note = form.cleaned_data['note']
+        for employee in employees:
+            v = Vacation(employee=employee, date=date, to_date=to_date, vacation_type=vacation_type, note=note)
             v.save()
-            v = Vacation.objects.get(id=v.id)
-            employee = Employee.objects.get(id=e)
-            employee.current_vacations = employee.current_vacations - (v.to_date - v.date).days
+            employee.current_vacations = employee.current_vacations - (to_date - date).days
             employee.save()
-        
+
         SystemLog.objects.create(
             user=self.request.user,
-            action="إضافة إجازات",
-            description=f"تم إضافة إجازات لعدد {len(form.data.getlist('employees'))} موظف",
+            action="إضافة إجازات جماعية",
+            description=f"تم إضافة إجازة لعدد {employees.count()} موظف للفترة من {date} إلى {to_date}",
             ip_address=self.request.META.get('REMOTE_ADDR')
         )
         return super().form_valid(form)
-
-
-class AddVacationTypeView(PermissionRequiredMixin, CreateView):
-    template_name = "attendance/vacations/add_edit_vacation_type.html"
-    form_class = AddVacationTypeForm
-    model = VacationType
-    success_url = reverse_lazy("Attendance:list")
-    permission_required = ('Attendance.can_create_employees',)
-    raise_exception = True
-
-    def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
-
-
-class EditVacationTypeView(PermissionRequiredMixin, UpdateView):
-    template_name = "attendance/vacations/add_edit_vacation_type.html"
-    form_class = AddVacationTypeForm
-    model = VacationType
-    success_url = reverse_lazy("Attendance:vacation_types")
-    permission_required = ('Attendance.can_create_employees',)
-    raise_exception = True
-
-    def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
-
-
-class DeleteVacationTypeView(DeleteView):
-    template_name = "attendance/delete_form.html"
-    model = VacationType
-    success_url = reverse_lazy("Attendance:vacation_types")
-    extra_context = {
-        "back_url": reverse_lazy("Attendance:vacation_types")
-    }
-
-
-class VacationTypeView(ListView):
-    template_name = "attendance/vacations/vacation_type_list_view.html"
-    model = VacationType
-
-    permission_required = ('Attendance.can_create_employees',)
-
-    def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
 
 
 class EditVacationView(PermissionRequiredMixin, UpdateView):
@@ -719,24 +745,97 @@ class EditVacationView(PermissionRequiredMixin, UpdateView):
     permission_required = ('Attendance.can_create_employees',)
     raise_exception = True
 
-    def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        SystemLog.objects.create(
+            user=self.request.user,
+            action="تعديل إجازة",
+            description=f"تم تعديل إجازة الموظف: {self.object.employee.name}",
+            ip_address=self.request.META.get('REMOTE_ADDR')
+        )
+        return response
 
 
-class DeleteVacationView(DeleteView):
-    template_name = "attendance/delete_form.html"
+class DeleteVacationView(PermissionRequiredMixin, DeleteView):
+    permission_required = ('Attendance.can_create_employees',)
+    raise_exception = True
     model = Vacation
     success_url = reverse_lazy("Attendance:vacation")
-    extra_context = {
-        "back_url": reverse_lazy("Attendance:vacation")
-    }
 
     def delete(self, request, *args, **kwargs):
         obj = self.get_object()
         SystemLog.objects.create(
             user=self.request.user,
             action="حذف إجازة",
-            description=f"تم حذف إجازة الموظف {obj.employee.name}",
+            description=f"تم حذف إجازة الموظف: {obj.employee.name} للفترة من {obj.date} إلى {obj.to_date}",
+            ip_address=self.request.META.get('REMOTE_ADDR')
+        )
+        return super().delete(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        return self.delete(request, *args, **kwargs)
+
+
+class VacationTypeView(PermissionRequiredMixin, ListView):
+    template_name = "attendance/vacations/vacation_type_list_view.html"
+    model = VacationType
+    permission_required = ('Attendance.can_create_employees',)
+    raise_exception = True
+
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+
+class AddVacationTypeView(PermissionRequiredMixin, CreateView):
+    permission_required = ('Attendance.can_create_employees',)
+    raise_exception = True
+    template_name = "attendance/vacations/add_edit_vacation_type.html"
+    form_class = AddVacationTypeForm
+    model = VacationType
+    success_url = reverse_lazy("Attendance:vacation_types")
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        SystemLog.objects.create(
+            user=self.request.user,
+            action="إضافة نوع إجازة",
+            description=f"تم إضافة نوع إجازة جديد: {self.object.name}",
+            ip_address=self.request.META.get('REMOTE_ADDR')
+        )
+        return response
+
+
+class EditVacationTypeView(PermissionRequiredMixin, UpdateView):
+    permission_required = ('Attendance.can_create_employees',)
+    raise_exception = True
+    template_name = "attendance/vacations/add_edit_vacation_type.html"
+    form_class = AddVacationTypeForm
+    model = VacationType
+    success_url = reverse_lazy("Attendance:vacation_types")
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        SystemLog.objects.create(
+            user=self.request.user,
+            action="تعديل نوع إجازة",
+            description=f"تم تعديل نوع الإجازة: {self.object.name}",
+            ip_address=self.request.META.get('REMOTE_ADDR')
+        )
+        return response
+
+
+class DeleteVacationTypeView(PermissionRequiredMixin, DeleteView):
+    permission_required = ('Attendance.can_create_employees',)
+    raise_exception = True
+    model = VacationType
+    success_url = reverse_lazy("Attendance:vacation_types")
+
+    def delete(self, request, *args, **kwargs):
+        obj = self.get_object()
+        SystemLog.objects.create(
+            user=self.request.user,
+            action="حذف نوع إجازة",
+            description=f"تم حذف نوع الإجازة: {obj.name}",
             ip_address=self.request.META.get('REMOTE_ADDR')
         )
         return super().delete(request, *args, **kwargs)
@@ -749,16 +848,12 @@ class ExceptionsView(ListView):
     def get_queryset(self):
         q = super().get_queryset()
         g = self.request.GET
-
         if g.get('employees', "") != "":
             q = q.filter(employee_id=g.get('employees', None))
-
         if g.get('type', "") != "":
             q = q.filter(type=g.get('type', None))
-
         if g.get('date', "") != "":
             q = q.filter(date__gte=g.get('date', None))
-
         return q
 
     def get_context_data(self, **kwargs):
@@ -767,7 +862,6 @@ class ExceptionsView(ListView):
         return data
 
     def get(self, request, *args, **kwargs):
-
         return super().get(request, *args, **kwargs)
 
 
@@ -779,58 +873,58 @@ class AddExceptionsView(PermissionRequiredMixin, FormView):
     permission_required = ('Attendance.can_create_employees',)
     raise_exception = True
 
-    def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        return super().post(request, *args, **kwargs)
-
     def form_valid(self, form):
-        for e in form.data.getlist("employees"):
-            Exception(date=form.data["date"],
-                      note=form.data["note"],
-                      type=form.data["type"],
-                      employee_id=e
-                      ).save()
-        
+        date = form.cleaned_data['date']
+        exception_type = form.cleaned_data['type']
+        employees = form.cleaned_data['employees']
+        note = form.cleaned_data['note']
+        for employee in employees:
+            e = Exception(employee=employee, date=date, type=exception_type, note=note)
+            e.save()
+
         SystemLog.objects.create(
             user=self.request.user,
-            action="إضافة أذونات",
-            description=f"تم إضافة أذونات لعدد {len(form.data.getlist('employees'))} موظف",
+            action="إضافة استثناءات جماعية",
+            description=f"تم إضافة استثناء {dict(Exception.types).get(exception_type)} لعدد {employees.count()} موظف بتاريخ {date}",
             ip_address=self.request.META.get('REMOTE_ADDR')
         )
         return super().form_valid(form)
 
 
-class DeleteExceptionView(DeleteView):
-    template_name = "attendance/delete_form.html"
+class DeleteExceptionView(PermissionRequiredMixin, DeleteView):
+    permission_required = ('Attendance.can_create_employees',)
+    raise_exception = True
     model = Exception
     success_url = reverse_lazy("Attendance:exception")
-    extra_context = {
-        "back_url": reverse_lazy("Attendance:exception")
-    }
 
     def delete(self, request, *args, **kwargs):
         obj = self.get_object()
         SystemLog.objects.create(
             user=self.request.user,
-            action="حذف إذن",
-            description=f"تم حذف إذن الموظف {obj.employee.name}",
+            action="حذف استثناء",
+            description=f"تم حذف استثناء الموظف: {obj.employee.name} بتاريخ {obj.date}",
             ip_address=self.request.META.get('REMOTE_ADDR')
         )
         return super().delete(request, *args, **kwargs)
 
 
 class EditExceptionView(PermissionRequiredMixin, UpdateView):
+    permission_required = ('Attendance.can_create_employees',)
+    raise_exception = True
     template_name = "attendance/exceptions/edit_exception.html"
     form_class = EditExceptionForm
     model = Exception
     success_url = reverse_lazy("Attendance:exception")
-    permission_required = ('Attendance.can_create_employees',)
-    raise_exception = True
 
-    def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        SystemLog.objects.create(
+            user=self.request.user,
+            action="تعديل استثناء",
+            description=f"تم تعديل استثناء الموظف: {self.object.employee.name}",
+            ip_address=self.request.META.get('REMOTE_ADDR')
+        )
+        return response
 
 
 class AddPermission(CreateView):
@@ -1065,11 +1159,145 @@ class ExportMonthlyRegisterView(PermissionRequiredMixin, View):
             description=f"تم تحميل التقرير العام للفترة من {from_date} إلى {to_date}",
             ip_address=request.META.get('REMOTE_ADDR')
         )
+        return response
+
+
+class ImportRecordsView(PermissionRequiredMixin, FormView):
+    template_name = "attendance/import_data.html"
+    form_class = ImportRecordsForm
+    success_url = reverse_lazy("Attendance:list")
+    permission_required = ('Attendance.can_create_employees',)
+    raise_exception = True
+
+    def form_valid(self, form):
+        file = self.request.FILES['file']
+        # Save temporary file
+        temp_path = os.path.join(settings.BASE_DIR, 'data', f"temp_import_{self.request.user.id}.xls")
+        os.makedirs(os.path.dirname(temp_path), exist_ok=True)
+        with open(temp_path, 'wb+') as destination:
+            for chunk in file.chunks():
+                destination.write(chunk)
+        
+        success, message = import_records_from_xls(temp_path, user=self.request.user)
+        
+        if success:
+            SystemLog.objects.create(
+                user=self.request.user,
+                action="استيراد بيانات",
+                description=f"تم استيراد سجلات حضور من ملف Excel: {message}",
+                ip_address=self.request.META.get('REMOTE_ADDR')
+            )
+            return render(self.request, self.template_name, {
+                'form': form,
+                'success_message': message
+            })
+        else:
+            return render(self.request, self.template_name, {
+                'form': form,
+                'error_message': message
+            })
+
+
+class ExportPayrollSummaryView(PermissionRequiredMixin, View):
+    permission_required = ('Attendance.can_view_employees',)
+    raise_exception = True
+
+    def get(self, request, *args, **kwargs):
+        from_date, to_date = default_date_range(self)
+        if not from_date or not to_date:
+            return HttpResponse("Invalid date range", status=400)
+
+        output = io.BytesIO()
+        workbook = xlsxwriter.Workbook(output)
+        worksheet = workbook.add_worksheet("Payroll Summary")
+        worksheet.right_to_left()
+
+        header_fmt = workbook.add_format({
+            'bold': True, 'bg_color': '#1e293b', 'font_color': 'white',
+            'border': 1, 'align': 'center', 'valign': 'vcenter'
+        })
+        cell_fmt = workbook.add_format({'border': 1, 'align': 'center'})
+
+        headers = ['الاسم', 'نظام العمل', 'اجمالي ساعات العمل', 'ايام التأخير', 'الاجازات', 'الاضافي', 'ايام الاضافي', 'الايام المطلوبة', 'ايام الحضور', 'الايام المستحقه']
+        for col, header in enumerate(headers):
+            worksheet.write(0, col, header, header_fmt)
+            worksheet.set_column(col, col, 15)
+
+        employees = Employee.objects.all().prefetch_related('vacation_set', 'exception_set')
+        
+        row_num = 1
+        for emp in employees:
+            profile = emp.default_profile or Profile.objects.first()
+            if not profile: continue
+
+            workdays = WorkDay.objects.filter(employee=emp, date__range=[from_date, to_date])
+            
+            total_work_hours = 0
+            late_days_count = 0
+            overtime_hours = 0
+            overtime_days_count = 0
+            present_days_count = workdays.count()
+            
+            late_threshold = getattr(profile, 'late_threshold', 15)
+
+            for wd in workdays:
+                total_work_hours += (wd.work or 0) + (wd.overwork or 0)
+                if wd.late > (late_threshold * 60):
+                    late_days_count += 1
+                if (wd.overwork or 0) > 0:
+                    overtime_hours += wd.overwork
+                    overtime_days_count += 1
+
+            vacations = Vacation.objects.filter(employee=emp, date__lte=to_date, to_date__gte=from_date)
+            vacation_days = 0
+            for v in vacations:
+                v_start = max(v.date, from_date.date())
+                v_end = min(v.to_date, to_date.date())
+                vacation_days += (v_end - v_start).days + 1
+
+            profile_days = [int(d.day) for d in profile.days.all()]
+            required_days = 0
+            current_day = from_date.date()
+            while current_day <= to_date.date():
+                weekday_map = {5: 0, 6: 1, 0: 2, 1: 3, 2: 4, 3: 5, 4: 6}
+                day_index = weekday_map.get(current_day.weekday())
+                if day_index in profile_days:
+                    required_days += 1
+                current_day += datetime.timedelta(days=1)
+
+            accrued_days = present_days_count + vacation_days
+
+            data = [
+                emp.name,
+                profile.name,
+                round(total_work_hours, 2),
+                late_days_count,
+                vacation_days,
+                round(overtime_hours, 2),
+                overtime_days_count,
+                required_days,
+                present_days_count,
+                accrued_days
+            ]
+            
+            for col, val in enumerate(data):
+                worksheet.write(row_num, col, val, cell_fmt)
+            row_num += 1
+
+        workbook.close()
+        output.seek(0)
+        filename = f"payroll-summary-{from_date.strftime('%Y-%m-%d')}-to-{to_date.strftime('%Y-%m-%d')}.xlsx"
+        
+        response = HttpResponse(
+            output,
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        response['Content-Disposition'] = f'attachment; filename={filename}'
+        
         SystemLog.objects.create(
             user=request.user,
-            action="تحميل تقرير",
-            description=f"تم تحميل التقرير العام للفترة من {from_date} إلى {to_date}",
+            action="تحميل تقرير الرواتب",
+            description=f"تم تحميل ملخص الرواتب للفترة من {from_date} إلى {to_date}",
             ip_address=request.META.get('REMOTE_ADDR')
         )
         return response
-

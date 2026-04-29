@@ -92,9 +92,10 @@ class ProfileForm(forms.ModelForm):
                 'type': 'time'
             }),
             'days': forms.CheckboxSelectMultiple(attrs={
-                # 'class': 'form-control rounded-pill',
-                # 'placeholder': 'تاريخ بداية العقد',
-
+            }),
+            'late_threshold': forms.NumberInput(attrs={
+                'class': 'form-control rounded-pill',
+                'placeholder': 'دقائق التأخير المسموح بها'
             }),
         }
 
@@ -305,3 +306,7 @@ class PermissionForm(forms.ModelForm):
                 'class': 'form-control rounded-pill'}),
 
         }
+
+
+class ImportRecordsForm(forms.Form):
+    file = forms.FileField(label="ملف Excel (xls)", widget=forms.FileInput(attrs={'class': 'form-control rounded-pill'}))

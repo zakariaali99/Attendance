@@ -239,6 +239,11 @@
                     <span class="material-symbols-outlined !text-[22px]" {% if request.resolver_match.url_name == 'monthly_register' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>calendar_view_month</span>
                     <span class="font-bold text-xs sidebar-text">سجل الدوام الشهري</span>
                 </a>
+
+                <a href="{% url 'Attendance:export_payroll_summary' %}" class="flex flex-row-reverse items-center gap-4 py-3 px-4 rounded-2xl transition-all duration-200 {% if request.resolver_match.url_name == 'export_payroll_summary' %}bg-white/10 text-white shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
+                    <span class="material-symbols-outlined !text-[22px]">payments</span>
+                    <span class="font-bold text-xs sidebar-text">ملخص الرواتب</span>
+                </a>
             </div>
 
             <!-- System Section -->
@@ -256,6 +261,11 @@
                 <a href="{% url 'Attendance:devices' %}" class="flex flex-row-reverse items-center gap-4 py-3 px-4 rounded-2xl transition-all duration-200 {% if 'device' in request.path %}bg-white/10 text-white shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
                     <span class="material-symbols-outlined !text-[22px]">devices</span>
                     <span class="font-bold text-xs sidebar-text">أجهزة البصمة</span>
+                </a>
+
+                <a href="{% url 'Attendance:import_data' %}" class="flex flex-row-reverse items-center gap-4 py-3 px-4 rounded-2xl transition-all duration-200 {% if request.resolver_match.url_name == 'import_data' %}bg-white/10 text-white shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
+                    <span class="material-symbols-outlined !text-[22px]">publish</span>
+                    <span class="font-bold text-xs sidebar-text">استيراد السجلات</span>
                 </a>
 
                 <a href="{% url 'Attendance:settings' %}" class="flex flex-row-reverse items-center gap-4 py-3 px-4 rounded-2xl transition-all duration-200 {% if request.resolver_match.url_name == 'settings' %}bg-white/10 text-white shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">

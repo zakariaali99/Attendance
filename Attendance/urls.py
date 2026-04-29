@@ -10,6 +10,7 @@ urlpatterns = [
     path('list', EmployeeView.as_view(), name="list"),
     path('create', AddEmployeeView.as_view(), name="add"),
     path('edit/<int:pk>', EditEmployeeView.as_view(), name="edit"),
+    path('delete/<int:pk>', DeleteEmployeeView.as_view(), name="delete"),
     path('records/<int:pk>', EmployeeRecordsView.as_view(), name="records"),
     path('permission/<str:pk>', AddPermission.as_view(), name="permission"),
     path('records/<int:pk>/export', ExportEmployeeReportView.as_view(), name="export_employee_report"),
@@ -20,6 +21,7 @@ urlpatterns = [
     path('profile/delete/<int:pk>', DeleteProfileView.as_view(), name="delete_profile"),
     path('report', ReportView.as_view(), name="report"),
     path('report/export', ExportReportView.as_view(), name="export_report"),
+    path('report/payroll-summary', ExportPayrollSummaryView.as_view(), name="export_payroll_summary"),
     path('report/register', MonthlyRegisterView.as_view(), name="monthly_register"),
     path('report/register/export', ExportMonthlyRegisterView.as_view(), name="export_monthly_register"),
 
@@ -39,14 +41,11 @@ urlpatterns = [
     path('vacation/types/<int:pk>/delete', DeleteVacationTypeView.as_view(), name="delete_vacation_type"),
     path('vacation/types/add', AddVacationTypeView.as_view(), name="add_vacation_type"),
 
-
-
-
     path('exception/', AddExceptionsView.as_view(), name="add_exception"),
     path('exception/view', ExceptionsView.as_view(), name="exception"),
     path('exception/<int:pk>/edit', EditExceptionView.as_view(), name="edit_exception"),
     path('exception/<int:pk>/delete', DeleteExceptionView.as_view(), name="delete_exception"),
+    path('import-data', ImportRecordsView.as_view(), name="import_data"),
     path('settings', SettingsView.as_view(), name="settings"),
 
 ]
-

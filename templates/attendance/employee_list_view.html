@@ -59,12 +59,16 @@
                                 <span class="material-symbols-outlined text-[18px] group-hover:scale-110 transition-transform">list_alt</span>
                                 <span>السجل</span>
                             </a>
-                            <a href="{% url 'Attendance:edit' employee.id %}" 
-                               class="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-primary text-white font-black text-xs hover:bg-black transition-all group shadow-lg shadow-primary/20">
-                                <span class="material-symbols-outlined text-[18px] group-hover:rotate-12 transition-transform">edit</span>
-                                <span>تعديل</span>
-                            </a>
-                        </div>
+                             <a href="{% url 'Attendance:edit' employee.id %}" 
+                                class="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-primary text-white font-black text-xs hover:bg-black transition-all group shadow-lg shadow-primary/20">
+                                 <span class="material-symbols-outlined text-[18px] group-hover:rotate-12 transition-transform">edit</span>
+                                 <span>تعديل</span>
+                             </a>
+                             <a href="{% url 'Attendance:delete' employee.id %}" 
+                                class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-error/20 text-error font-black text-xs hover:bg-error hover:text-white transition-all group shadow-sm">
+                                 <span class="material-symbols-outlined text-[18px] group-hover:scale-110 transition-transform">delete</span>
+                             </a>
+                         </div>
                     </td>
                 </tr>
                 {% empty %}
