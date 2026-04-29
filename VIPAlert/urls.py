@@ -1,7 +1,6 @@
 from django.contrib.auth.views import LogoutView
 from django.urls import path, re_path
-from django.views.static import serve
-from HTI import settings
+from django.contrib.staticfiles.views import serve as staticfiles_serve
 from VIPAlert.views import HomeView, LoginView, UsersListView, AddUserView, EditUserView
 
 
@@ -14,5 +13,5 @@ urlpatterns = [
 
     path('add_user', AddUserView.as_view(), name="add_user"),
     path('edit_user/<int:pk>', EditUserView.as_view(), name="edit_user"),
-    re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
+    re_path(r'^static/(?P<path>.*)$', staticfiles_serve, {'insecure': True}),
 ]

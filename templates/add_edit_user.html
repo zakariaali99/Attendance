@@ -9,7 +9,7 @@
 <nav class="flex flex-row-reverse items-center gap-2 mb-8 text-xs font-bold text-outline dark:text-slate-500 uppercase tracking-widest animate-fade-in-up">
     <a href="{% url 'Attendance:dashboard' %}" class="hover:text-primary dark:hover:text-white transition-colors">الرئيسية</a>
     <span class="material-symbols-outlined text-[14px]">chevron_left</span>
-    <a href="{% url 'VIP:list_users' %}" class="hover:text-primary dark:hover:text-white transition-colors">إدارة المستخدمين</a>
+    <a href="{% url 'VIP:users_list' %}" class="hover:text-primary dark:hover:text-white transition-colors">إدارة المستخدمين</a>
     <span class="material-symbols-outlined text-[14px]">chevron_left</span>
     <span class="text-primary dark:text-white">{% if form.instance.pk %}تعديل المستخدم{% else %}مستخدم جديد{% endif %}</span>
 </nav>
@@ -58,12 +58,7 @@
                 </div>
                 <div class="space-y-2">
                     <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-4 font-headline">تأكيد كلمة المرور</label>
-                    {% render_field form.password_2 class="w-full bg-surface-container dark:bg-slate-800 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-primary dark:text-white focus:ring-2 focus:ring-secondary transition-all" type="password" %}
-                </div>
-
-                <div class="space-y-2">
-                    <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-4 font-headline">المدينة الفرع</label>
-                    {% render_field form.city class="w-full bg-surface-container dark:bg-slate-800 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-primary dark:text-white focus:ring-2 focus:ring-secondary transition-all" %}
+                    {% render_field form.password2 class="w-full bg-surface-container dark:bg-slate-800 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-primary dark:text-white focus:ring-2 focus:ring-secondary transition-all" type="password" %}
                 </div>
                 <div class="space-y-2">
                     <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-4 font-headline">صفة المستخدم</label>
@@ -97,7 +92,7 @@
                     <span class="material-symbols-outlined">save</span>
                     <span>{% if form.instance.pk %}حفظ تعديلات المستخدم{% else %}إنشاء حساب المستخدم{% endif %}</span>
                 </button>
-                <a href="{% url 'VIP:list_users' %}" class="text-xs font-black text-outline dark:text-slate-500 hover:text-red-500 transition-colors uppercase tracking-widest">تراجع للخلف</a>
+                <a href="{% url 'VIP:users_list' %}" class="text-xs font-black text-outline dark:text-slate-500 hover:text-red-500 transition-colors uppercase tracking-widest">تراجع للخلف</a>
             </div>
         </form>
     </div>

@@ -84,7 +84,7 @@
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 
-    <link rel="icon" href="{% static 'imgs/logo.png' %}">
+    <link rel="icon" href="{% static 'imgs/logo-mark.png' %}">
     <link rel="stylesheet" href="{% static 'css/alchemist.css' %}?v=1">
 
     <style>
@@ -133,26 +133,26 @@
 
 {% block shell %}
     <!-- TopNavBar -->
-    <nav class="fixed top-0 w-full z-[100] glass-nav h-16 flex flex-row-reverse justify-between items-center px-6 font-headline">
-        <div class="flex items-center gap-4 flex-row-reverse">
+    <nav class="fixed top-0 w-full z-[100] glass-nav h-16 flex flex-row-reverse justify-between items-center gap-3 px-4 sm:px-6 font-headline">
+        <div class="flex min-w-0 items-center gap-3 flex-row-reverse">
             <button id="sidebarToggle" class="p-2 lg:hidden rounded-full hover:bg-surface-container transition-colors focus:ring-2 focus:ring-secondary-container">
                 <span class="material-symbols-outlined text-primary dark:text-white">menu</span>
             </button>
-            <a href="{% url 'Attendance:dashboard' %}" class="flex items-center gap-3 flex-row-reverse">
-                <img alt="منظومة الخوارزمي" class="h-10 w-auto" src="{% static 'imgs/logo.png' %}"/>
-                <span class="text-xl font-bold text-primary dark:text-white hidden sm:block">منظومة الخوارزمي</span>
+            <a href="{% url 'Attendance:dashboard' %}" class="flex min-w-0 items-center gap-3 flex-row-reverse">
+                <img alt="منظومة الخوارزمي" class="h-9 w-9 shrink-0 rounded-lg object-cover" src="{% static 'imgs/logo-mark.png' %}"/>
+                <span class="truncate text-lg font-bold text-primary dark:text-white hidden xl:block">منظومة الخوارزمي</span>
             </a>
         </div>
 
         
-        <div class="flex items-center gap-4 flex-row-reverse">
+        <div class="flex min-w-0 items-center gap-2 sm:gap-3 flex-row-reverse">
             <!-- Search Bar (hidden on small screens) -->
-            <div class="relative hidden md:flex items-center bg-surface-container dark:bg-slate-800 rounded-full px-4 py-1.5 transition-all focus-within:bg-white focus-within:ring-2 focus-within:ring-secondary-container">
+            <div class="relative hidden xl:flex items-center bg-surface-container dark:bg-slate-800 rounded-full px-4 py-1.5 transition-all focus-within:bg-white focus-within:ring-2 focus-within:ring-secondary-container">
                 <span class="material-symbols-outlined text-outline">search</span>
                 <input class="bg-transparent border-none focus:ring-0 text-sm w-48 text-right font-headline dark:text-white" placeholder="بحث سريع..." type="text"/>
             </div>
 
-            <button class="p-2 rounded-full hover:bg-surface-container dark:hover:bg-slate-800 transition-colors relative">
+            <button class="relative shrink-0 p-2 rounded-full hover:bg-surface-container dark:hover:bg-slate-800 transition-colors">
                 <span class="material-symbols-outlined text-primary dark:text-slate-200">notifications</span>
                 <span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full outline outline-2 outline-white dark:outline-slate-900"></span>
             </button>
@@ -160,8 +160,8 @@
             <!-- User Dropdown -->
             <div class="relative group">
                 <button class="flex items-center gap-3 flex-row-reverse p-1.5 rounded-full hover:bg-surface-container dark:hover:bg-slate-800 transition-colors">
-                    <div class="text-right hidden sm:block">
-                        <div class="text-xs font-bold text-primary dark:text-white">
+                    <div class="max-w-32 text-right hidden lg:block">
+                        <div class="truncate text-xs font-bold text-primary dark:text-white">
                             {% if user.is_authenticated %}
                                 {{ user.username|default:user.email }}
                             {% else %}
@@ -172,7 +172,7 @@
                             {% if user.is_authenticated %}مدير النظام{% else %}زائر{% endif %}
                         </div>
                     </div>
-                    <div class="w-9 h-9 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-sm overflow-hidden border-2 border-white dark:border-slate-800 shadow-sm">
+                    <div class="w-9 h-9 shrink-0 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-sm overflow-hidden border-2 border-white dark:border-slate-800 shadow-sm">
                         {% if user.is_authenticated and user.profile_picture %}
                             <img src="{{ user.profile_picture.url }}" class="w-full h-full object-cover">
                         {% elif user.is_authenticated %}
@@ -264,7 +264,7 @@
         <div class="mt-auto border-t border-white/5 pt-4 px-4 sidebar-text">
             <div class="flex flex-row-reverse items-center gap-3 mb-2">
                 <div class="w-8 h-8 rounded-lg bg-secondary-container/20 flex items-center justify-center">
-                    <img src="{% static 'imgs/logo.png' %}" class="w-5 h-5 opacity-80" alt=""/>
+                    <img src="{% static 'imgs/logo-mark.png' %}" class="w-5 h-5 opacity-80" alt=""/>
                 </div>
                 <div>
                     <div class="text-[10px] font-bold text-white uppercase opacity-90">الخوارزمي</div>
@@ -275,7 +275,7 @@
     </aside>
 
     <!-- Main Content Canvas -->
-    <main id="main-content" class="mr-64 pt-24 p-4 sm:p-8 min-h-screen main-content">
+    <main id="main-content" class="mr-64 pt-28 p-4 sm:p-8 lg:pt-24 min-h-screen main-content">
         <div class="max-w-[1600px] mx-auto animate-fade-in-up">
             {% block body %}{% endblock %}
         </div>
@@ -296,7 +296,9 @@
             const sidebarToggle = document.getElementById('sidebarToggle');
             const sidebarTexts = document.querySelectorAll('.sidebar-text');
             
-            let isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+            const savedSidebarState = localStorage.getItem('sidebarCollapsed');
+            let isCollapsed = window.innerWidth <= 1024 ? true : savedSidebarState === 'true';
+            let wasMobile = window.innerWidth <= 1024;
             
             function updateSidebarUI() {
                 if (window.innerWidth > 1024) {
@@ -322,7 +324,9 @@
             if (sidebarToggle) {
                 sidebarToggle.addEventListener('click', () => {
                     isCollapsed = !isCollapsed;
-                    localStorage.setItem('sidebarCollapsed', isCollapsed);
+                    if (window.innerWidth > 1024) {
+                        localStorage.setItem('sidebarCollapsed', isCollapsed);
+                    }
                     updateSidebarUI();
                 });
                 
@@ -330,7 +334,14 @@
                 updateSidebarUI();
 
                 // Handle resize
-                window.addEventListener('resize', updateSidebarUI);
+                window.addEventListener('resize', () => {
+                    const isMobile = window.innerWidth <= 1024;
+                    if (isMobile && !wasMobile) {
+                        isCollapsed = true;
+                    }
+                    wasMobile = isMobile;
+                    updateSidebarUI();
+                });
             }
 
             // Dark Mode Theme Control
