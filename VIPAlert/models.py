@@ -27,6 +27,7 @@ class UserManager(BaseUserManager):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_admin', True)
         extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('user_type', 1)  # Admin
 
         if extra_fields.get('is_staff') is not True:
             raise ValueError('Superuser must have is_staff=True.')
@@ -78,13 +79,43 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     class Meta:
         permissions = [
-            ("can_view_users", "View Users"),
-            ("can_create_users", "Create Users"),
-            ("can_edit_users", "Edit Users"),
-            ("can_delete_users", "Delete Users"),
-            ("can_change_users_passwords", "Change users passwords"),
-
+            ("can_view_users", "عرض المستخدمين"),
+            ("can_create_users", "إضافة مستخدمين"),
+            ("can_edit_users", "تعديل المستخدمين"),
+            ("can_delete_users", "حذف المستخدمين"),
+            ("can_change_users_passwords", "تغيير كلمات مرور المستخدمين"),
+            ("can_view_logs", "عرض سجلات النظام"),
+            ("can_manage_attendance", "إدارة الحضور والانصراف"),
+            ("can_manage_employees", "إدارة الموظفين"),
+            ("can_manage_vacations", "إدارة الإجازات والأذونات"),
+            ("can_manage_devices", "إدارة الأجهزة"),
+            ("can_manage_settings", "إدارة إعدادات النظام"),
+            ("can_view_reports", "عرض التقارير"),
         ]
 
-    def can_view_users(self):
-        return self.has_perm('can_view_users')
+    def has_any_perm(self, perms):
+        if self.is_superuser:
+            return True
+        return any(self.has_perm(perm) for perm in perms)
+
+class SystemLog(models.Model):
+    LOG_LEVELS = [
+        ('INFO', 'معلومات'),
+        ('WARNING', 'تحذير'),
+        ('ERROR', 'خطأ'),
+        ('CRITICAL', 'حرج'),
+    ]
+    
+    timestamp = models.DateTimeField(default=timezone.now)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    level = models.CharField(max_length=10, choices=LOG_LEVELS, default='INFO')
+    action = models.CharField(max_length=255)
+    description = models.TextField()
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    path = models.CharField(max_length=255, null=True, blank=True)
+
+    class Meta:
+        ordering = ['-timestamp']
+
+    def __str__(self):
+        return f"{self.timestamp} - {self.user} - {self.action}"

@@ -1,4 +1,5 @@
 from django import forms
+from django import forms
 from django.contrib.auth.models import Permission
 from django.forms import CheckboxSelectMultiple
 from VIPAlert.models import User
@@ -6,79 +7,44 @@ from VIPAlert.models import User
 
 
 class UserForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput(), required=False)
-    password2 = forms.CharField(widget=forms.PasswordInput(), required=False)
-
+    password = forms.CharField(widget=forms.PasswordInput(attrs={
+        'class': 'form-control rounded-pill',
+        'placeholder': 'كلمة المرور (اتركه فارغاً للحفاظ على القديمة)'
+    }), required=False)
+    
     user_permissions = forms.ModelMultipleChoiceField(
-        queryset=Permission.objects.filter(content_type_id__gt=7), widget=CheckboxSelectMultiple())
+        queryset=Permission.objects.filter(content_type__app_label='VIPAlert', codename__startswith='can_'),
+        widget=forms.CheckboxSelectMultiple(attrs={'class': 'permission-checkbox'}),
+        required=False,
+        label="الصلاحيات"
+    )
 
-    # user_permissions.widget.attrs = {
-    #     "class": 'form-check form-switch'
-    # }
     class Meta:
         model = User
         fields = ['name', 'email', 'password', 'is_admin', 'user_type', 'user_permissions']
-
         widgets = {
-            'name': forms.TextInput(attrs={
-                'class': 'form-control rounded-pill',
-                'placeholder': 'Your Name'}),
-            'email': forms.EmailInput(attrs={
-                'class': 'form-control rounded-pill',
-                'placeholder': 'Your Email',
-            }),
-            'user_type': forms.Select(attrs={
-                'class': 'form-control rounded-pill',
-                'placeholder': 'Select account type'
-            }),
-            'is_admin': forms.CheckboxInput(attrs={
-                'class': 'rounded-pill',
-            }),
+            'name': forms.TextInput(attrs={'class': 'form-control rounded-pill', 'placeholder': 'الاسم بالكامل'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control rounded-pill', 'placeholder': 'البريد الإلكتروني'}),
+            'user_type': forms.Select(attrs={'class': 'form-control rounded-pill'}),
+            'is_admin': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
-    password.widget.attrs = {
-        'class': 'form-control rounded-pill',
-        'placeholder': 'Password'
-    }
-    password2.widget.attrs = {
-        'class': 'form-control rounded-pill',
-        'placeholder': 'Retype Password'
-    }
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.pk:
+            self.fields['user_permissions'].initial = self.instance.user_permissions.all()
 
     def save(self, commit=True):
-        if self.instance:
-            if self.instance.id is not None:
-                user = self.instance
-                user = User.objects.get(id=user.id)
-                pw = self.cleaned_data["password"]
-                pw2 = self.cleaned_data["password2"]
-
-                if pw == pw2 and len(pw) >= 5:
-                    user.set_password(pw)
-                print(self.cleaned_data)
-
-                user.user_permissions.clear()
-                user.user_permissions.add(*self.cleaned_data["user_permissions"])
-                user.name = self.cleaned_data['name']
-                user.email = self.cleaned_data['email']
-                user.is_admin = self.cleaned_data["is_admin"]
-                user.user_type = self.cleaned_data["user_type"]
-                user.save()
-                return user
-
-        user = super().save(True)
-        user.set_password(self.cleaned_data["password"])
-        user.save()
+        user = super().save(commit=False)
+        password = self.cleaned_data.get("password")
+        if password:
+            user.set_password(password)
+        
+        if commit:
+            user.save()
+            if 'user_permissions' in self.cleaned_data:
+                user.user_permissions.set(self.cleaned_data['user_permissions'])
         return user
-
-    def clean_password(self):
-        if "password" in self.data.keys():
-            if self.data["password"] == "":
-                return None
-            if len(self.data['password']) < 6:
-                raise forms.ValidationError("Too Short password")
-        self.cleaned_data["password"] = self.data['password']
-        return self.cleaned_data["password"]
 
 
 class LoginForm(forms.Form):

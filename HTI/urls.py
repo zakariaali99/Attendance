@@ -12,3 +12,5 @@ urlpatterns = [
     re_path(r'^static/(?P<path>.*)$', staticfiles_serve, {'insecure': True}),
     # re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}, name="media"),
 ]
+
+handler403 = 'Attendance.views.permission_denied_view'

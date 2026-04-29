@@ -53,12 +53,23 @@
                         {% endif %}
                     </td>
                     <td class="px-6 py-5">
-                        <div class="flex items-center justify-center gap-3 flex-row-reverse">
+                        <div class="flex items-center justify-center gap-2 flex-row-reverse">
                             <a href="{% url 'VIP:edit_user' user.id %}" 
-                               class="flex items-center gap-2 px-4 py-2 rounded-xl border border-surface-container dark:border-slate-700 text-primary dark:text-slate-200 font-black text-[10px] hover:bg-surface-container transition-all shadow-sm">
-                                <span class="material-symbols-outlined text-[16px]">edit</span>
-                                <span>تعديل</span>
+                               class="p-2 rounded-xl border border-surface-container dark:border-slate-700 text-primary dark:text-slate-200 hover:bg-surface-container transition-all shadow-sm" title="تعديل">
+                                <span class="material-symbols-outlined text-[18px]">edit</span>
                             </a>
+                            <a href="{% url 'VIP:trace_user' user.id %}" 
+                               class="p-2 rounded-xl border border-surface-container dark:border-slate-700 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all shadow-sm" title="تتبع">
+                                <span class="material-symbols-outlined text-[18px]">history</span>
+                            </a>
+                            {% if user.email != 'zak@system.local' and user != request.user %}
+                            <form action="{% url 'VIP:delete_user' user.id %}" method="post" class="inline" onsubmit="return confirm('هل أنت متأكد من حذف هذا المستخدم؟')">
+                                {% csrf_token %}
+                                <button type="submit" class="p-2 rounded-xl border border-surface-container dark:border-slate-700 text-error hover:bg-red-50 dark:hover:bg-red-900/20 transition-all shadow-sm" title="حذف">
+                                    <span class="material-symbols-outlined text-[18px]">delete</span>
+                                </button>
+                            </form>
+                            {% endif %}
                         </div>
                     </td>
                 </tr>

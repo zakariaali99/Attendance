@@ -55,10 +55,7 @@
                 <div class="space-y-2">
                     <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-4 font-headline">كلمة المرور</label>
                     {% render_field form.password class="w-full bg-surface-container dark:bg-slate-800 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-primary dark:text-white focus:ring-2 focus:ring-secondary transition-all" type="password" %}
-                </div>
-                <div class="space-y-2">
-                    <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-4 font-headline">تأكيد كلمة المرور</label>
-                    {% render_field form.password2 class="w-full bg-surface-container dark:bg-slate-800 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-primary dark:text-white focus:ring-2 focus:ring-secondary transition-all" type="password" %}
+                    <p class="text-[9px] text-outline dark:text-slate-500 pr-4 mt-1 font-bold">{% if form.instance.pk %}اتركها فارغة للحفاظ على الحالية{% else %}أدخل كلمة مرور قوية{% endif %}</p>
                 </div>
                 <div class="space-y-2">
                     <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-4 font-headline">صفة المستخدم</label>
@@ -71,18 +68,28 @@
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="flex flex-row-reverse items-center justify-between p-4 bg-surface-container-low dark:bg-slate-800/50 rounded-2xl border border-surface-container dark:border-slate-800 group hover:border-secondary transition-all">
-                        <span class="text-[11px] font-black text-primary dark:text-white font-headline text-right">مدير نظام كامل (Superuser)</span>
-                        {{ form.is_admin|add_class:"w-5 h-5 rounded bg-surface-container dark:bg-slate-800 border-surface-container dark:border-slate-700 text-secondary focus:ring-secondary" }}
+                        <div class="text-right">
+                            <span class="text-[11px] font-black text-primary dark:text-white font-headline">مدير نظام كامل</span>
+                            <p class="text-[9px] text-outline dark:text-slate-500">يمتلك كامل صلاحيات النظام</p>
+                        </div>
+                        {{ form.is_admin|add_class:"w-6 h-6 rounded-lg bg-surface-container dark:bg-slate-800 border-surface-container dark:border-slate-700 text-secondary focus:ring-secondary cursor-pointer" }}
                     </div>
                 </div>
 
-                <div class="mt-6 flex flex-row-reverse bg-surface-container-low dark:bg-slate-800/50 rounded-2xl p-6 border border-surface-container dark:border-slate-800">
-                    <div class="w-full space-y-2 text-right">
-                        <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest font-headline">الصلاحيات المخصصة للمستخدم</label>
-                        <div class="custom-permissions-wrapper">
-                            {{ form.user_permissions }}
+                <div class="mt-6 flex flex-row-reverse bg-surface-container-low dark:bg-slate-800/50 rounded-2xl p-8 border border-surface-container dark:border-slate-800">
+                    <div class="w-full space-y-4 text-right">
+                        <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest font-headline">الصلاحيات الدقيقة المخصصة</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-4 gap-x-8 rtl-checklist">
+                            {% for choice in form.user_permissions %}
+                                <label class="flex flex-row-reverse items-center gap-3 cursor-pointer group">
+                                    <div class="flex-grow text-xs font-bold text-primary dark:text-slate-200 group-hover:text-secondary transition-colors">
+                                        {{ choice.choice_label }}
+                                    </div>
+                                    {{ choice.tag }}
+                                </label>
+                            {% endfor %}
                         </div>
-                        <p class="text-[9px] text-outline dark:text-slate-500 font-bold mt-2">اختر الصلاحيات الدقيقة في حال لم يكن المستخدم مديراً كاملاً للنظام.</p>
+                        <p class="text-[10px] text-outline dark:text-slate-500 font-bold mt-6 pt-4 border-t border-surface-container dark:border-slate-800 italic">ملاحظة: اختر الصلاحيات في حال لم يكن المستخدم مديراً كاملاً للنظام.</p>
                     </div>
                 </div>
             </div>
@@ -90,25 +97,31 @@
             <div class="flex flex-row-reverse items-center justify-between gap-4 pt-8 border-t border-surface-container dark:border-slate-800">
                 <button type="submit" class="flex flex-row-reverse items-center gap-3 bg-secondary-container text-on-secondary-container px-10 py-4 rounded-2xl font-black shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all">
                     <span class="material-symbols-outlined">save</span>
-                    <span>{% if form.instance.pk %}حفظ تعديلات المستخدم{% else %}إنشاء حساب المستخدم{% endif %}</span>
+                    <span>{% if form.instance.pk %}حفظ التعديلات{% else %}إنشاء الحساب{% endif %}</span>
                 </button>
-                <a href="{% url 'VIP:users_list' %}" class="text-xs font-black text-outline dark:text-slate-500 hover:text-red-500 transition-colors uppercase tracking-widest">تراجع للخلف</a>
+                <a href="{% url 'VIP:users_list' %}" class="text-xs font-black text-outline dark:text-slate-500 hover:text-red-500 transition-colors uppercase tracking-widest">إلغاء والتراجع</a>
             </div>
         </form>
     </div>
 </div>
 
 <style>
-    .custom-permissions-wrapper select {
-        width: 100%;
-        background-color: var(--color-surface-container);
-        border: none;
-        border-radius: 1rem;
-        padding: 1rem;
-        font-size: 0.75rem;
-        font-weight: bold;
-        color: var(--color-primary);
-        text-align: right;
+    .rtl-checklist input[type="checkbox"] {
+        width: 1.25rem;
+        height: 1.25rem;
+        border-radius: 0.375rem;
+        background-color: #f1edf0;
+        border: 1px solid #c9c5ce;
+        color: #705d00;
+        cursor: pointer;
+    }
+    .dark .rtl-checklist input[type="checkbox"] {
+        background-color: #1e293b;
+        border-color: #334155;
+    }
+    .rtl-checklist input[type="checkbox"]:focus {
+        box-shadow: 0 0 0 2px #fcd400;
+        outline: none;
     }
 </style>
 {% endblock %}

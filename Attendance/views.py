@@ -23,8 +23,11 @@ from Attendance.forms import *  # EditVacationForm, EmployeeForm, ProfileForm, D
 from Attendance.models import *
 from Attendance.sync_records import sync_all, sync_all_devices
 from Attendance.tasks import sync_all_devices_task
-from VIPAlert.models import User
+from VIPAlert.models import User, SystemLog
 from VIPAlert.views import ensure_default_admin
+
+def permission_denied_view(request, exception=None):
+    return render(request, '403.html', status=403)
 
 
 def default_date_range(view):
@@ -231,6 +234,16 @@ class AddEmployeeView(PermissionRequiredMixin, CreateView):
     permission_required = ('Attendance.can_create_employees',)
     raise_exception = True
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        SystemLog.objects.create(
+            user=self.request.user,
+            action="إضافة موظف",
+            description=f"تم إضافة موظف جديد: {self.object.name}",
+            ip_address=self.request.META.get('REMOTE_ADDR')
+        )
+        return response
+
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
@@ -254,6 +267,16 @@ class EditEmployeeView(PermissionRequiredMixin, UpdateView):
     success_url = reverse_lazy("Attendance:list")
     permission_required = ('Attendance.can_edit_employees',)
     raise_exception = True
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        SystemLog.objects.create(
+            user=self.request.user,
+            action="تعديل موظف",
+            description=f"تم تعديل بيانات الموظف: {self.object.name}",
+            ip_address=self.request.META.get('REMOTE_ADDR')
+        )
+        return response
 
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
@@ -364,6 +387,16 @@ class DeleteProfileView(DeleteView):
         "back_url": reverse_lazy("Attendance:profiles")
     }
 
+    def delete(self, request, *args, **kwargs):
+        obj = self.get_object()
+        SystemLog.objects.create(
+            user=self.request.user,
+            action="حذف نظام دوام",
+            description=f"تم حذف نظام الدوام: {obj.title}",
+            ip_address=self.request.META.get('REMOTE_ADDR')
+        )
+        return super().delete(request, *args, **kwargs)
+
 class ReportView(PermissionRequiredMixin, TemplateView):
     template_name = "attendance/reports/monthly_report.html"
 
@@ -463,6 +496,12 @@ class ExportReportView(PermissionRequiredMixin, View):
         )
         response['Content-Disposition'] = 'attachment; filename=%s' % filename
 
+        SystemLog.objects.create(
+            user=request.user,
+            action="تحميل تقرير",
+            description=f"تم تحميل التقرير العام للفترة من {from_date} إلى {to_date}",
+            ip_address=request.META.get('REMOTE_ADDR')
+        )
         return response
 
 
@@ -517,6 +556,12 @@ class ExportEmployeeReportView(PermissionRequiredMixin, DetailView):
         )
         response['Content-Disposition'] = 'attachment; filename=%s' % filename
 
+        SystemLog.objects.create(
+            user=request.user,
+            action="تحميل تقرير موظف",
+            description=f"تم تحميل تقرير الموظف {employee.name} للفترة من {from_date} إلى {to_date}",
+            ip_address=request.META.get('REMOTE_ADDR')
+        )
         return response
 
 
@@ -582,10 +627,7 @@ class VacationsView(ListView):
         if g.get('to_date', "") != "":
             q = q.filter(date__lte=g.get('to_date', None))
 
-        return q
-
     def get(self, request, *args, **kwargs):
-
         return super().get(request, *args, **kwargs)
 
 
@@ -600,10 +642,10 @@ class AddVacationsView(PermissionRequiredMixin, FormView):
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
-    def post(self, request, *args, **kwargs) -> HttpResponse:
+    def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)
 
-    def form_valid(self, form) -> HttpResponse:
+    def form_valid(self, form):
         for e in form.data.getlist("employees"):
             v = Vacation(date=form.data["date"],
                          to_date=form.data["to_date"],
@@ -611,13 +653,18 @@ class AddVacationsView(PermissionRequiredMixin, FormView):
                          vacation_type_id=form.data["type"],
                          employee_id=e
                          )
-
             v.save()
             v = Vacation.objects.get(id=v.id)
-
             employee = Employee.objects.get(id=e)
             employee.current_vacations = employee.current_vacations - (v.to_date - v.date).days
             employee.save()
+        
+        SystemLog.objects.create(
+            user=self.request.user,
+            action="إضافة إجازات",
+            description=f"تم إضافة إجازات لعدد {len(form.data.getlist('employees'))} موظف",
+            ip_address=self.request.META.get('REMOTE_ADDR')
+        )
         return super().form_valid(form)
 
 
@@ -684,6 +731,16 @@ class DeleteVacationView(DeleteView):
         "back_url": reverse_lazy("Attendance:vacation")
     }
 
+    def delete(self, request, *args, **kwargs):
+        obj = self.get_object()
+        SystemLog.objects.create(
+            user=self.request.user,
+            action="حذف إجازة",
+            description=f"تم حذف إجازة الموظف {obj.employee.name}",
+            ip_address=self.request.META.get('REMOTE_ADDR')
+        )
+        return super().delete(request, *args, **kwargs)
+
 
 class ExceptionsView(ListView):
     template_name = "attendance/exceptions/exceptions_list_view.html"
@@ -725,16 +782,23 @@ class AddExceptionsView(PermissionRequiredMixin, FormView):
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
-    def post(self, request, *args, **kwargs) -> HttpResponse:
+    def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)
 
-    def form_valid(self, form) -> HttpResponse:
+    def form_valid(self, form):
         for e in form.data.getlist("employees"):
             Exception(date=form.data["date"],
                       note=form.data["note"],
                       type=form.data["type"],
                       employee_id=e
                       ).save()
+        
+        SystemLog.objects.create(
+            user=self.request.user,
+            action="إضافة أذونات",
+            description=f"تم إضافة أذونات لعدد {len(form.data.getlist('employees'))} موظف",
+            ip_address=self.request.META.get('REMOTE_ADDR')
+        )
         return super().form_valid(form)
 
 
@@ -745,6 +809,16 @@ class DeleteExceptionView(DeleteView):
     extra_context = {
         "back_url": reverse_lazy("Attendance:exception")
     }
+
+    def delete(self, request, *args, **kwargs):
+        obj = self.get_object()
+        SystemLog.objects.create(
+            user=self.request.user,
+            action="حذف إذن",
+            description=f"تم حذف إذن الموظف {obj.employee.name}",
+            ip_address=self.request.META.get('REMOTE_ADDR')
+        )
+        return super().delete(request, *args, **kwargs)
 
 
 class EditExceptionView(PermissionRequiredMixin, UpdateView):
@@ -985,5 +1059,17 @@ class ExportMonthlyRegisterView(PermissionRequiredMixin, View):
             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         )
         response['Content-Disposition'] = f'attachment; filename={filename}'
+        SystemLog.objects.create(
+            user=request.user,
+            action="تحميل تقرير",
+            description=f"تم تحميل التقرير العام للفترة من {from_date} إلى {to_date}",
+            ip_address=request.META.get('REMOTE_ADDR')
+        )
+        SystemLog.objects.create(
+            user=request.user,
+            action="تحميل تقرير",
+            description=f"تم تحميل التقرير العام للفترة من {from_date} إلى {to_date}",
+            ip_address=request.META.get('REMOTE_ADDR')
+        )
         return response
 

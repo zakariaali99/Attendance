@@ -1,31 +1,20 @@
-from django.contrib.auth import login
-from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.shortcuts import redirect
+from django.contrib.auth import login, logout
+from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
+from django.shortcuts import redirect, get_object_or_404
 from django.conf import settings
 from django.urls import reverse_lazy
 from django.utils.http import url_has_allowed_host_and_scheme
-from django.views.generic import TemplateView, ListView, UpdateView, CreateView, FormView
+from django.views import View
+from django.views.generic import TemplateView, ListView, UpdateView, CreateView, FormView, DeleteView
 from VIPAlert.forms import LoginForm, UserForm
-from VIPAlert.models import User
+from VIPAlert.models import User, SystemLog
+from django.contrib import messages
 
 
 def ensure_default_admin():
-    admin_user = User.objects.filter(email__iexact="admin").first()
-    if admin_user is None:
-        admin_user = User.objects.create_superuser(
-            email="admin",
-            password="admin",
-            name="admin",
-        )
-    else:
-        admin_user.name = admin_user.name or "admin"
-        admin_user.is_active = True
-        admin_user.is_staff = True
-        admin_user.is_admin = True
-        admin_user.is_superuser = True
-        admin_user.set_password("admin")
-        admin_user.save(update_fields=["name", "is_active", "is_staff", "is_admin", "is_superuser", "password"])
-    return admin_user
+    # We no longer reset the admin password to 'admin' every time for security.
+    # The user 'zak' is the main superuser.
+    pass
 
 
 class HomeView(TemplateView):
@@ -47,10 +36,16 @@ class LoginView(FormView):
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
-        # HttpRequest.session
         user = form.clean_user()
         if user is not None:
             login(self.request, user)
+            SystemLog.objects.create(
+                user=user,
+                action="دخول",
+                description=f"قام المستخدم {user.name or user.email} بتسجيل الدخول للنظام.",
+                ip_address=self.request.META.get('REMOTE_ADDR'),
+                path=self.request.path
+            )
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -90,6 +85,16 @@ class AddUserView(PermissionRequiredMixin, CreateView):
     permission_required = ("VIPAlert.can_create_users",)
     raise_exception = True
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        SystemLog.objects.create(
+            user=self.request.user,
+            action="إضافة مستخدم",
+            description=f"تم إضافة مستخدم جديد: {self.object.name or self.object.email}",
+            ip_address=self.request.META.get('REMOTE_ADDR')
+        )
+        return response
+
 
 class EditUserView(PermissionRequiredMixin, UpdateView):
     template_name = "add_edit_user.html"
@@ -98,3 +103,58 @@ class EditUserView(PermissionRequiredMixin, UpdateView):
     success_url = reverse_lazy("VIP:users_list")
     permission_required = ("VIPAlert.can_edit_users",)
     raise_exception = True
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        SystemLog.objects.create(
+            user=self.request.user,
+            action="تعديل مستخدم",
+            description=f"تم تعديل بيانات المستخدم: {self.object.name or self.object.email}",
+            ip_address=self.request.META.get('REMOTE_ADDR')
+        )
+        return response
+
+
+class DeleteUserView(PermissionRequiredMixin, DeleteView):
+    model = User
+    success_url = reverse_lazy("VIP:users_list")
+    permission_required = ("VIPAlert.can_delete_users",)
+
+    def delete(self, request, *args, **kwargs):
+        user_to_delete = self.get_object()
+        
+        # Protection: Cannot delete superuser 'zak' or self
+        if user_to_delete.email == 'zak@system.local' or user_to_delete == request.user:
+            messages.error(request, "لا يمكنك حذف هذا المستخدم.")
+            return redirect("VIP:users_list")
+            
+        SystemLog.objects.create(
+            user=request.user,
+            action="حذف مستخدم",
+            description=f"تم حذف المستخدم: {user_to_delete.name or user_to_delete.email}",
+            ip_address=request.META.get('REMOTE_ADDR')
+        )
+        return super().delete(request, *args, **kwargs)
+
+
+class SystemLogListView(PermissionRequiredMixin, ListView):
+    model = SystemLog
+    template_name = "system_logs.html"
+    permission_required = ("VIPAlert.can_view_logs",)
+    paginate_by = 50
+
+
+class UserTraceView(PermissionRequiredMixin, ListView):
+    model = SystemLog
+    template_name = "system_logs.html"
+    permission_required = ("VIPAlert.can_view_logs",)
+    paginate_by = 50
+
+    def get_queryset(self):
+        user_id = self.kwargs.get('pk')
+        return SystemLog.objects.filter(user_id=user_id)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['trace_user'] = get_object_or_404(User, pk=self.kwargs.get('pk'))
+        return context
