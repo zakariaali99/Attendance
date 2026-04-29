@@ -3,8 +3,4 @@ env/
 migrations
 build/
 dist/
-*.spec
-run_desktop.py
-build_app.py
-generate_icons.py
 static/offline/
