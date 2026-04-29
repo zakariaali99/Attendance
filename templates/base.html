@@ -8,8 +8,8 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>{% block title %}منظومة الخوارزمي{% endblock %}</title>
 
-    <!-- Tailwind CSS with custom configuration -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Tailwind CSS with custom configuration (Local for Offline) -->
+    <script src="{% static 'offline/js/tailwind.min.js' %}?plugins=forms,container-queries"></script>
     <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -286,7 +286,7 @@
     <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
     <!-- Popper.js and Bootstrap JS (only for modals/dropdowns if needed, though we moved to Tailwind/Vanilla) -->
     <script src="{% static 'js/bootstrap.bundle.js' %}"></script>
-    <script src="https://cdn.datatables.net/v/bs5/dt-1.10.25/r-2.2.9/datatables.min.js"></script>
+    <script src="{% static 'offline/js/datatables.min.js' %}"></script>
 
     <script>
         $(document).ready(function () {
@@ -376,7 +376,7 @@
             if ($.fn.dataTable) {
                 $.extend(true, $.fn.dataTable.defaults, {
                     language: {
-                        url: '//cdn.datatables.net/plug-ins/1.10.25/i18n/Arabic.json'
+                        url: '{% static "offline/js/Arabic.json" %}'
                     },
                     pageLength: 25,
                     responsive: true,
