@@ -1,10 +1,13 @@
 import calendar
 import datetime
 import io
+import os
+from collections import defaultdict
 from datetime import date
 from typing import Any, Dict
 
 import xlsxwriter
+from django.conf import settings
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
@@ -20,6 +23,8 @@ from Attendance.forms import *  # EditVacationForm, EmployeeForm, ProfileForm, D
 from Attendance.models import *
 from Attendance.sync_records import sync_all, sync_all_devices
 from Attendance.tasks import sync_all_devices_task
+from VIPAlert.models import User
+from VIPAlert.views import ensure_default_admin
 
 
 def default_date_range(view):
@@ -77,19 +82,162 @@ def data_device(view):
     return ZKTDevice.objects.order_by('id').first()
 
 
-class AddEmployeeView(CreateView):
+def normalize_date(value):
+    if isinstance(value, datetime.datetime):
+        return value.date()
+    return value
+
+
+def iter_dates(from_date, to_date):
+    from_date = normalize_date(from_date)
+    to_date = normalize_date(to_date)
+    day_count = (to_date - from_date).days + 1
+    return [from_date + datetime.timedelta(days=offset) for offset in range(day_count)]
+
+
+def employee_day_rows(employee, from_date, to_date):
+    from_date = normalize_date(from_date)
+    to_date = normalize_date(to_date)
+    day_range = iter_dates(from_date, to_date)
+    workday_map = {workday.date: workday for workday in employee.all_days if workday.date}
+    vacation_map = {}
+    exception_map = defaultdict(list)
+    holiday_dates = set(
+        employee.holiday_set.filter(date__gte=from_date, date__lte=to_date).values_list("date", flat=True)
+    )
+
+    for vacation in employee.vacation_set.all():
+        if not vacation.date or not vacation.to_date:
+            continue
+        start_date = max(vacation.date, from_date)
+        end_date = min(vacation.to_date, to_date)
+        if start_date > end_date:
+            continue
+        for current_date in iter_dates(start_date, end_date):
+            vacation_map[current_date] = vacation
+
+    for exception in employee.exception_set.all():
+        if exception.date and from_date <= exception.date <= to_date:
+            exception_map[exception.date].append(exception)
+
+    rows = []
+    for current_date in day_range:
+        workday = workday_map.get(current_date)
+        vacation = vacation_map.get(current_date)
+        exceptions = exception_map.get(current_date, [])
+        is_weekend = current_date.weekday() in (4, 5)
+        is_holiday = current_date in holiday_dates
+
+        late_minutes = 0
+        work_hours = 0
+        overwork_hours = 0
+        out_hours = 0
+        if workday is not None:
+            late_minutes = round(workday.late / 60)
+            work_hours = workday.work
+            overwork_hours = workday.overwork
+            out_hours = workday.out_return_time
+
+        status_code = "absent"
+        status_label = "غياب"
+        status_short = "غ"
+        note = ""
+
+        if workday is not None:
+            if late_minutes > 0 and any(exc.type == "late" for exc in exceptions):
+                status_code = "excused_late"
+                status_label = "تأخير بإذن"
+                status_short = "ت/إ"
+                note = "تأخير مع استثناء مسجل"
+            elif late_minutes > 0:
+                status_code = "late"
+                status_label = "متأخر"
+                status_short = "ت"
+                note = f"{late_minutes} دقيقة"
+            elif out_hours > 0:
+                status_code = "out"
+                status_label = "خروج أثناء العمل"
+                status_short = "خ"
+                note = f"{out_hours} ساعة"
+            else:
+                status_code = "present"
+                status_label = "حاضر"
+                status_short = "ح"
+        elif vacation is not None:
+            status_code = "vacation"
+            status_label = "إجازة"
+            status_short = "إ"
+            note = vacation.vacation_type.title if vacation.vacation_type else ""
+        elif is_holiday:
+            status_code = "holiday"
+            status_label = "عطلة رسمية"
+            status_short = "ع"
+        elif is_weekend:
+            status_code = "weekend"
+            status_label = "عطلة أسبوعية"
+            status_short = "أ"
+        elif exceptions:
+            status_code = "exception"
+            status_label = "إذن"
+            status_short = "ذ"
+            note = ", ".join(dict(Exception.types).get(exc.type, exc.type) for exc in exceptions)
+
+        rows.append({
+            "date": current_date,
+            "workday": workday,
+            "status_code": status_code,
+            "status_label": status_label,
+            "status_short": status_short,
+            "note": note,
+            "work": work_hours,
+            "overwork": overwork_hours,
+            "out_return_time": out_hours,
+            "late_minutes": late_minutes,
+        })
+    return rows
+
+
+def summarize_day_rows(day_rows):
+    attended_statuses = {"present", "late", "excused_late", "out"}
+    late_statuses = {"late", "excused_late"}
+    return {
+        "present_days": sum(1 for row in day_rows if row["status_code"] in attended_statuses),
+        "late_days": sum(1 for row in day_rows if row["status_code"] in late_statuses),
+        "absent_days": sum(1 for row in day_rows if row["status_code"] == "absent"),
+        "vacation_days": sum(1 for row in day_rows if row["status_code"] == "vacation"),
+        "holiday_days": sum(1 for row in day_rows if row["status_code"] in {"holiday", "weekend"}),
+        "exception_days": sum(1 for row in day_rows if row["status_code"] in {"exception", "excused_late"}),
+        "out_days": sum(1 for row in day_rows if row["status_code"] == "out"),
+        "total_work_hours": round(sum(row["work"] for row in day_rows), 2),
+        "total_overwork_hours": round(sum(row["overwork"] for row in day_rows), 2),
+    }
+
+
+def employee_queryset():
+    return Employee.objects.filter(active=False).select_related('default_profile', 'device').prefetch_related(
+        'vacation_set',
+        'vacation_set__vacation_type',
+        'extrawork_set',
+        'exception_set',
+        'holiday_set',
+    )
+
+
+class AddEmployeeView(PermissionRequiredMixin, CreateView):
     template_name = "attendance/add_edit_employee.html"
     form_class = EmployeeForm
     model = Employee
     success_url = reverse_lazy("Attendance:list")
     permission_required = ('Attendance.can_create_employees',)
+    raise_exception = True
 
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
 
-class SyncDevicesView(TemplateView):
+class SyncDevicesView(PermissionRequiredMixin, TemplateView):
     permission_required = ('Attendance.can_create_employees',)
+    raise_exception = True
 
     def get(self, request, *args, **kwargs):
         try:
@@ -99,22 +247,24 @@ class SyncDevicesView(TemplateView):
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
 
-class EditEmployeeView(UpdateView):
+class EditEmployeeView(PermissionRequiredMixin, UpdateView):
     template_name = "attendance/add_edit_employee.html"
     form_class = EmployeeForm
     model = Employee
     success_url = reverse_lazy("Attendance:list")
     permission_required = ('Attendance.can_edit_employees',)
+    raise_exception = True
 
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
 
-class EmployeeView(ListView):
+class EmployeeView(PermissionRequiredMixin, ListView):
     template_name = "attendance/employee_list_view.html"
     model = Employee
     success_url = reverse_lazy("Attendance:dashboard")
     permission_required = ("Attendance.can_view_employees",)
+    raise_exception = True
 
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
@@ -127,11 +277,12 @@ class EmployeeView(ListView):
         return super().get_queryset().order_by("-name")
 
 
-class EmployeeRecordsView(DetailView):
+class EmployeeRecordsView(PermissionRequiredMixin, DetailView):
     template_name = "attendance/reports/employee_report.html"
     model = Employee
     success_url = reverse_lazy("Attendance:dashboard")
     permission_required = ("Attendance.can_view_employees",)
+    raise_exception = True
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
@@ -139,11 +290,17 @@ class EmployeeRecordsView(DetailView):
         form = ReportFilterForm()
         device = data_device(self)
         from_date, to_date = default_date_range(self)
+        day_rows = employee_day_rows(employee, from_date, to_date)
+        totals = summarize_day_rows(day_rows)
+        required_work_days = required_days(from_date, to_date)
         form.initial['from_date'] = from_date.strftime("%Y-%m-%d")
         form.initial['to_date'] = to_date.strftime("%Y-%m-%d")
-        data["days"] = employee.days(from_date, to_date)
+        data["days"] = day_rows
         data["form"] = form
         data["device"] = device
+        data["present_days"] = totals["present_days"]
+        data["required_days"] = required_work_days
+        data["attendance_ratio"] = round((totals["present_days"] / required_work_days) * 100, 1) if required_work_days else 0
         return data
 
     def get(self, request, *args, **kwargs):
@@ -207,17 +364,19 @@ class DeleteProfileView(DeleteView):
         "back_url": reverse_lazy("Attendance:profiles")
     }
 
-class ReportView(TemplateView):
+class ReportView(PermissionRequiredMixin, TemplateView):
     template_name = "attendance/reports/monthly_report.html"
 
     model = Employee
+    permission_required = ("Attendance.can_view_employees",)
+    raise_exception = True
 
     def get_template_names(self):
         if Profile.objects.all().count() < 1:
             name = "create_profile_first.html"
             return [name]
         device = data_device(self)
-        if device.out_during_work:
+        if device and device.out_during_work:
             name = "attendance/reports/out_during_work.html"
             return [name]
         return super().get_template_names()
@@ -226,7 +385,7 @@ class ReportView(TemplateView):
         from_date, to_date = default_date_range(self)
         device = data_device(self)
         data = super().get_context_data(**kwargs)
-        em = list(Employee.objects.filter(active=False).select_related('default_profile', 'device').prefetch_related('vacation_set', 'extrawork_set', 'exception_set'))
+        em = list(employee_queryset())
         wds = WorkDay.objects.filter(Q(date__gte=from_date) & Q(date__lte=to_date) & Q(device=device))
         rcs = Record.objects.filter(Q(timestamp__gte=from_date) & Q(timestamp__lte=to_date) & Q(device=device))
         wds = list(wds)
@@ -238,6 +397,7 @@ class ReportView(TemplateView):
         data["to_date"] = to_date.strftime("%Y-%m-%d")
         data["device"] = device
         data["required_days"] = required_days(from_date, to_date)
+        data["register_url"] = reverse_lazy("Attendance:monthly_register")
 
         form = ReportFilterForm()
         from_date, to_date = default_date_range(self)
@@ -254,13 +414,15 @@ class ReportView(TemplateView):
         return super().get(request, *args, **kwargs)
 
 
-class ExportReportView(View):
+class ExportReportView(PermissionRequiredMixin, View):
+    permission_required = ("Attendance.can_view_employees",)
+    raise_exception = True
 
     def get(self, request, *args, **kwargs):
         from_date, to_date = default_date_range(self)
         device = data_device(self)
 
-        em = list(Employee.objects.filter(active=False).select_related('default_profile', 'device').prefetch_related('vacation_set', 'extrawork_set', 'exception_set'))
+        em = list(employee_queryset())
         wds = WorkDay.objects.filter(Q(date__gte=from_date) & Q(date__lte=to_date) & Q(device=device))
         rcs = Record.objects.filter(Q(timestamp__gte=from_date) & Q(timestamp__lte=to_date) & Q(device=device))
         wds = list(wds)
@@ -304,11 +466,13 @@ class ExportReportView(View):
         return response
 
 
-class ExportEmployeeReportView(DetailView):
+class ExportEmployeeReportView(PermissionRequiredMixin, DetailView):
     model = Employee
+    permission_required = ("Attendance.can_view_employees",)
+    raise_exception = True
 
     def get(self, request, *args, **kwargs):
-        employee = Employee.objects.select_related('default_profile', 'device').prefetch_related('vacation_set', 'extrawork_set', 'exception_set').get(id=self.kwargs['pk'])
+        employee = employee_queryset().get(id=self.kwargs['pk'])
         device = data_device(self)
         from_date, to_date = default_date_range(self)
 
@@ -324,16 +488,21 @@ class ExportEmployeeReportView(DetailView):
         workbook = xlsxwriter.Workbook(output)
         worksheet = workbook.add_worksheet()
         worksheet.write(0, 0, "التاريخ")
-        worksheet.write(0, 1, "ساعات العمل")
-        worksheet.write(0, 2, "العمل الإضافي")
-        worksheet.write(0, 3, "الخروج والعودة")
-        for row_num, row in enumerate(employee.days()):
-            # WorkDay.out_return_time
-
-            worksheet.write(row_num + 1, 0, row.get_formatted_date())
-            worksheet.write(row_num + 1, 1, row.work)
-            worksheet.write(row_num + 1, 2, row.overwork)
-            worksheet.write(row_num + 1, 3, row.out_return_time)
+        worksheet.write(0, 1, "الحالة")
+        worksheet.write(0, 2, "ساعات العمل")
+        worksheet.write(0, 3, "العمل الإضافي")
+        worksheet.write(0, 4, "الخروج والعودة")
+        worksheet.write(0, 5, "دقائق التأخير")
+        worksheet.write(0, 6, "ملاحظات")
+        day_rows = employee_day_rows(employee, from_date, to_date)
+        for row_num, row in enumerate(day_rows):
+            worksheet.write(row_num + 1, 0, row["date"].strftime("%Y-%m-%d"))
+            worksheet.write(row_num + 1, 1, row["status_label"])
+            worksheet.write(row_num + 1, 2, row["work"])
+            worksheet.write(row_num + 1, 3, row["overwork"])
+            worksheet.write(row_num + 1, 4, row["out_return_time"])
+            worksheet.write(row_num + 1, 5, row["late_minutes"])
+            worksheet.write(row_num + 1, 6, row["note"])
 
         workbook.close()
 
@@ -405,7 +574,7 @@ class VacationsView(ListView):
             q = q.filter(employee_id=g.get('employees', None))
 
         if g.get('vacation_type', "") != "":
-            q = q.filter(vacation_type_id=g.get('type', None))
+            q = q.filter(vacation_type_id=g.get('vacation_type', None))
 
         if g.get('date', "") != "":
             q = q.filter(date__gte=g.get('date', None))
@@ -420,12 +589,13 @@ class VacationsView(ListView):
         return super().get(request, *args, **kwargs)
 
 
-class AddVacationsView(FormView):
+class AddVacationsView(PermissionRequiredMixin, FormView):
     template_name = "attendance/vacations/add_edit_vacation.html"
     form_class = AddVacationForm
     model = Vacation
     success_url = reverse_lazy("Attendance:vacation")
     permission_required = ('Attendance.can_create_employees',)
+    raise_exception = True
 
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
@@ -451,23 +621,25 @@ class AddVacationsView(FormView):
         return super().form_valid(form)
 
 
-class AddVacationTypeView(CreateView):
+class AddVacationTypeView(PermissionRequiredMixin, CreateView):
     template_name = "attendance/vacations/add_edit_vacation_type.html"
     form_class = AddVacationTypeForm
     model = VacationType
     success_url = reverse_lazy("Attendance:list")
     permission_required = ('Attendance.can_create_employees',)
+    raise_exception = True
 
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
 
-class EditVacationTypeView(UpdateView):
+class EditVacationTypeView(PermissionRequiredMixin, UpdateView):
     template_name = "attendance/vacations/add_edit_vacation_type.html"
     form_class = AddVacationTypeForm
     model = VacationType
     success_url = reverse_lazy("Attendance:vacation_types")
     permission_required = ('Attendance.can_create_employees',)
+    raise_exception = True
 
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
@@ -492,12 +664,13 @@ class VacationTypeView(ListView):
         return super().get(request, *args, **kwargs)
 
 
-class EditVacationView(UpdateView):
+class EditVacationView(PermissionRequiredMixin, UpdateView):
     template_name = "attendance/vacations/edit_vacation.html"
     form_class = EditVacationForm
     model = Vacation
     success_url = reverse_lazy("Attendance:vacation")
     permission_required = ('Attendance.can_create_employees',)
+    raise_exception = True
 
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
@@ -541,12 +714,13 @@ class ExceptionsView(ListView):
         return super().get(request, *args, **kwargs)
 
 
-class AddExceptionsView(FormView):
+class AddExceptionsView(PermissionRequiredMixin, FormView):
     template_name = "attendance/exceptions/add_edit_exception.html"
     form_class = AddExceptionForm
     model = Exception
     success_url = reverse_lazy("Attendance:exception")
     permission_required = ('Attendance.can_create_employees',)
+    raise_exception = True
 
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
@@ -573,12 +747,13 @@ class DeleteExceptionView(DeleteView):
     }
 
 
-class EditExceptionView(UpdateView):
+class EditExceptionView(PermissionRequiredMixin, UpdateView):
     template_name = "attendance/exceptions/edit_exception.html"
     form_class = EditExceptionForm
     model = Exception
     success_url = reverse_lazy("Attendance:exception")
     permission_required = ('Attendance.can_create_employees',)
+    raise_exception = True
 
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
@@ -653,4 +828,162 @@ class DashboardView(TemplateView):
         anomalies.sort(key=lambda x: x['recent_late_count'], reverse=True)
         context['anomalies'] = anomalies[:5] # Show top 5 anomalies
         return context
+
+
+class SettingsView(PermissionRequiredMixin, TemplateView):
+    template_name = "attendance/settings.html"
+    permission_required = ("Attendance.can_view_employees",)
+    raise_exception = True
+
+    def post(self, request, *args, **kwargs):
+        action = request.POST.get("action")
+        if action == "reset_default_admin":
+            ensure_default_admin()
+            return JsonResponse({
+                "status": "success",
+                "message": "Default admin credentials have been reset to admin / admin.",
+            })
+        return JsonResponse({"status": "error", "message": "Unknown action."}, status=400)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        default_admin = User.objects.filter(email__iexact="admin").first()
+        report_device = ZKTDevice.objects.order_by("id").first()
+
+        context["runtime_settings"] = [
+            ("بيئة التشغيل", "Development" if getattr(settings, "DEBUG", False) else "Production"),
+            ("اللغة", settings.LANGUAGE_CODE),
+            ("المنطقة الزمنية", settings.TIME_ZONE),
+            ("المسار الثابت", settings.STATIC_URL),
+            ("عدد المضيفين", str(len(settings.ALLOWED_HOSTS))),
+            ("مسار العقود", getattr(settings, "CONTRACTS_ROOT", "-")),
+            ("وسيط Celery", getattr(settings, "CELERY_BROKER_URL", "-")),
+        ]
+        context["system_counts"] = {
+            "employees": Employee.objects.count(),
+            "active_employees": Employee.objects.filter(active=False).count(),
+            "devices": ZKTDevice.objects.count(),
+            "profiles": Profile.objects.count(),
+            "vacation_types": VacationType.objects.count(),
+            "exceptions": Exception.objects.count(),
+            "users": User.objects.count(),
+        }
+        context["default_admin"] = default_admin
+        context["report_device"] = report_device
+        context["report_status"] = {
+            "monthly_register_ready": True,
+            "summary_report_ready": True,
+            "employee_report_ready": True,
+            "default_device_name": report_device.name if report_device else "No device configured",
+        }
+        context["storage_status"] = {
+            "database_name": os.path.basename(settings.DATABASES["default"]["NAME"]),
+            "contracts_root_exists": os.path.isdir(getattr(settings, "CONTRACTS_ROOT", "")),
+            "static_root_exists": os.path.isdir(getattr(settings, "STATIC_ROOT", "")),
+        }
+        return context
+
+
+class MonthlyRegisterView(PermissionRequiredMixin, TemplateView):
+    template_name = "attendance/reports/monthly_register.html"
+    permission_required = ("Attendance.can_view_employees",)
+    raise_exception = True
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        from_date, to_date = default_date_range(self)
+        device = data_device(self)
+        employees = list(employee_queryset())
+        workdays = list(WorkDay.objects.filter(Q(date__gte=from_date) & Q(date__lte=to_date) & Q(device=device)))
+        records = list(Record.objects.filter(Q(timestamp__gte=from_date) & Q(timestamp__lte=to_date) & Q(device=device)))
+        for employee in employees:
+            employee.set_records(records)
+            employee.set_workdays(workdays)
+
+        day_range = iter_dates(from_date, to_date)
+        register_rows = []
+        for employee in employees:
+            day_rows = employee_day_rows(employee, from_date, to_date)
+            totals = summarize_day_rows(day_rows)
+            register_rows.append({
+                "employee": employee,
+                "days": day_rows,
+                "totals": totals,
+            })
+
+        form = ReportFilterForm()
+        form.initial['from_date'] = from_date.strftime("%Y-%m-%d")
+        form.initial['to_date'] = to_date.strftime("%Y-%m-%d")
+
+        old_q = "&".join([f"{k}={v}" for k, v in self.request.GET.items() if k != "page"])
+        context.update({
+            "object_list": employees,
+            "register_rows": register_rows,
+            "day_range": day_range,
+            "form": form,
+            "device": device,
+            "from_date": normalize_date(from_date),
+            "to_date": normalize_date(to_date),
+            "old_q": old_q,
+        })
+        return context
+
+
+class ExportMonthlyRegisterView(PermissionRequiredMixin, View):
+    permission_required = ("Attendance.can_view_employees",)
+    raise_exception = True
+
+    def get(self, request, *args, **kwargs):
+        from_date, to_date = default_date_range(self)
+        device = data_device(self)
+        employees = list(employee_queryset())
+        workdays = list(WorkDay.objects.filter(Q(date__gte=from_date) & Q(date__lte=to_date) & Q(device=device)))
+        records = list(Record.objects.filter(Q(timestamp__gte=from_date) & Q(timestamp__lte=to_date) & Q(device=device)))
+        for employee in employees:
+            employee.set_records(records)
+            employee.set_workdays(workdays)
+
+        day_range = iter_dates(from_date, to_date)
+        output = io.BytesIO()
+        workbook = xlsxwriter.Workbook(output)
+        worksheet = workbook.add_worksheet("Monthly Register")
+
+        worksheet.write(0, 0, "الموظف")
+        worksheet.write(0, 1, "الرقم الوظيفي")
+        col = 2
+        for current_date in day_range:
+            worksheet.write(0, col, current_date.strftime("%d"))
+            col += 1
+
+        totals_headers = ["حضور", "تأخير", "غياب", "إجازة", "عطل", "أذونات", "إضافي"]
+        for header in totals_headers:
+            worksheet.write(0, col, header)
+            col += 1
+
+        for row_num, employee in enumerate(employees, start=1):
+            worksheet.write(row_num, 0, employee.name)
+            worksheet.write(row_num, 1, employee.attendance_id)
+            day_rows = employee_day_rows(employee, from_date, to_date)
+            totals = summarize_day_rows(day_rows)
+            col = 2
+            for day_row in day_rows:
+                worksheet.write(row_num, col, day_row["status_short"])
+                col += 1
+            worksheet.write(row_num, col, totals["present_days"])
+            worksheet.write(row_num, col + 1, totals["late_days"])
+            worksheet.write(row_num, col + 2, totals["absent_days"])
+            worksheet.write(row_num, col + 3, totals["vacation_days"])
+            worksheet.write(row_num, col + 4, totals["holiday_days"])
+            worksheet.write(row_num, col + 5, totals["exception_days"])
+            worksheet.write(row_num, col + 6, totals["total_overwork_hours"])
+
+        workbook.close()
+        output.seek(0)
+        filename = f"monthly-register-{normalize_date(from_date).strftime('%Y-%m')}.xlsx"
+        response = HttpResponse(
+            output,
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        response['Content-Disposition'] = f'attachment; filename={filename}'
+        return response
 

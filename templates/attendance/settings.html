@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}منظومة الخوارزمي - الإعدادات{% endblock %}
+
+{% block body %}
+<nav class="flex flex-row-reverse items-center gap-2 mb-8 text-xs font-bold text-outline dark:text-slate-500 uppercase tracking-widest animate-fade-in-up">
+    <a href="{% url 'Attendance:dashboard' %}" class="hover:text-primary dark:hover:text-white transition-colors">الرئيسية</a>
+    <span class="material-symbols-outlined text-[14px]">chevron_left</span>
+    <span class="text-primary dark:text-white">الإعدادات</span>
+</nav>
+
+<header class="flex flex-col xl:flex-row-reverse justify-between items-center gap-6 mb-10 animate-fade-in-up">
+    <div class="text-right">
+        <h1 class="text-3xl font-black text-primary dark:text-white mb-2 font-headline">الإعدادات</h1>
+        <p class="text-xs font-bold text-outline dark:text-slate-500 uppercase tracking-widest">لوحة تشغيل تجمع حالة النظام والتكوين الفعلي وروابط الإدارة السريعة</p>
+    </div>
+    <div class="flex flex-wrap items-center gap-3 flex-row-reverse">
+        <a href="{% url 'Attendance:devices' %}" class="flex flex-row-reverse items-center gap-2 bg-surface-container dark:bg-slate-800 text-primary dark:text-white px-6 py-3 rounded-2xl font-black shadow-sm hover:bg-surface-container-highest transition-all">
+            <span class="material-symbols-outlined">devices</span>
+            <span class="text-xs">إدارة الأجهزة</span>
+        </a>
+        <a href="{% url 'Attendance:profiles' %}" class="flex flex-row-reverse items-center gap-2 bg-surface-container dark:bg-slate-800 text-primary dark:text-white px-6 py-3 rounded-2xl font-black shadow-sm hover:bg-surface-container-highest transition-all">
+            <span class="material-symbols-outlined">calendar_today</span>
+            <span class="text-xs">أنظمة الدوام</span>
+        </a>
+        <a href="{% url 'VIP:users_list' %}" class="flex flex-row-reverse items-center gap-2 bg-surface-container dark:bg-slate-800 text-primary dark:text-white px-6 py-3 rounded-2xl font-black shadow-sm hover:bg-surface-container-highest transition-all">
+            <span class="material-symbols-outlined">admin_panel_settings</span>
+            <span class="text-xs">المستخدمون</span>
+        </a>
+    </div>
+</header>
+
+<div id="settings-feedback" class="hidden mb-6"></div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border-r-4 border-primary">
+        <div class="text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest mb-3">الموظفون</div>
+        <div class="text-4xl font-black text-primary dark:text-white">{{ system_counts.employees }}</div>
+        <div class="text-xs text-on-surface-variant dark:text-slate-400 font-bold mt-2">المفعلون في التقارير: {{ system_counts.active_employees }}</div>
+    </div>
+    <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border-r-4 border-secondary-container">
+        <div class="text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest mb-3">الأجهزة</div>
+        <div class="text-4xl font-black text-secondary">{{ system_counts.devices }}</div>
+        <div class="text-xs text-on-surface-variant dark:text-slate-400 font-bold mt-2">{{ report_status.default_device_name }}</div>
+    </div>
+    <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border-r-4 border-amber-500">
+        <div class="text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest mb-3">أنظمة الدوام</div>
+        <div class="text-4xl font-black text-amber-700 dark:text-amber-400">{{ system_counts.profiles }}</div>
+        <div class="text-xs text-on-surface-variant dark:text-slate-400 font-bold mt-2">أنواع الإجازات: {{ system_counts.vacation_types }}</div>
+    </div>
+    <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border-r-4 border-green-600">
+        <div class="text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest mb-3">المستخدمون</div>
+        <div class="text-4xl font-black text-green-700 dark:text-green-400">{{ system_counts.users }}</div>
+        <div class="text-xs text-on-surface-variant dark:text-slate-400 font-bold mt-2">الاستثناءات المسجلة: {{ system_counts.exceptions }}</div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+    <section class="xl:col-span-2 bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-surface-container dark:border-slate-800 overflow-hidden">
+        <div class="p-6 border-b border-surface-container dark:border-slate-800 flex items-center gap-3 flex-row-reverse">
+            <span class="material-symbols-outlined text-secondary">tune</span>
+            <h2 class="text-xl font-black text-primary dark:text-white font-headline">التكوين الحالي</h2>
+        </div>
+        <div class="divide-y divide-surface-container dark:divide-slate-800">
+            {% for label, value in runtime_settings %}
+            <div class="flex justify-between items-center flex-row-reverse px-6 py-4">
+                <div class="text-sm font-black text-primary dark:text-white">{{ label }}</div>
+                <div class="text-xs font-bold text-outline dark:text-slate-400 break-all text-left">{{ value }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-surface-container dark:border-slate-800 overflow-hidden">
+        <div class="p-6 border-b border-surface-container dark:border-slate-800 flex items-center gap-3 flex-row-reverse">
+            <span class="material-symbols-outlined text-amber-500">security</span>
+            <h2 class="text-xl font-black text-primary dark:text-white font-headline">وصول الإدارة</h2>
+        </div>
+        <div class="p-6 space-y-6">
+            <div class="bg-surface-container-low dark:bg-slate-800/60 rounded-2xl p-5">
+                <div class="text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest mb-2">الحساب الافتراضي</div>
+                <div class="text-sm font-black text-primary dark:text-white">المعرف: {{ default_admin.email|default:"admin" }}</div>
+                <div class="text-xs text-on-surface-variant dark:text-slate-400 font-bold mt-2">الاسم الظاهر: {{ default_admin.name|default:"admin" }}</div>
+            </div>
+
+            <button id="reset-admin-btn" type="button" class="w-full py-4 bg-primary text-white font-black rounded-2xl shadow-lg hover:opacity-90 transition-all flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined">restart_alt</span>
+                <span>إعادة ضبط admin / admin</span>
+            </button>
+
+            <div class="text-[11px] font-bold text-outline dark:text-slate-500 leading-6 text-right">
+                هذا الإجراء يعيد تفعيل المستخدم الافتراضي ويضبط بيانات دخوله المحلية إلى <span class="text-primary dark:text-white">admin / admin</span>.
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-surface-container dark:border-slate-800 overflow-hidden">
+        <div class="p-6 border-b border-surface-container dark:border-slate-800 flex items-center gap-3 flex-row-reverse">
+            <span class="material-symbols-outlined text-green-600">analytics</span>
+            <h2 class="text-xl font-black text-primary dark:text-white font-headline">جاهزية التقارير</h2>
+        </div>
+        <div class="p-6 space-y-4">
+            <div class="flex justify-between items-center flex-row-reverse bg-surface-container-low dark:bg-slate-800/50 rounded-2xl px-4 py-3">
+                <span class="text-sm font-black text-primary dark:text-white">التقرير الشهري الملخص</span>
+                <span class="text-[10px] font-black px-3 py-1 rounded-full bg-green-50 dark:bg-green-950/20 text-green-700 dark:text-green-400 border border-green-100 dark:border-green-900/50">جاهز</span>
+            </div>
+            <div class="flex justify-between items-center flex-row-reverse bg-surface-container-low dark:bg-slate-800/50 rounded-2xl px-4 py-3">
+                <span class="text-sm font-black text-primary dark:text-white">سجل الشهر الكامل</span>
+                <span class="text-[10px] font-black px-3 py-1 rounded-full bg-green-50 dark:bg-green-950/20 text-green-700 dark:text-green-400 border border-green-100 dark:border-green-900/50">جاهز</span>
+            </div>
+            <div class="flex justify-between items-center flex-row-reverse bg-surface-container-low dark:bg-slate-800/50 rounded-2xl px-4 py-3">
+                <span class="text-sm font-black text-primary dark:text-white">تقرير الموظف التفصيلي</span>
+                <span class="text-[10px] font-black px-3 py-1 rounded-full bg-green-50 dark:bg-green-950/20 text-green-700 dark:text-green-400 border border-green-100 dark:border-green-900/50">جاهز</span>
+            </div>
+            <a href="{% url 'Attendance:monthly_register' %}" class="block w-full text-center py-4 bg-secondary-container text-on-secondary-container font-black rounded-2xl shadow-lg hover:opacity-90 transition-all">فتح سجل الشهر</a>
+        </div>
+    </section>
+
+    <section class="xl:col-span-2 bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-surface-container dark:border-slate-800 overflow-hidden">
+        <div class="p-6 border-b border-surface-container dark:border-slate-800 flex items-center gap-3 flex-row-reverse">
+            <span class="material-symbols-outlined text-primary">inventory_2</span>
+            <h2 class="text-xl font-black text-primary dark:text-white font-headline">حالة التخزين والملفات</h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-6">
+            <div class="bg-surface-container-low dark:bg-slate-800/50 rounded-2xl p-5">
+                <div class="text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest mb-3">قاعدة البيانات</div>
+                <div class="text-sm font-black text-primary dark:text-white break-all">{{ storage_status.database_name }}</div>
+            </div>
+            <div class="bg-surface-container-low dark:bg-slate-800/50 rounded-2xl p-5">
+                <div class="text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest mb-3">مجلد العقود</div>
+                <div class="text-sm font-black {% if storage_status.contracts_root_exists %}text-green-700 dark:text-green-400{% else %}text-red-600 dark:text-red-400{% endif %}">
+                    {% if storage_status.contracts_root_exists %}موجود{% else %}غير موجود{% endif %}
+                </div>
+            </div>
+            <div class="bg-surface-container-low dark:bg-slate-800/50 rounded-2xl p-5">
+                <div class="text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest mb-3">مجلد الملفات الثابتة</div>
+                <div class="text-sm font-black {% if storage_status.static_root_exists %}text-green-700 dark:text-green-400{% else %}text-red-600 dark:text-red-400{% endif %}">
+                    {% if storage_status.static_root_exists %}موجود{% else %}غير موجود{% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-surface-container dark:border-slate-800 overflow-hidden">
+        <div class="p-6 border-b border-surface-container dark:border-slate-800 flex items-center gap-3 flex-row-reverse">
+            <span class="material-symbols-outlined text-secondary">bolt</span>
+            <h2 class="text-xl font-black text-primary dark:text-white font-headline">إجراءات سريعة</h2>
+        </div>
+        <div class="p-6 space-y-3">
+            <a href="{% url 'Attendance:sync_devices' %}" class="flex flex-row-reverse items-center justify-between p-4 bg-surface-container-low dark:bg-slate-800/50 rounded-2xl hover:bg-primary-container hover:text-secondary-container transition-all group">
+                <div class="flex items-center gap-3 flex-row-reverse">
+                    <span class="material-symbols-outlined text-primary dark:text-white group-hover:text-secondary-container">sync</span>
+                    <span class="text-sm font-black text-primary dark:text-white group-hover:text-secondary-container">مزامنة الأجهزة</span>
+                </div>
+                <span class="material-symbols-outlined text-[16px] text-outline group-hover:text-secondary-container">chevron_left</span>
+            </a>
+            <a href="{% url 'Attendance:report' %}" class="flex flex-row-reverse items-center justify-between p-4 bg-surface-container-low dark:bg-slate-800/50 rounded-2xl hover:bg-primary-container hover:text-secondary-container transition-all group">
+                <div class="flex items-center gap-3 flex-row-reverse">
+                    <span class="material-symbols-outlined text-primary dark:text-white group-hover:text-secondary-container">assessment</span>
+                    <span class="text-sm font-black text-primary dark:text-white group-hover:text-secondary-container">التقرير العام</span>
+                </div>
+                <span class="material-symbols-outlined text-[16px] text-outline group-hover:text-secondary-container">chevron_left</span>
+            </a>
+            <a href="{% url 'Attendance:monthly_register' %}" class="flex flex-row-reverse items-center justify-between p-4 bg-surface-container-low dark:bg-slate-800/50 rounded-2xl hover:bg-primary-container hover:text-secondary-container transition-all group">
+                <div class="flex items-center gap-3 flex-row-reverse">
+                    <span class="material-symbols-outlined text-primary dark:text-white group-hover:text-secondary-container">calendar_view_month</span>
+                    <span class="text-sm font-black text-primary dark:text-white group-hover:text-secondary-container">سجل الشهر</span>
+                </div>
+                <span class="material-symbols-outlined text-[16px] text-outline group-hover:text-secondary-container">chevron_left</span>
+            </a>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const resetBtn = document.getElementById('reset-admin-btn');
+        const feedback = document.getElementById('settings-feedback');
+        if (!resetBtn || !feedback) return;
+
+        resetBtn.addEventListener('click', async function () {
+            resetBtn.disabled = true;
+            try {
+                const response = await fetch("{% url 'Attendance:settings' %}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        "X-CSRFToken": "{{ csrf_token }}",
+                    },
+                    body: new URLSearchParams({ action: "reset_default_admin" }),
+                });
+                const data = await response.json();
+                feedback.className = "mb-6 rounded-2xl border px-5 py-4 text-sm font-black bg-green-50 text-green-700 border-green-100 dark:bg-green-950/20 dark:text-green-400 dark:border-green-900/50";
+                feedback.textContent = data.message;
+                feedback.classList.remove('hidden');
+            } catch (error) {
+                feedback.className = "mb-6 rounded-2xl border px-5 py-4 text-sm font-black bg-red-50 text-red-700 border-red-100 dark:bg-red-950/20 dark:text-red-400 dark:border-red-900/50";
+                feedback.textContent = "تعذر تنفيذ الإجراء حالياً.";
+                feedback.classList.remove('hidden');
+            } finally {
+                resetBtn.disabled = false;
+            }
+        });
+    });
+</script>
+{% endblock %}

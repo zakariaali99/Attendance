@@ -128,7 +128,7 @@ class Employee(models.Model):
         c = 0
         for v in self.vacation_set.all():
             if v.date and v.to_date:
-                c += (v.to_date - v.date).days
+                c += (v.to_date - v.date).days + 1
         return c
 
     @property
@@ -180,6 +180,10 @@ class Employee(models.Model):
             self.count_hours
         return self.out_return_time
 
+    @property
+    def out_return_count(self):
+        return len([day for day in self.all_days if day.out_return_time > 0])
+
     class Meta:
         permissions = [
             ("can_view_employees", "View employees"),
@@ -195,6 +199,7 @@ class Employee(models.Model):
 attendance_choices = [
     ("early_exit", "خروج مبكر"),
     ("late", "تأخير"),
+    ("attendance", "حضور"),
 ]
 
 
@@ -206,7 +211,8 @@ class Record(models.Model):
     uid = models.CharField(max_length=1024, default="", blank=True)
     device = models.ForeignKey("Attendance.ZKTDevice", on_delete=models.SET_NULL, null=True)
     status = models.CharField(choices=attendance_choices, default="attendance", null=True, max_length=50)
-    note = models.TextField(default="")
+    note = models.TextField(default="", blank=True)
+
 
     def __str__(self):
         return f"{self.user_id} -> {self.timestamp}, {self.id}, {self.status}"
@@ -381,6 +387,10 @@ class WorkDay(models.Model):
         return self.date.weekday() == 5
 
     @property
+    def is_holiday(self):
+        return self.employee.holiday_set.filter(date=self.date).exists()
+
+    @property
     def late(self):
         return sum([s.late for s in self.shifts()])
 
@@ -495,7 +505,7 @@ class WorkDay(models.Model):
                 is_in = True
                 # s, _, _ = self.prepare_shift(start_shift, rs[0], p, not is_in)
                 # shifts.append(s)
-                exceptions = filter(lambda a: a.type != "late", self.work_day_exceptions())
+                exceptions = list(filter(lambda a: a.type != "late", self.work_day_exceptions))
                 print("Early exit", exceptions)
                 end_time = None
                 if p.auto_close or len(exceptions) > 0:
@@ -507,7 +517,7 @@ class WorkDay(models.Model):
             else:
                 # s, _, _ = self.prepare_shift(start_shift, start_profile_shift, p, is_in)
                 # shifts.append(s)
-                exceptions = filter(lambda a: a.type == "late", self.work_day_exceptions())
+                exceptions = list(filter(lambda a: a.type == "late", self.work_day_exceptions))
                 start_time = None
                 if p.auto_open or len(exceptions) > 0:
                     start_time = start_profile_shift

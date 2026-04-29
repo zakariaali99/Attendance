@@ -20,6 +20,8 @@ urlpatterns = [
     path('profile/delete/<int:pk>', DeleteProfileView.as_view(), name="delete_profile"),
     path('report', ReportView.as_view(), name="report"),
     path('report/export', ExportReportView.as_view(), name="export_report"),
+    path('report/register', MonthlyRegisterView.as_view(), name="monthly_register"),
+    path('report/register/export', ExportMonthlyRegisterView.as_view(), name="export_monthly_register"),
 
     path('devices/', DeviceListView.as_view(), name="devices"),
     path('devices/sync', SyncDevicesView.as_view(), name="sync_devices"),
@@ -44,6 +46,7 @@ urlpatterns = [
     path('exception/view', ExceptionsView.as_view(), name="exception"),
     path('exception/<int:pk>/edit', EditExceptionView.as_view(), name="edit_exception"),
     path('exception/<int:pk>/delete', DeleteExceptionView.as_view(), name="delete_exception"),
+    path('settings', SettingsView.as_view(), name="settings"),
 
 ]
 

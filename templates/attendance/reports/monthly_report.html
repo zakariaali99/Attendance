@@ -19,6 +19,10 @@
         <p class="text-xs font-bold text-outline dark:text-slate-500 uppercase tracking-widest">تتبع كفاءة الحضور وتحليل الانضباط العام للمنظومة</p>
     </div>
     <div class="flex items-center gap-3 flex-row-reverse">
+        <a href="{% url 'Attendance:monthly_register' %}?{{ old_q }}" class="flex flex-row-reverse items-center gap-3 bg-primary text-white px-8 py-4 rounded-2xl font-black shadow-xl hover:opacity-90 transition-all group">
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">calendar_view_month</span>
+            <span>سجل الشهر الكامل</span>
+        </a>
         <a href="{% url 'Attendance:export_report' %}?{{ old_q }}" class="flex flex-row-reverse items-center gap-3 bg-green-600 text-white px-8 py-4 rounded-2xl font-black shadow-xl hover:bg-green-700 transition-all group">
             <span class="material-symbols-outlined group-hover:scale-110 transition-transform">download</span>
             <span>تصدير التقرير الكامل (Excel)</span>

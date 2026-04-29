@@ -20,7 +20,7 @@ def sync_records(device=None, records=None):
     if records is None:
         # Avoid pulling all records into memory at once if unnecessary
         if workday:
-            records = Record.objects.filter(device=device, timestamp__date__gt=workday.date)
+            records = Record.objects.filter(device=device, timestamp__date__gte=workday.date)
         else:
             records = Record.objects.filter(device=device)
 
@@ -28,7 +28,7 @@ def sync_records(device=None, records=None):
     for r in records:
         r_date = r.timestamp.date()
         if workday is not None:
-            if r_date > workday.date:
+            if r_date >= workday.date:
                 if r.user_id not in days:
                     days[r.user_id] = {r_date}
                 else:
@@ -51,8 +51,8 @@ def sync_records(device=None, records=None):
             for d in unique_dates:
                 # Sanity check for dates
                 if d.year < this_year + 5:
-                    # Check if workday already exists for this employee on this date to prevent duplicates
-                    if not WorkDay.objects.filter(employee=employee, date=d).exists():
+                    # Check if workday already exists for this employee/device on this date to prevent duplicates
+                    if not WorkDay.objects.filter(employee=employee, date=d, device=device).exists():
                         w = WorkDay(date=d, employee=employee, device=device)
                         work_days.append(w)
         except Exception as e:

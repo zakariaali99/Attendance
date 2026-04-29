@@ -21,17 +21,22 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
+import environ
+
+env = environ.Env(
+    DEBUG=(bool, False)
+)
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-s#z18)=c8#7$z61s-ed!bydv%lejobv!+obyc!nu#loev%gmbu'
+SECRET_KEY = env('SECRET_KEY', default='django-insecure-s#z18)=c8#7$z61s-ed!bydv%lejobv!+obyc!nu#loev%gmbu')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = [
-    '*'
-]
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['*'])
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_ALLOW_ALL = env.bool('CORS_ORIGIN_ALLOW_ALL', default=True)
 
 
 INSTALLED_APPS = [
@@ -53,6 +58,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'VIPAlert.middleware.LoginRequiredMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -154,7 +160,7 @@ CELERY_TIMEZONE = 'Africa/Cairo'
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static"), ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'statics')
-STATIC_URL = '/vip/static/'
+STATIC_URL = '/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -163,7 +169,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = "VIPAlert.User"
 
-LOGOUT_REDIRECT_URL = reverse_lazy("Attendance:dashboard")
+LOGIN_URL = reverse_lazy("VIP:login")
+LOGIN_REDIRECT_URL = reverse_lazy("Attendance:list")
+LOGOUT_REDIRECT_URL = reverse_lazy("VIP:login")
 
 
 

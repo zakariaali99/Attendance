@@ -82,12 +82,12 @@ class UserForm(forms.ModelForm):
 
 
 class LoginForm(forms.Form):
-    email = forms.EmailField(required=True)
+    identifier = forms.CharField(required=True, max_length=4096)
     password = forms.CharField(max_length=4096, required=True, widget=forms.PasswordInput)
 
-    email.widget.attrs = {
+    identifier.widget.attrs = {
         'class': 'form-control rounded-pill',
-        'placeholder': 'البريد الإلكتروني'
+        'placeholder': 'اسم المستخدم أو البريد الإلكتروني'
     }
 
     password.widget.attrs = {
@@ -100,9 +100,11 @@ class LoginForm(forms.Form):
 
 
     def clean_user(self):
-        email = self.cleaned_data["email"]
+        identifier = self.cleaned_data["identifier"].strip()
         pw = self.cleaned_data["password"]
-        users = User.objects.filter(email__iexact=email)
+        users = User.objects.filter(email__iexact=identifier)
+        if users.count() <= 0:
+            users = User.objects.filter(name__iexact=identifier)
         if users.count() > 0:
             user = users.first()
             if user.check_password(pw):

@@ -131,6 +131,7 @@
 
 <body class="bg-background text-on-surface dark:bg-slate-950 dark:text-slate-100 min-h-screen">
 
+{% block shell %}
     <!-- TopNavBar -->
     <nav class="fixed top-0 w-full z-[100] glass-nav h-16 flex flex-row-reverse justify-between items-center px-6 font-headline">
         <div class="flex items-center gap-4 flex-row-reverse">
@@ -231,9 +232,14 @@
 
             <div class="mt-4 mb-1 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest sidebar-text">تحليل البيانات</div>
 
-            <a href="{% url 'Attendance:report' %}" class="flex flex-row-reverse items-center gap-4 py-3 px-4 mx-2 rounded-xl transition-all duration-200 {% if 'report' in request.path %}bg-primary-container text-secondary-container shadow-lg{% else %}text-slate-300 hover:bg-white/5 hover:text-white{% endif %}">
-                <span class="material-symbols-outlined" {% if 'report' in request.path %}style="font-variation-settings: 'FILL' 1;"{% endif %}>assessment</span>
+            <a href="{% url 'Attendance:report' %}" class="flex flex-row-reverse items-center gap-4 py-3 px-4 mx-2 rounded-xl transition-all duration-200 {% if request.resolver_match.url_name == 'report' %}bg-primary-container text-secondary-container shadow-lg{% else %}text-slate-300 hover:bg-white/5 hover:text-white{% endif %}">
+                <span class="material-symbols-outlined" {% if request.resolver_match.url_name == 'report' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>assessment</span>
                 <span class="font-medium text-sm sidebar-text">التقرير العام</span>
+            </a>
+
+            <a href="{% url 'Attendance:monthly_register' %}" class="flex flex-row-reverse items-center gap-4 py-3 px-4 mx-2 rounded-xl transition-all duration-200 {% if request.resolver_match.url_name == 'monthly_register' %}bg-primary-container text-secondary-container shadow-lg{% else %}text-slate-300 hover:bg-white/5 hover:text-white{% endif %}">
+                <span class="material-symbols-outlined" {% if request.resolver_match.url_name == 'monthly_register' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>calendar_view_month</span>
+                <span class="font-medium text-sm sidebar-text">سجل الشهر</span>
             </a>
 
             <div class="mt-4 mb-1 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest sidebar-text">النظام</div>
@@ -249,8 +255,8 @@
             </a>
 
             <!-- Settings -->
-            <a href="#" class="flex flex-row-reverse items-center gap-4 py-3 px-4 mx-2 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-all duration-200 mt-2">
-                <span class="material-symbols-outlined">settings</span>
+            <a href="{% url 'Attendance:settings' %}" class="flex flex-row-reverse items-center gap-4 py-3 px-4 mx-2 rounded-xl transition-all duration-200 mt-2 {% if request.resolver_match.url_name == 'settings' %}bg-primary-container text-secondary-container shadow-lg{% else %}text-slate-300 hover:bg-white/5 hover:text-white{% endif %}">
+                <span class="material-symbols-outlined" {% if request.resolver_match.url_name == 'settings' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>settings</span>
                 <span class="font-medium text-sm sidebar-text">الإعدادات</span>
             </a>
         </div>
@@ -274,6 +280,7 @@
             {% block body %}{% endblock %}
         </div>
     </main>
+{% endblock %}
 
     <!-- Global Scripts -->
     <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
