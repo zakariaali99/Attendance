@@ -8,7 +8,7 @@ from typing import Any, Dict
 
 import xlsxwriter
 from django.conf import settings
-from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django.template.response import TemplateResponse
@@ -39,12 +39,12 @@ def default_date_range(view):
     if "from_date" in get.keys():
         fromdate = get["from_date"]
         if len(fromdate) > 2:
-            from_date = datetime.datetime.strptime(fromdate, "%Y-%m-%d")
+            from_date = datetime.datetime.strptime(fromdate, "%Y-%m-%d").date()
 
     if "to_date" in get.keys():
         todate = get["to_date"]
         if len(todate) > 2:
-            to_date = datetime.datetime.strptime(todate, "%Y-%m-%d")
+            to_date = datetime.datetime.strptime(todate, "%Y-%m-%d").date()
 
     this_month = timezone.now().month
     this_year = timezone.now().year
@@ -58,18 +58,29 @@ def default_date_range(view):
     return from_date, to_date
 
 
-def required_days(from_date, to_date):
-    c = 0
-    total = 0
-    # Include both from_date and to_date in the calculation
+def required_days(from_date, to_date, profile=None):
+    if profile and profile.full_month_work:
+        return (to_date - from_date).days + 1
+
+    count = 0
+    profile_day_values = []
+    if profile:
+        profile_day_values = list(profile.days.values_list('day', flat=True))
+
     for d in range(from_date.toordinal(), to_date.toordinal() + 1):
         dt = date.fromordinal(d)
-        # Friday (4) and Saturday (5) are common weekend days in the region
-        if dt.weekday() == 4 or dt.weekday() == 5:
-            c += 1
-        total += 1
-
-    return total - c
+        if profile:
+            # Python: 0=Mon, 4=Fri, 5=Sat, 6=Sun
+            # Our Day model: 0=Sat, 1=Sun, 2=Mon, 3=Tue, 4=Wed, 5=Thu, 6=Fri
+            python_to_our_day = {0: '2', 1: '3', 2: '4', 3: '5', 4: '6', 5: '0', 6: '1'}
+            our_day_val = python_to_our_day[dt.weekday()]
+            if our_day_val in profile_day_values:
+                count += 1
+        else:
+            # Default logic: exclude Friday(4) and Saturday(5)
+            if dt.weekday() != 4 and dt.weekday() != 5:
+                count += 1
+    return count
 
 
 def data_device(view):
@@ -340,7 +351,7 @@ class EmployeeRecordsView(PermissionRequiredMixin, DetailView):
         from_date, to_date = default_date_range(self)
         day_rows = employee_day_rows(employee, from_date, to_date)
         totals = summarize_day_rows(day_rows)
-        required_work_days = required_days(from_date, to_date)
+        required_work_days = required_days(from_date, to_date, profile=employee.default_profile)
         form.initial['from_date'] = from_date.strftime("%Y-%m-%d")
         form.initial['to_date'] = to_date.strftime("%Y-%m-%d")
         data["days"] = day_rows
@@ -480,7 +491,7 @@ class ReportView(PermissionRequiredMixin, TemplateView):
         data["from_date"] = from_date.strftime("%Y-%m-%d")
         data["to_date"] = to_date.strftime("%Y-%m-%d")
         data["device"] = device
-        data["required_days"] = required_days(from_date, to_date)
+        data["required_days"] = required_days(from_date, to_date) # Global report uses default weekends
         data["register_url"] = reverse_lazy("Attendance:monthly_register")
 
         form = ReportFilterForm()
@@ -511,7 +522,7 @@ class ExportReportView(PermissionRequiredMixin, View):
         rcs = Record.objects.filter(Q(timestamp__gte=from_date) & Q(timestamp__lte=to_date) & Q(device=device))
         wds = list(wds)
         rcs = list(rcs)
-        required_work_days = required_days(from_date, to_date)
+        required_work_days = required_days(from_date, to_date) # Global
 
         _ = [(e.set_records(rcs), e.set_workdays(wds)) for e in em]
 
@@ -683,12 +694,12 @@ class DeleteDeviceView(PermissionRequiredMixin, DeleteView):
 
 class VacationsView(ListView):
     template_name = "attendance/vacations/vacations_list_view.html"
-    form_class = Vacation
     model = Vacation
+    paginate_by = 25
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
-        data["search_form"] = FilterVacationsForm()
+        data["search_form"] = FilterVacationsForm(self.request.GET)
         return data
 
     def get_queryset(self):
@@ -702,7 +713,7 @@ class VacationsView(ListView):
             q = q.filter(date__gte=g.get('date', None))
         if g.get('to_date', "") != "":
             q = q.filter(date__lte=g.get('to_date', None))
-        return q
+        return q.order_by('-date')
 
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
@@ -844,6 +855,7 @@ class DeleteVacationTypeView(PermissionRequiredMixin, DeleteView):
 class ExceptionsView(ListView):
     template_name = "attendance/exceptions/exceptions_list_view.html"
     model = Exception
+    paginate_by = 25
 
     def get_queryset(self):
         q = super().get_queryset()
@@ -854,11 +866,13 @@ class ExceptionsView(ListView):
             q = q.filter(type=g.get('type', None))
         if g.get('date', "") != "":
             q = q.filter(date__gte=g.get('date', None))
-        return q
+        if g.get('to_date', "") != "":
+            q = q.filter(date__lte=g.get('to_date', None))
+        return q.order_by('-date')
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
-        data["search_form"] = FilterExceptionsForm()
+        data["search_form"] = FilterExceptionsForm(self.request.GET)
         return data
 
     def get(self, request, *args, **kwargs):
@@ -979,7 +993,7 @@ class DashboardView(TemplateView):
         
         # We process a subset of employees to keep dashboard responsive
         # In a production environment with many employees, this should be a background task or cached
-        for emp in Employee.objects.filter(active=False)[:50]:
+        for emp in Employee.objects.filter(active=True)[:50]:
             recent_wds = WorkDay.objects.filter(employee=emp, date__gte=recent_date_limit)
             late_count = 0
             for wd in recent_wds:
@@ -995,6 +1009,38 @@ class DashboardView(TemplateView):
         
         anomalies.sort(key=lambda x: x['recent_late_count'], reverse=True)
         context['anomalies'] = anomalies[:5] # Show top 5 anomalies
+
+        # Weekly Presence Trend
+        weekly_trend = []
+        total_count = total_employees.count()
+        for i in range(6, -1, -1):
+            day = today - datetime.timedelta(days=i)
+            presents = WorkDay.objects.filter(date=day).count()
+            pct = (presents / total_count * 100) if total_count > 0 else 0
+            weekly_trend.append({
+                'day': day.strftime('%a'),
+                'date': day.strftime('%Y-%m-%d'),
+                'count': presents,
+                'pct': pct
+            })
+        context['weekly_trend'] = weekly_trend
+
+        # Comparative Performance (Current Month)
+        month_start = today.replace(day=1)
+        perf_labels = []
+        perf_hours = []
+        perf_lates = []
+        for emp in total_employees[:10]:
+            emp.set_workdays(WorkDay.objects.filter(employee=emp, date__gte=month_start, date__lte=today))
+            perf_labels.append(emp.name or emp.attendance_id)
+            perf_hours.append(float(emp.count_hours))
+            perf_lates.append(int(emp.late_days_count))
+        
+        import json
+        context['perf_labels'] = json.dumps(perf_labels)
+        context['perf_hours'] = json.dumps(perf_hours)
+        context['perf_lates'] = json.dumps(perf_lates)
+
         return context
 
 
@@ -1198,9 +1244,11 @@ class ImportRecordsView(PermissionRequiredMixin, FormView):
             })
 
 
-class ExportPayrollSummaryView(PermissionRequiredMixin, View):
-    permission_required = ('Attendance.can_view_employees',)
+class ExportPayrollSummaryView(UserPassesTestMixin, View):
     raise_exception = True
+
+    def test_func(self):
+        return self.request.user.is_superuser
 
     def get(self, request, *args, **kwargs):
         from_date, to_date = default_date_range(self)
@@ -1251,19 +1299,12 @@ class ExportPayrollSummaryView(PermissionRequiredMixin, View):
             vacations = Vacation.objects.filter(employee=emp, date__lte=to_date, to_date__gte=from_date)
             vacation_days = 0
             for v in vacations:
-                v_start = max(v.date, from_date.date())
-                v_end = min(v.to_date, to_date.date())
+                v_start = max(v.date, from_date)
+                v_end = min(v.to_date, to_date)
                 vacation_days += (v_end - v_start).days + 1
 
             profile_days = [int(d.day) for d in profile.days.all()]
-            required_days = 0
-            current_day = from_date.date()
-            while current_day <= to_date.date():
-                weekday_map = {5: 0, 6: 1, 0: 2, 1: 3, 2: 4, 3: 5, 4: 6}
-                day_index = weekday_map.get(current_day.weekday())
-                if day_index in profile_days:
-                    required_days += 1
-                current_day += datetime.timedelta(days=1)
+            required_days_val = required_days(from_date, to_date, profile=profile)
 
             accrued_days = present_days_count + vacation_days
 
@@ -1275,7 +1316,7 @@ class ExportPayrollSummaryView(PermissionRequiredMixin, View):
                 vacation_days,
                 round(overtime_hours, 2),
                 overtime_days_count,
-                required_days,
+                required_days_val,
                 present_days_count,
                 accrued_days
             ]

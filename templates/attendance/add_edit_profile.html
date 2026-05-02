@@ -127,6 +127,10 @@
             <!-- Section: System Flags -->
             <div class="mt-10 grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="flex flex-row-reverse items-center justify-between p-4 bg-surface-container-low dark:bg-slate-800/50 rounded-2xl border border-surface-container dark:border-slate-800 group hover:border-secondary transition-all">
+                    <span class="text-[11px] font-black text-primary dark:text-white font-headline text-right">اعتبار كامل الشهر عمل</span>
+                    {{ form.full_month_work|add_class:"w-5 h-5 rounded bg-surface-container dark:bg-slate-800 border-surface-container dark:border-slate-700 text-secondary focus:ring-secondary" }}
+                </div>
+                <div class="flex flex-row-reverse items-center justify-between p-4 bg-surface-container-low dark:bg-slate-800/50 rounded-2xl border border-surface-container dark:border-slate-800 group hover:border-secondary transition-all">
                     <span class="text-[11px] font-black text-primary dark:text-white font-headline text-right">انصراف اليوم التالي</span>
                     {{ form.next_day|add_class:"w-5 h-5 rounded bg-surface-container dark:bg-slate-800 border-surface-container dark:border-slate-700 text-secondary focus:ring-secondary" }}
                 </div>
@@ -137,10 +141,6 @@
                 <div class="flex flex-row-reverse items-center justify-between p-4 bg-surface-container-low dark:bg-slate-800/50 rounded-2xl border border-surface-container dark:border-slate-800 group hover:border-secondary transition-all">
                     <span class="text-[11px] font-black text-primary dark:text-white font-headline text-right">رصيد بالأجر</span>
                     {{ form.hourly|add_class:"w-5 h-5 rounded bg-surface-container dark:bg-slate-800 border-surface-container dark:border-slate-700 text-secondary focus:ring-secondary" }}
-                </div>
-                <div class="flex flex-row-reverse items-center justify-between p-4 bg-surface-container-low dark:bg-slate-800/50 rounded-2xl border border-surface-container dark:border-slate-800 group hover:border-secondary transition-all">
-                    <span class="text-[11px] font-black text-primary dark:text-white font-headline text-right">نشط حالياً</span>
-                    {{ form.active|add_class:"w-5 h-5 rounded bg-surface-container dark:bg-slate-800 border-surface-container dark:border-slate-700 text-secondary focus:ring-secondary" }}
                 </div>
             </div>
         </div>

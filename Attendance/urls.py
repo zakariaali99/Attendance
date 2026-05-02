@@ -45,7 +45,6 @@ urlpatterns = [
     path('exception/view', ExceptionsView.as_view(), name="exception"),
     path('exception/<int:pk>/edit', EditExceptionView.as_view(), name="edit_exception"),
     path('exception/<int:pk>/delete', DeleteExceptionView.as_view(), name="delete_exception"),
-    path('import-data', ImportRecordsView.as_view(), name="import_data"),
     path('settings', SettingsView.as_view(), name="settings"),
 
 ]

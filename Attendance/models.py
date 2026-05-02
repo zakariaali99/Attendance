@@ -32,6 +32,7 @@ class Day(models.Model):
 class Profile(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=4096)
+    full_month_work = models.BooleanField(default=False, help_text="If True, every day is a work day.")
     start_time = models.TimeField(null=True, default=None)
     end_time = models.TimeField(null=True, default=None)
     allowed_start_time = models.TimeField(null=True, default=None)
@@ -67,7 +68,7 @@ class Profile(models.Model):
 
 class Employee(models.Model):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=4096)
+    name = models.CharField(max_length=4096, blank=True, null=True)
     phone = models.CharField(max_length=4096, blank=True, default="")
     attendance_id = models.CharField(max_length=256)
     device = models.ForeignKey("ZKTDevice", on_delete=models.SET_NULL, null=True, default=None)
@@ -94,7 +95,7 @@ class Employee(models.Model):
         ]
 
     def __str__(self):
-        return self.name
+        return self.name or self.attendance_id
 
     @property
     def records(self):
@@ -321,7 +322,14 @@ class Vacation(models.Model):
     vacation_type = models.ForeignKey("VacationType", null=True, on_delete=models.SET_NULL)
 
     def __str__(self) -> str:
-        return f"{self.employee.name} - [ {self.vacation_type.title} ] - [{self.date} > {self.to_date}]"
+        name = self.employee.name or self.employee.attendance_id
+        return f"{name} - [ {self.vacation_type.title} ] - [{self.date} > {self.to_date}]"
+
+    @property
+    def duration(self):
+        if self.to_date and self.date:
+            return (self.to_date - self.date).days + 1
+        return 0
 
 
 class ExceptionType(models.Model):
@@ -344,7 +352,8 @@ class Exception(models.Model):
     type = models.CharField(choices=types, default=None, null=True, max_length=50)
 
     def __str__(self) -> str:
-        return f"{self.employee.name} - [ {self.type} ] - [{self.date}]"
+        name = self.employee.name or self.employee.attendance_id
+        return f"{name} - [ {self.type} ] - [{self.date}]"
 
 
 class ExtraWork(models.Model):
@@ -354,7 +363,8 @@ class ExtraWork(models.Model):
     note = models.TextField()
 
     def __str__(self) -> str:
-        return f"{self.employee.name} - [{self.start} -> {self.end}]"
+        name = self.employee.name or self.employee.attendance_id
+        return f"{name} - [{self.start} -> {self.end}]"
 
     def time(self):
         return (self.end - self.start).seconds

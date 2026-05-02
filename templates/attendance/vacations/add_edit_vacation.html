@@ -24,10 +24,10 @@
                     <h3 class="text-xs font-black uppercase tracking-widest font-headline">سياسة الإجازات</h3>
                 </div>
                 <div class="space-y-4 text-right">
-                    <p class="text-[10px] opacity-70 font-bold leading-relaxed">عند تسجيل الإجازة، سيتم خصم المدة تلقائياً من رصيد الإجازات السنوي المتبقي لكل موظف مختار.</p>
+                    <p class="text-[10px] opacity-70 font-bold leading-relaxed">عند تسجيل الإجازة، سيتم تطبيقها تلقائياً على الموظفين المختارين في سجل الدوام.</p>
                     <div class="p-3 bg-white/10 rounded-2xl border border-white/10">
                         <div class="text-[9px] font-black uppercase tracking-widest text-secondary mb-1">تنبيه النظام</div>
-                        <p class="text-[9px] opacity-90 font-bold">يرجى التأكد من اختيار نوع الإجازة الصحيح (سنوية، مرضية، مرافقة) لضمان دقة التقارير المالية والإدارية.</p>
+                        <p class="text-[9px] opacity-90 font-bold">يرجى التأكد من اختيار نوع الإجازة الصحيح لضمان دقة التقارير المالية والإدارية.</p>
                     </div>
                 </div>
             </div>
@@ -71,8 +71,9 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="space-y-2">
                             <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">نوع الإجازة</label>
-                            {% render_field form.type class="w-full bg-surface-container dark:bg-slate-800 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-primary dark:text-white focus:ring-2 focus:ring-secondary transition-all" %}
+                            {% render_field form.vacation_type class="w-full bg-surface-container dark:bg-slate-800 border-0 rounded-2xl px-6 py-4 text-xs font-bold text-primary dark:text-white focus:ring-2 focus:ring-secondary transition-all" %}
                         </div>
                         <div class="space-y-2">
                             <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">ملاحظات إضافية (اختياري)</label>
@@ -95,9 +96,18 @@
                     </div>
 
                     <div class="space-y-4">
-                        <p class="text-[9px] text-outline font-bold text-right pr-2">يمكنك البحث واختيار موظف واحد أو أكثر من القائمة التالية:</p>
-                        <div class="bg-surface-container-low dark:bg-slate-800/50 rounded-2xl p-4 max-h-64 overflow-y-auto border border-surface-container dark:border-slate-800 custom-scrollbar">
-                            {% render_field form.employees class="w-full bg-transparent border-0 text-xs font-bold text-primary dark:text-white space-y-2 focus:ring-0" %}
+                        <div class="flex flex-row-reverse items-center justify-between gap-4">
+                            <p class="text-[9px] text-outline font-bold text-right pr-2">يمكنك البحث واختيار موظف واحد أو أكثر:</p>
+                            <input type="text" id="employeeSearch" placeholder="بحث عن موظف..." class="text-[10px] px-4 py-2 bg-surface-container dark:bg-slate-800 rounded-full border-0 focus:ring-2 focus:ring-secondary font-bold text-right">
+                        </div>
+                        
+                        <div class="bg-surface-container-low dark:bg-slate-800/50 rounded-2xl p-4 max-h-64 overflow-y-auto border border-surface-container dark:border-slate-800 custom-scrollbar grid grid-cols-1 md:grid-cols-2 gap-2" id="employeeList">
+                            {% for value, text in form.employees.field.choices %}
+                            <label class="flex flex-row-reverse items-center gap-3 p-3 bg-white dark:bg-slate-900 border border-surface-container dark:border-slate-800 rounded-xl cursor-pointer hover:border-secondary transition-all employee-item shadow-sm">
+                                <input type="checkbox" name="employees" value="{{ value }}" class="w-4 h-4 rounded border-surface-container text-secondary focus:ring-secondary">
+                                <span class="text-xs font-bold text-primary dark:text-white">{{ text }}</span>
+                            </label>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
@@ -115,4 +125,22 @@
         </form>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById('employeeSearch').addEventListener('input', function(e) {
+        const term = e.target.value.toLowerCase();
+        const items = document.querySelectorAll('.employee-item');
+        
+        items.forEach(item => {
+            const name = item.querySelector('span').textContent.toLowerCase();
+            if (name.includes(term)) {
+                item.style.display = 'flex';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    });
+</script>
 {% endblock %}

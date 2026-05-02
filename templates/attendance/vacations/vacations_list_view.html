@@ -49,13 +49,14 @@
     </div>
     
     <div class="overflow-x-auto">
-        <table class="w-full text-right border-collapse" id="vacationTable">
+        <table class="w-full text-right border-collapse">
             <thead>
                 <tr class="bg-surface-container-low dark:bg-slate-800/50 text-outline dark:text-slate-500">
                     <th class="px-6 py-4 font-black text-xs uppercase tracking-widest">الموظف</th>
                     <th class="px-6 py-4 font-black text-xs uppercase tracking-widest">نوع الإجازة</th>
                     <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">الفترة الزمنية</th>
                     <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">المدة</th>
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest">الملاحظات</th>
                     <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">الإجراءات</th>
                 </tr>
             </thead>
@@ -65,10 +66,10 @@
                     <td class="px-6 py-5">
                         <div class="flex items-center gap-4 flex-row-reverse">
                             <div class="w-10 h-10 rounded-full bg-primary-container/10 text-primary dark:text-white flex items-center justify-center font-black text-xs border border-white dark:border-slate-700 shadow-sm">
-                                {{ vacation.employee.name|slice:":1"|upper }}
+                                {{ vacation.employee.name|slice:":1"|upper|default:"?" }}
                             </div>
                             <div>
-                                <div class="font-black text-primary dark:text-white text-sm font-headline">{{ vacation.employee.name }}</div>
+                                <div class="font-black text-primary dark:text-white text-sm font-headline">{{ vacation.employee.name|default:vacation.employee.attendance_id }}</div>
                             </div>
                         </div>
                     </td>
@@ -89,6 +90,11 @@
                         <span class="text-[9px] font-bold text-outline dark:text-slate-500 uppercase tracking-widest mr-1">يوم</span>
                     </td>
                     <td class="px-6 py-5">
+                        <div class="text-[11px] text-outline dark:text-slate-400 font-bold max-w-xs truncate" title="{{ vacation.note }}">
+                            {{ vacation.note|default:"-" }}
+                        </div>
+                    </td>
+                    <td class="px-6 py-5">
                         <div class="flex items-center justify-center gap-2 flex-row-reverse">
                             <a href="{% url 'Attendance:edit_vacation' vacation.id %}" 
                                class="flex items-center justify-center w-10 min-w-10 h-10 rounded-xl border border-surface-container dark:border-slate-700 text-primary dark:text-slate-200 hover:bg-surface-container transition-all shadow-sm">
@@ -104,7 +110,7 @@
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="5" class="px-6 py-16 text-center">
+                    <td colspan="6" class="px-6 py-16 text-center">
                         <div class="flex flex-col items-center gap-4 opacity-30 dark:opacity-50">
                             <span class="material-symbols-outlined text-[64px]">event_busy</span>
                             <p class="text-base font-bold font-headline">لا توجد إجازات مسجلة حالياً.</p>
@@ -119,18 +125,4 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-    $(document).ready(function() {
-        if ($.fn.dataTable) {
-            $('#vacationTable').DataTable({
-                "order": [[ 2, "desc" ]],
-                "pageLength": 25,
-                "dom": 'rtip',
-                "language": {
-                    "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Arabic.json"
-                }
-            });
-        }
-    });
-</script>
 {% endblock %}

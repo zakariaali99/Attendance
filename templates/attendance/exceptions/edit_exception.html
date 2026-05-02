@@ -1,75 +1,59 @@
 {% extends 'base.html' %}
 
-
-<div class="container py-5">
+{% block body %}
+<div class="container-fluid py-5">
     <div class="row justify-content-center">
         <div class="col-lg-8">
-            <div class="d-flex align-items-center mb-4">
+            <div class="d-flex align-items-center mb-6 flex-row-reverse justify-between">
+                <h3 class="text-3xl font-black text-primary dark:text-white font-headline">تعديل الإذن</h3>
                 <a href="{% url 'Attendance:exception' %}"
-                    class="btn btn-outline-secondary rounded-pill px-3 shadow-sm ms-3">
-                    <i class="bi bi-arrow-right ms-1"></i> رجوع
+                    class="flex items-center gap-2 px-4 py-2 rounded-xl border border-surface-container dark:border-slate-700 text-outline hover:bg-surface-container transition-all">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                    <span class="font-bold text-sm">رجوع</span>
                 </a>
-                <h3 class="mb-0 fw-bold">تعديل الإذن</h3>
             </div>
 
-            <div class="card border-0 shadow-lg bg-hti rounded-4">
-                <div class="card-body p-5">
-                    <form method="post">
+            <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-lg border border-surface-container dark:border-slate-800 overflow-hidden animate-fade-in-up">
+                <div class="p-8">
+                    <form method="post" class="space-y-6">
                         {% csrf_token %}
+                        
                         {% if form.errors %}
-                        <div class="alert alert-danger mb-4 rounded-3 border-0">
+                        <div class="p-4 bg-error/10 border border-error/20 rounded-2xl text-error text-sm font-bold">
                             {{ form.errors }}
                         </div>
                         {% endif %}
 
-                        <div class="row g-4">
-                            <div class="col-12 mt-4">
-                                <h6 class="text-primary fw-bold text-uppercase border-bottom border-glass pb-2">
-                                    <i class="bi bi-clock ms-2"></i>تفاصيل الإذن
-                                </h6>
-                            </div>
-
-                            <div class="col-12">
-                                <label for="{{ form.employee.id_for_label }}"
-                                    class="form-label fw-bold text-muted small text-uppercase">
-                                    <i class="bi bi-person ms-1"></i>الموظف
-                                </label>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-right" dir="rtl">
+                            <div class="col-span-2">
+                                <label class="block text-xs font-black text-outline uppercase tracking-widest mb-2">الموظف</label>
                                 {{ form.employee }}
                             </div>
 
-                            <div class="col-md-6">
-                                <label for="{{ form.date.id_for_label }}"
-                                    class="form-label fw-bold text-muted small text-uppercase">
-                                    <i class="bi bi-calendar-event ms-1"></i>تاريخ الإذن
-                                </label>
+                            <div>
+                                <label class="block text-xs font-black text-outline uppercase tracking-widest mb-2">تاريخ الإذن</label>
                                 {{ form.date }}
                             </div>
 
-                            <div class="col-md-6">
-                                <label for="{{ form.type.id_for_label }}"
-                                    class="form-label fw-bold text-muted small text-uppercase">
-                                    <i class="bi bi-list-task ms-1"></i>نوع الإذن
-                                </label>
+                            <div>
+                                <label class="block text-xs font-black text-outline uppercase tracking-widest mb-2">نوع الإذن</label>
                                 {{ form.type }}
                             </div>
 
-                            <div class="col-12">
-                                <label for="{{ form.note.id_for_label }}"
-                                    class="form-label fw-bold text-muted small text-uppercase">
-                                    <i class="bi bi-sticky ms-1"></i>ملاحظات
-                                </label>
+                            <div class="col-span-2">
+                                <label class="block text-xs font-black text-outline uppercase tracking-widest mb-2">ملاحظات</label>
                                 {{ form.note }}
                             </div>
+                        </div>
 
-                            <div class="col-12 mt-5">
-                                <div class="d-flex justify-content-center gap-3">
-                                    <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 flex-grow-1">
-                                        <i class="bi bi-check2-circle ms-1"></i> حفظ التعديلات
-                                    </button>
-                                    <a href="{% url 'Attendance:exception' %}"
-                                        class="btn btn-outline-light btn-lg rounded-pill px-5">إلغاء</a>
-                                </div>
-                            </div>
+                        <div class="pt-6 flex gap-4 flex-row-reverse">
+                            <button type="submit" class="flex-grow bg-primary text-white py-4 rounded-2xl font-black shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all">
+                                حفظ التعديلات
+                            </button>
+                            <a href="{% url 'Attendance:exception' %}"
+                                class="px-8 py-4 rounded-2xl border border-surface-container dark:border-slate-800 text-outline font-bold hover:bg-surface-container transition-all">
+                                إلغاء
+                            </a>
                         </div>
                     </form>
                 </div>
@@ -77,4 +61,4 @@
         </div>
     </div>
 </div>
-{% endblock %}
+{% endblock %}

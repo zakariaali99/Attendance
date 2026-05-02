@@ -8,7 +8,7 @@
 
 {% block search_box %}
 <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-surface-container dark:border-slate-800 p-6 mb-8 animate-fade-in-up">
-    <form method="get" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+    <form method="get" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
         <div class="space-y-2">
             <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">الموظف</label>
             {{ search_form.employees|add_class:"form-select" }}
@@ -18,8 +18,12 @@
             {{ search_form.type|add_class:"form-select" }}
         </div>
         <div class="space-y-2">
-            <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">التاريخ</label>
+            <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">من تاريخ</label>
             {{ search_form.date|add_class:"form-control" }}
+        </div>
+        <div class="space-y-2">
+            <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">إلى تاريخ</label>
+            {{ search_form.to_date|add_class:"form-control" }}
         </div>
         <div>
             <button type="submit" class="w-full py-4 bg-primary dark:bg-white text-white dark:text-primary font-black rounded-2xl shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2">
@@ -44,7 +48,7 @@
     </div>
     
     <div class="overflow-x-auto">
-        <table class="w-full text-right border-collapse" id="exceptionsTable">
+        <table class="w-full text-right border-collapse">
             <thead>
                 <tr class="bg-surface-container-low dark:bg-slate-800/50 text-outline dark:text-slate-500">
                     <th class="px-6 py-4 font-black text-xs uppercase tracking-widest">الموظف</th>
@@ -60,10 +64,10 @@
                     <td class="px-6 py-5">
                         <div class="flex items-center gap-4 flex-row-reverse">
                             <div class="w-10 h-10 rounded-full bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 flex items-center justify-center font-black text-xs border border-white dark:border-slate-700 shadow-sm">
-                                {{ exception.employee.name|slice:":1"|upper }}
+                                {{ exception.employee.name|slice:":1"|upper|default:"?" }}
                             </div>
                             <div>
-                                <div class="font-black text-primary dark:text-white text-sm font-headline">{{ exception.employee.name }}</div>
+                                <div class="font-black text-primary dark:text-white text-sm font-headline">{{ exception.employee.name|default:exception.employee.attendance_id }}</div>
                             </div>
                         </div>
                     </td>
@@ -114,18 +118,4 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-    $(document).ready(function() {
-        if ($.fn.dataTable) {
-            $('#exceptionsTable').DataTable({
-                "order": [[ 2, "desc" ]],
-                "pageLength": 25,
-                "dom": 'rtip',
-                "language": {
-                    "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Arabic.json"
-                }
-            });
-        }
-    });
-</script>
 {% endblock %}

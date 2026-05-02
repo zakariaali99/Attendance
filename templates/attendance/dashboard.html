@@ -23,58 +23,111 @@
 <!-- Stats Grid -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10 animate-fade-in-up" style="animation-delay: 0.1s;">
     <!-- Total Employees -->
-    <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border-r-4 border-primary flex flex-col justify-between h-44 group hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-        <div class="flex justify-between items-start flex-row-reverse">
-            <div class="bg-primary/10 dark:bg-primary/20 p-3 rounded-2xl text-primary dark:text-primary-fixed">
+    <div class="bg-white dark:bg-slate-900 rounded-[2rem] p-6 shadow-sm border border-surface-container dark:border-slate-800 flex flex-col justify-between h-44 group hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+        <div class="flex justify-between items-start flex-row-reverse relative z-10">
+            <div class="bg-primary/5 dark:bg-primary/20 p-3 rounded-2xl text-primary dark:text-primary-fixed">
                 <span class="material-symbols-outlined text-[28px]">group</span>
             </div>
             <span class="text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest">إجمالي الموظفين</span>
         </div>
-        <div>
+        <div class="relative z-10">
             <div class="text-4xl font-black text-primary dark:text-white mb-1 counter" data-target="{{ count_employees|default:0 }}">0</div>
-            <div class="text-xs text-on-surface-variant dark:text-slate-400 font-bold">موظف مسجل حالياً</div>
+            <div class="text-[11px] text-on-surface-variant dark:text-slate-400 font-bold">موظف مسجل حالياً</div>
         </div>
+        <div class="absolute -bottom-6 -right-6 w-24 h-24 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors"></div>
     </div>
 
     <!-- Present Today -->
-    <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border-r-4 border-secondary-container flex flex-col justify-between h-44 group hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-        <div class="flex justify-between items-start flex-row-reverse">
-            <div class="bg-secondary-container/10 dark:bg-secondary-container/20 p-3 rounded-2xl text-secondary">
+    <div class="bg-white dark:bg-slate-900 rounded-[2rem] p-6 shadow-sm border border-surface-container dark:border-slate-800 flex flex-col justify-between h-44 group hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+        <div class="flex justify-between items-start flex-row-reverse relative z-10">
+            <div class="bg-green-500/10 p-3 rounded-2xl text-green-600 dark:text-green-400">
                 <span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
             </div>
             <span class="text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest">حضور اليوم</span>
         </div>
-        <div>
-            <div class="text-4xl font-black text-secondary mb-1 counter" data-target="{{ count_presents|default:0 }}">0</div>
-            <div class="text-xs text-on-surface-variant dark:text-slate-400 font-bold">موظف سجل دخول اليوم</div>
+        <div class="relative z-10">
+            <div class="text-4xl font-black text-green-600 dark:text-green-400 mb-1 counter" data-target="{{ count_presents|default:0 }}">0</div>
+            <div class="text-[11px] text-on-surface-variant dark:text-slate-400 font-bold">سجلوا دخول اليوم</div>
         </div>
+        <div class="absolute -bottom-6 -right-6 w-24 h-24 bg-green-500/5 rounded-full blur-2xl"></div>
     </div>
 
     <!-- Absent Today -->
-    <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border-r-4 border-error flex flex-col justify-between h-44 group hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-        <div class="flex justify-between items-start flex-row-reverse">
-            <div class="bg-error/10 dark:bg-error/20 p-3 rounded-2xl text-error">
+    <div class="bg-white dark:bg-slate-900 rounded-[2rem] p-6 shadow-sm border border-surface-container dark:border-slate-800 flex flex-col justify-between h-44 group hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+        <div class="flex justify-between items-start flex-row-reverse relative z-10">
+            <div class="bg-red-500/10 p-3 rounded-2xl text-red-600 dark:text-red-400">
                 <span class="material-symbols-outlined text-[28px]">person_off</span>
             </div>
             <span class="text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest">غياب اليوم</span>
         </div>
-        <div>
-            <div class="text-4xl font-black text-error mb-1 counter" data-target="{{ count_absents|default:0 }}">0</div>
-            <div class="text-xs text-on-surface-variant dark:text-slate-400 font-bold">لم يسجلوا حضور اليوم</div>
+        <div class="relative z-10">
+            <div class="text-4xl font-black text-red-600 dark:text-red-400 mb-1 counter" data-target="{{ count_absents|default:0 }}">0</div>
+            <div class="text-[11px] text-on-surface-variant dark:text-slate-400 font-bold">لم يسجلوا حضور اليوم</div>
         </div>
+        <div class="absolute -bottom-6 -right-6 w-24 h-24 bg-red-500/5 rounded-full blur-2xl"></div>
     </div>
 
     <!-- Permissions Today -->
-    <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border-r-4 border-amber-500 flex flex-col justify-between h-44 group hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-        <div class="flex justify-between items-start flex-row-reverse">
-            <div class="bg-amber-100 dark:bg-amber-900/30 p-3 rounded-2xl text-amber-700 dark:text-amber-400">
+    <div class="bg-white dark:bg-slate-900 rounded-[2rem] p-6 shadow-sm border border-surface-container dark:border-slate-800 flex flex-col justify-between h-44 group hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+        <div class="flex justify-between items-start flex-row-reverse relative z-10">
+            <div class="bg-amber-500/10 p-3 rounded-2xl text-amber-600 dark:text-amber-400">
                 <span class="material-symbols-outlined text-[28px]">schedule</span>
             </div>
             <span class="text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest">أذونات اليوم</span>
         </div>
-        <div>
-            <div class="text-4xl font-black text-amber-700 dark:text-amber-400 mb-1 counter" data-target="{{ count_permissions|default:0 }}">0</div>
-            <div class="text-xs text-on-surface-variant dark:text-slate-400 font-bold">حالات استثناء مسجلة</div>
+        <div class="relative z-10">
+            <div class="text-4xl font-black text-amber-600 dark:text-amber-400 mb-1 counter" data-target="{{ count_permissions|default:0 }}">0</div>
+            <div class="text-[11px] text-on-surface-variant dark:text-slate-400 font-bold">حالات استثناء مسجلة</div>
+        </div>
+        <div class="absolute -bottom-6 -right-6 w-24 h-24 bg-amber-500/5 rounded-full blur-2xl"></div>
+    </div>
+</div>
+
+<!-- Analytics Visualization -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
+    <!-- Comparative Performance Chart -->
+    <div class="lg:col-span-2 bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-surface-container dark:border-slate-800 animate-fade-in-up" style="animation-delay: 0.15s;">
+        <div class="flex justify-between items-center flex-row-reverse mb-8">
+            <h2 class="text-xl font-black text-primary dark:text-white font-headline flex items-center gap-2 flex-row-reverse">
+                <span class="material-symbols-outlined text-secondary">monitoring</span>
+                مخطط الأداء المقارن
+            </h2>
+            <div class="text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest">الشهر الحالي</div>
+        </div>
+        <div class="h-[300px] w-full">
+            <canvas id="performanceChart" 
+                data-labels='{{ perf_labels|safe }}'
+                data-hours='{{ perf_hours|safe }}'
+                data-lates='{{ perf_lates|safe }}'>
+            </canvas>
+        </div>
+    </div>
+
+    <!-- Weekly Presence Trend -->
+    <div class="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-surface-container dark:border-slate-800 animate-fade-in-up" style="animation-delay: 0.2s;">
+        <div class="flex justify-between items-center flex-row-reverse mb-8">
+            <h2 class="text-lg font-black text-primary dark:text-white font-headline flex items-center gap-2 flex-row-reverse">
+                <span class="material-symbols-outlined text-secondary">bar_chart</span>
+                مؤشر الحضور
+            </h2>
+            <div class="text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest">7 أيام</div>
+        </div>
+        
+        <div class="flex items-end justify-between gap-2 h-48 px-2" dir="ltr">
+            {% for day in weekly_trend %}
+            <div class="flex-grow flex flex-col items-center gap-3 group h-full">
+                <div class="relative w-full flex flex-col justify-end items-center flex-grow">
+                    <div class="absolute -top-8 bg-primary text-white text-[9px] px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">
+                        {{ day.count }}
+                    </div>
+                    <div class="w-full bg-surface-container-low dark:bg-slate-800 rounded-lg overflow-hidden h-full flex flex-col justify-end">
+                        <div class="bg-secondary-container rounded-t-lg transition-all duration-1000 ease-out group-hover:bg-secondary" 
+                             style="--h: {{ day.pct }}%; height: var(--h);"></div>
+                    </div>
+                </div>
+                <div class="text-[9px] font-black text-outline dark:text-slate-500 uppercase tracking-tighter">{{ day.day }}</div>
+            </div>
+            {% endfor %}
         </div>
     </div>
 </div>
@@ -205,8 +258,95 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Performance Chart
+        const perfCanvas = document.getElementById('performanceChart');
+        if (perfCanvas) {
+            const labels = JSON.parse(perfCanvas.getAttribute('data-labels'));
+            const hours = JSON.parse(perfCanvas.getAttribute('data-hours'));
+            const lates = JSON.parse(perfCanvas.getAttribute('data-lates'));
+
+            const isDark = document.documentElement.classList.contains('dark');
+            const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
+            const textColor = isDark ? '#94a3b8' : '#64748b';
+
+            new Chart(perfCanvas, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'ساعات العمل',
+                            data: hours,
+                            backgroundColor: isDark ? 'rgba(252, 212, 0, 0.8)' : 'rgba(24, 21, 52, 0.8)',
+                            borderRadius: 6,
+                            barPercentage: 0.6,
+                            categoryPercentage: 0.8,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'أيام التأخير',
+                            data: lates,
+                            type: 'line',
+                            borderColor: '#ff4d4d',
+                            borderWidth: 2,
+                            pointBackgroundColor: '#ff4d4d',
+                            pointRadius: 3,
+                            tension: 0.4,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { 
+                            position: 'top', 
+                            rtl: true, 
+                            labels: { 
+                                color: textColor,
+                                font: { family: 'Tajawal', size: 11, weight: 'bold' },
+                                usePointStyle: true,
+                                padding: 15
+                            } 
+                        },
+                        tooltip: {
+                            rtl: true,
+                            backgroundColor: isDark ? '#1e293b' : '#ffffff',
+                            titleColor: isDark ? '#ffffff' : '#1e293b',
+                            bodyColor: isDark ? '#cbd5e1' : '#475569',
+                            borderColor: gridColor,
+                            borderWidth: 1,
+                            padding: 12,
+                            cornerRadius: 8
+                        }
+                    },
+                    scales: {
+                        x: { 
+                            grid: { display: false }, 
+                            ticks: { color: textColor, font: { size: 10, weight: 'bold' } } 
+                        },
+                        y: { 
+                            beginAtZero: true, 
+                            grid: { color: gridColor }, 
+                            ticks: { color: textColor, font: { size: 10 } },
+                            title: { display: true, text: 'ساعات العمل', color: textColor, font: { size: 10, weight: 'bold' } }
+                        },
+                        y1: { 
+                            position: 'right', 
+                            beginAtZero: true, 
+                            grid: { display: false }, 
+                            ticks: { color: '#ff4d4d', font: { size: 10 } },
+                            title: { display: true, text: 'التأخيرات', color: '#ff4d4d', font: { size: 10, weight: 'bold' } }
+                        }
+                    }
+                }
+            });
+        }
+
         // Live Date Time Control
         function updateClock() {
             const now = new Date();

@@ -140,7 +140,7 @@
             </button>
             <a href="{% url 'Attendance:dashboard' %}" class="flex min-w-0 items-center gap-2 flex-row-reverse">
                 <img alt="Clock" class="h-9 w-9 shrink-0 object-contain" src="{% static 'imgs/logo-mark.png' %}"/>
-                <img alt="منظومة الخوارزمي" class="h-8 shrink-0 object-contain hidden sm:block" src="{% static 'imgs/text-logo.png' %}"/>
+                <img alt="منظومة الخوارزمي" class="h-8 shrink-0 object-contain block" src="{% static 'imgs/text-logo.png' %}"/>
             </a>
         </div>
 
@@ -189,86 +189,97 @@
         </div>
     </nav>
 
+    <!-- SideNavBar Overlay (Mobile) -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/40 z-30 hidden lg:hidden backdrop-blur-sm transition-opacity duration-300 opacity-0"></div>
+
     <!-- SideNavBar -->
     <aside id="sidebar" class="fixed right-0 top-0 h-full w-64 z-40 bg-slate-900 dark:bg-black shadow-2xl flex flex-col pt-20 pb-4 sidebar-transition font-body text-right overflow-hidden border-l border-white/5">
+        <!-- Sidebar Branding (Visible when expanded) -->
+        <div class="px-6 mb-8 sidebar-text">
+            <div class="flex items-center gap-3 flex-row-reverse group">
+                <div class="p-2 bg-white/5 rounded-xl group-hover:bg-white/10 transition-colors">
+                    <img src="{% static 'imgs/logo-mark.png' %}" class="w-8 h-8 object-contain" alt="Logo"/>
+                </div>
+                <div class="text-right">
+                    <div class="text-sm font-black text-white font-headline tracking-wide">الخوارزمي</div>
+                    <div class="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">نظام إدارة الحضور</div>
+                </div>
+            </div>
+        </div>
+
         <div class="flex flex-col gap-1 px-3 mb-8 overflow-y-auto flex-grow scrollbar-hide">
             <!-- Navigation Group -->
             <div class="space-y-1">
-                <a href="{% url 'Attendance:dashboard' %}" class="flex flex-row-reverse items-center gap-4 py-3.5 px-4 rounded-2xl transition-all duration-300 {% if request.resolver_match.url_name == 'dashboard' %}bg-secondary text-primary shadow-lg scale-[1.02]{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
+                <a href="{% url 'Attendance:dashboard' %}" class="sidebar-item flex flex-row-reverse items-center gap-3 py-2.5 px-4 rounded-xl transition-all duration-200 {% if request.resolver_match.url_name == 'dashboard' %}bg-secondary-container/10 text-secondary-container sidebar-active-accent shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
                     <span class="material-symbols-outlined !text-[22px]" {% if request.resolver_match.url_name == 'dashboard' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>dashboard</span>
                     <span class="font-black text-xs sidebar-text">لوحة التحكم</span>
                 </a>
             </div>
 
             <!-- Management Section -->
-            <div class="mt-8 mb-2 px-4 flex flex-row-reverse items-center gap-2">
-                <div class="h-[1px] flex-grow bg-white/10"></div>
-                <span class="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] sidebar-text whitespace-nowrap">الإدارة التشغيلية</span>
+            <div class="mt-7 mb-3 px-4 flex flex-row-reverse items-center gap-2">
+                <span class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] sidebar-text whitespace-nowrap">الإدارة التشغيلية</span>
             </div>
             
             <div class="space-y-1">
-                <a href="{% url 'Attendance:list' %}" class="flex flex-row-reverse items-center gap-4 py-3 px-4 rounded-2xl transition-all duration-200 {% if 'list' in request.path %}bg-white/10 text-white shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
+                <a href="{% url 'Attendance:list' %}" class="sidebar-item flex flex-row-reverse items-center gap-3 py-2.5 px-4 rounded-xl transition-all duration-200 {% if 'list' in request.path %}bg-white/10 text-white sidebar-active-accent shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
                     <span class="material-symbols-outlined !text-[22px]" {% if 'list' in request.path %}style="font-variation-settings: 'FILL' 1;"{% endif %}>group</span>
                     <span class="font-bold text-xs sidebar-text">شؤون الموظفين</span>
                 </a>
 
-                <a href="{% url 'Attendance:vacation' %}" class="flex flex-row-reverse items-center gap-4 py-3 px-4 rounded-2xl transition-all duration-200 {% if 'vacation' in request.path %}bg-white/10 text-white shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
+                <a href="{% url 'Attendance:vacation' %}" class="sidebar-item flex flex-row-reverse items-center gap-3 py-2.5 px-4 rounded-xl transition-all duration-200 {% if 'vacation' in request.path %}bg-white/10 text-white sidebar-active-accent shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
                     <span class="material-symbols-outlined !text-[22px]" {% if 'vacation' in request.path %}style="font-variation-settings: 'FILL' 1;"{% endif %}>event_busy</span>
                     <span class="font-bold text-xs sidebar-text">إدارة الإجازات</span>
                 </a>
 
-                <a href="{% url 'Attendance:exception' %}" class="flex flex-row-reverse items-center gap-4 py-3 px-4 rounded-2xl transition-all duration-200 {% if 'exception' in request.path %}bg-white/10 text-white shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
+                <a href="{% url 'Attendance:exception' %}" class="sidebar-item flex flex-row-reverse items-center gap-3 py-2.5 px-4 rounded-xl transition-all duration-200 {% if 'exception' in request.path %}bg-white/10 text-white sidebar-active-accent shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
                     <span class="material-symbols-outlined !text-[22px]" {% if 'exception' in request.path %}style="font-variation-settings: 'FILL' 1;"{% endif %}>schedule</span>
                     <span class="font-bold text-xs sidebar-text">أذونات الخروج</span>
                 </a>
             </div>
 
             <!-- Analysis Section -->
-            <div class="mt-8 mb-2 px-4 flex flex-row-reverse items-center gap-2">
-                <div class="h-[1px] flex-grow bg-white/10"></div>
-                <span class="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] sidebar-text whitespace-nowrap">التقارير والتحليل</span>
+            <div class="mt-7 mb-3 px-4 flex flex-row-reverse items-center gap-2">
+                <span class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] sidebar-text whitespace-nowrap">التقارير والتحليل</span>
             </div>
 
             <div class="space-y-1">
-                <a href="{% url 'Attendance:report' %}" class="flex flex-row-reverse items-center gap-4 py-3 px-4 rounded-2xl transition-all duration-200 {% if request.resolver_match.url_name == 'report' %}bg-white/10 text-white shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
+                <a href="{% url 'Attendance:report' %}" class="sidebar-item flex flex-row-reverse items-center gap-3 py-2.5 px-4 rounded-xl transition-all duration-200 {% if request.resolver_match.url_name == 'report' %}bg-white/10 text-white sidebar-active-accent shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
                     <span class="material-symbols-outlined !text-[22px]" {% if request.resolver_match.url_name == 'report' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>assessment</span>
                     <span class="font-bold text-xs sidebar-text">التقرير الإحصائي</span>
                 </a>
 
-                <a href="{% url 'Attendance:monthly_register' %}" class="flex flex-row-reverse items-center gap-4 py-3 px-4 rounded-2xl transition-all duration-200 {% if request.resolver_match.url_name == 'monthly_register' %}bg-white/10 text-white shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
+                <a href="{% url 'Attendance:monthly_register' %}" class="sidebar-item flex flex-row-reverse items-center gap-3 py-2.5 px-4 rounded-xl transition-all duration-200 {% if request.resolver_match.url_name == 'monthly_register' %}bg-white/10 text-white sidebar-active-accent shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
                     <span class="material-symbols-outlined !text-[22px]" {% if request.resolver_match.url_name == 'monthly_register' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>calendar_view_month</span>
                     <span class="font-bold text-xs sidebar-text">سجل الدوام الشهري</span>
                 </a>
 
-                <a href="{% url 'Attendance:export_payroll_summary' %}" class="flex flex-row-reverse items-center gap-4 py-3 px-4 rounded-2xl transition-all duration-200 {% if request.resolver_match.url_name == 'export_payroll_summary' %}bg-white/10 text-white shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
+                {% if user.is_superuser %}
+                <a href="{% url 'Attendance:export_payroll_summary' %}" class="sidebar-item flex flex-row-reverse items-center gap-3 py-2.5 px-4 rounded-xl transition-all duration-200 {% if request.resolver_match.url_name == 'export_payroll_summary' %}bg-white/10 text-white sidebar-active-accent shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
                     <span class="material-symbols-outlined !text-[22px]">payments</span>
                     <span class="font-bold text-xs sidebar-text">ملخص الرواتب</span>
                 </a>
+                {% endif %}
             </div>
 
             <!-- System Section -->
-            <div class="mt-8 mb-2 px-4 flex flex-row-reverse items-center gap-2">
-                <div class="h-[1px] flex-grow bg-white/10"></div>
-                <span class="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] sidebar-text whitespace-nowrap">إعدادات المنظومة</span>
+            <div class="mt-7 mb-3 px-4 flex flex-row-reverse items-center gap-2">
+                <span class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] sidebar-text whitespace-nowrap">إعدادات المنظومة</span>
             </div>
 
             <div class="space-y-1">
-                <a href="{% url 'Attendance:profiles' %}" class="flex flex-row-reverse items-center gap-4 py-3 px-4 rounded-2xl transition-all duration-200 {% if 'profile' in request.path %}bg-white/10 text-white shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
+                <a href="{% url 'Attendance:profiles' %}" class="sidebar-item flex flex-row-reverse items-center gap-3 py-2.5 px-4 rounded-xl transition-all duration-200 {% if 'profile' in request.path %}bg-white/10 text-white sidebar-active-accent shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
                     <span class="material-symbols-outlined !text-[22px]">calendar_today</span>
                     <span class="font-bold text-xs sidebar-text">قواعد الدوام</span>
                 </a>
 
-                <a href="{% url 'Attendance:devices' %}" class="flex flex-row-reverse items-center gap-4 py-3 px-4 rounded-2xl transition-all duration-200 {% if 'device' in request.path %}bg-white/10 text-white shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
+                <a href="{% url 'Attendance:devices' %}" class="sidebar-item flex flex-row-reverse items-center gap-3 py-2.5 px-4 rounded-xl transition-all duration-200 {% if 'device' in request.path %}bg-white/10 text-white sidebar-active-accent shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
                     <span class="material-symbols-outlined !text-[22px]">devices</span>
                     <span class="font-bold text-xs sidebar-text">أجهزة البصمة</span>
                 </a>
 
-                <a href="{% url 'Attendance:import_data' %}" class="flex flex-row-reverse items-center gap-4 py-3 px-4 rounded-2xl transition-all duration-200 {% if request.resolver_match.url_name == 'import_data' %}bg-white/10 text-white shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
-                    <span class="material-symbols-outlined !text-[22px]">publish</span>
-                    <span class="font-bold text-xs sidebar-text">استيراد السجلات</span>
-                </a>
 
-                <a href="{% url 'Attendance:settings' %}" class="flex flex-row-reverse items-center gap-4 py-3 px-4 rounded-2xl transition-all duration-200 {% if request.resolver_match.url_name == 'settings' %}bg-white/10 text-white shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
+                <a href="{% url 'Attendance:settings' %}" class="sidebar-item flex flex-row-reverse items-center gap-3 py-2.5 px-4 rounded-xl transition-all duration-200 {% if request.resolver_match.url_name == 'settings' %}bg-white/10 text-white sidebar-active-accent shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
                     <span class="material-symbols-outlined !text-[22px]">settings</span>
                     <span class="font-bold text-xs sidebar-text">إعدادات النظام</span>
                 </a>
@@ -276,42 +287,31 @@
 
             {% if user.is_authenticated and user.is_admin %}
             <!-- Security Section -->
-            <div class="mt-8 mb-2 px-4 flex flex-row-reverse items-center gap-2">
-                <div class="h-[1px] flex-grow bg-error/20"></div>
-                <span class="text-[9px] font-black text-error uppercase tracking-[0.2em] sidebar-text whitespace-nowrap">الأمان والرقابة</span>
+            <div class="mt-7 mb-3 px-4 flex flex-row-reverse items-center gap-2">
+                <span class="text-[10px] font-black text-error/60 uppercase tracking-[0.2em] sidebar-text whitespace-nowrap">الأمان والرقابة</span>
             </div>
             
             <div class="space-y-1">
-                <a href="{% url 'VIP:users_list' %}" class="flex flex-row-reverse items-center gap-4 py-3 px-4 rounded-2xl transition-all duration-200 {% if 'users' in request.path %}bg-error/10 text-error shadow-sm{% else %}text-slate-400 hover:bg-red-500/10 hover:text-red-400{% endif %}">
+                <a href="{% url 'VIP:users_list' %}" class="sidebar-item flex flex-row-reverse items-center gap-3 py-2.5 px-4 rounded-xl transition-all duration-200 {% if 'users' in request.path %}bg-error/10 text-error sidebar-active-accent shadow-sm{% else %}text-slate-400 hover:bg-red-500/10 hover:text-red-400{% endif %}">
                     <span class="material-symbols-outlined !text-[22px]" {% if 'users' in request.path %}style="font-variation-settings: 'FILL' 1;"{% endif %}>admin_panel_settings</span>
                     <span class="font-bold text-xs sidebar-text">إدارة المستخدمين</span>
                 </a>
 
-                <a href="{% url 'VIP:system_logs' %}" class="flex flex-row-reverse items-center gap-4 py-3 px-4 rounded-2xl transition-all duration-200 {% if 'logs' in request.path %}bg-error/10 text-error shadow-sm{% else %}text-slate-400 hover:bg-red-500/10 hover:text-red-400{% endif %}">
+                <a href="{% url 'VIP:system_logs' %}" class="sidebar-item flex flex-row-reverse items-center gap-3 py-2.5 px-4 rounded-xl transition-all duration-200 {% if 'logs' in request.path %}bg-error/10 text-error sidebar-active-accent shadow-sm{% else %}text-slate-400 hover:bg-red-500/10 hover:text-red-400{% endif %}">
                     <span class="material-symbols-outlined !text-[22px]" {% if 'logs' in request.path %}style="font-variation-settings: 'FILL' 1;"{% endif %}>history_edu</span>
                     <span class="font-bold text-xs sidebar-text">سجلات المراقبة</span>
                 </a>
             </div>
             {% endif %}
         </div>
-        </div>
 
-        <div class="mt-auto border-t border-white/5 pt-4 px-4 sidebar-text">
+        <div class="mt-auto border-t border-white/5 pt-4 px-4">
             {% if user.is_authenticated %}
-            <a href="{% url 'VIP:logout' %}" class="flex flex-row-reverse items-center gap-4 py-3 mx-2 text-error hover:text-red-400 transition-colors duration-200">
-                <span class="material-symbols-outlined">logout</span>
-                <span class="font-medium text-sm">تسجيل الخروج</span>
+            <a href="{% url 'VIP:logout' %}" class="sidebar-item flex flex-row-reverse items-center gap-3 py-3 px-4 rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-all duration-200 group">
+                <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">logout</span>
+                <span class="font-bold text-xs sidebar-text">تسجيل الخروج</span>
             </a>
             {% endif %}
-            <div class="flex flex-row-reverse items-center gap-3 mb-2 mt-4 mx-2">
-                <div class="w-8 h-8 rounded-lg bg-secondary-container/20 flex items-center justify-center">
-                    <img src="{% static 'imgs/logo-mark.png' %}" class="w-6 h-6 object-contain" alt=""/>
-                </div>
-                <div>
-                    <div class="text-[10px] font-bold text-white uppercase opacity-90">الخوارزمي</div>
-                    <div class="text-[9px] text-slate-400">الإصدار 4.2.0</div>
-                </div>
-            </div>
         </div>
     </aside>
 
@@ -335,6 +335,7 @@
             const sidebar = document.getElementById('sidebar');
             const mainContent = document.getElementById('main-content');
             const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
             const sidebarTexts = document.querySelectorAll('.sidebar-text');
             
             const savedSidebarState = localStorage.getItem('sidebarCollapsed');
@@ -348,6 +349,12 @@
                     mainContent.classList.remove('collapsed-main');
                     sidebarTexts.forEach(t => t.classList.remove('hidden'));
                     sidebar.classList.remove('mobile-open');
+                    
+                    if (sidebarOverlay) {
+                        sidebarOverlay.classList.add('hidden');
+                        sidebarOverlay.classList.remove('opacity-100');
+                        sidebarOverlay.classList.add('opacity-0');
+                    }
                 } else {
                     // Mobile logic: always full width if open
                     sidebar.classList.remove('collapsed-sidebar');
@@ -356,8 +363,17 @@
                     
                     if (isCollapsed) {
                         sidebar.classList.remove('mobile-open');
+                        if (sidebarOverlay) {
+                            sidebarOverlay.classList.add('opacity-0');
+                            sidebarOverlay.classList.remove('opacity-100');
+                            setTimeout(() => { if(isCollapsed) sidebarOverlay.classList.add('hidden'); }, 300);
+                        }
                     } else {
                         sidebar.classList.add('mobile-open');
+                        if (sidebarOverlay) {
+                            sidebarOverlay.classList.remove('hidden');
+                            setTimeout(() => sidebarOverlay.classList.add('opacity-100'), 10);
+                        }
                     }
                 }
             }
@@ -370,6 +386,13 @@
                     }
                     updateSidebarUI();
                 });
+                
+                if (sidebarOverlay) {
+                    sidebarOverlay.addEventListener('click', () => {
+                        isCollapsed = true;
+                        updateSidebarUI();
+                    });
+                }
                 
                 // Initial state
                 updateSidebarUI();

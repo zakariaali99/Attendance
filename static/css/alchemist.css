@@ -163,3 +163,20 @@ table.dataTable tbody tr td:last-child { border-radius: 8px 0 0 8px !important; 
     color: #181534 !important;
     border-radius: 8px !important;
 }
+
+/* Sidebar Utilities */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.sidebar-item {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-active-accent {
+    border-right: 3px solid #fcd400;
+}

@@ -97,6 +97,9 @@ class ProfileForm(forms.ModelForm):
                 'class': 'form-control rounded-pill',
                 'placeholder': 'دقائق التأخير المسموح بها'
             }),
+            'full_month_work': forms.CheckboxInput(attrs={
+                'class': 'w-5 h-5 rounded border-surface-container text-secondary focus:ring-secondary'
+            }),
         }
 
 
