@@ -1,27 +1,27 @@
 # Core Django Framework
-Django==4.2.24
-django-environ==0.12.0
-django-widget-tweaks==1.5.0
-django-filter==25.1
-djangorestframework==3.15.2
-whitenoise==6.7.0
+Django>=4.2,<5.0
+django-environ>=0.11.0
+django-widget-tweaks>=1.5.0
+django-filter>=24.0
+djangorestframework>=3.15.0
+whitenoise>=6.6.0
 
 # Data Processing & Reports
-xlrd==2.0.1
-xlsxwriter==3.2.0
-python-dateutil==2.9.0
-pytz==2024.1
+xlrd>=2.0.1
+xlsxwriter>=3.2.0
+python-dateutil>=2.9.0
+pytz>=2024.1
 
 # Biometric Device Integration (ZKTeco)
-pyzk==0.9.3
+pyzk>=0.9
 
 # Task Queue & Cache
-celery==5.4.0
-redis==5.0.8
+celery>=5.3.0
+redis>=5.0.0
 
 # Arabic Text Support (for Reports)
-arabic-reshaper==3.0.0
-python-bidi==0.4.2
+arabic-reshaper>=3.0.0
+python-bidi>=0.4.2
 
 # Database Drivers
-psycopg2-binary==2.9.9
+psycopg2-binary>=2.9.0
