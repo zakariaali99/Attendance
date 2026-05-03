@@ -266,10 +266,11 @@ class SyncDevicesView(PermissionRequiredMixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
         try:
-            sync_all_devices_task.delay()
-            return JsonResponse({'status': 'success', 'message': 'Device synchronization started in background.'})
+            # Run synchronization directly instead of using a background task
+            sync_all_devices()
+            return JsonResponse({'status': 'success', 'message': 'Device synchronization completed successfully.'})
         except Exception as e:
-            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+            return JsonResponse({'status': 'error', 'message': f'Sync failed: {str(e)}'}, status=500)
 
 
 class EditEmployeeView(PermissionRequiredMixin, UpdateView):
