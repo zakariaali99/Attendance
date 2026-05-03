@@ -7,8 +7,6 @@ from django.utils import timezone
 from zk import ZK
 from Attendance.models import Record, Employee, ZKTDevice
 from zk.attendance import Attendance as Att, Attendance
-import pandas as pd
-import numpy as np
 
 
 def sync_attendance(device):
@@ -76,15 +74,20 @@ def sync_missed(device):
             conn.disconnect()
             print("Device disconnected.")
 
-    # Optimized search using numpy
-    existing_records = list(Record.objects.filter(device=device))
-    data_records = [Record(user_id=i.user_id, timestamp=i.timestamp.replace(tzinfo=UTC), status=i.status, uid=i.uid,
-                           device=device) for i in data]
-    records_ts = np.array([r.timestamp for r in existing_records])
-
-    ed = [np.isin(records_ts, r.timestamp) for r in data_records]
-    ed1 = [not any(e) for e in ed]
-    missed = np.array(data_records)[ed1]
+    # Efficient search using standard Python sets (replaces numpy)
+    existing_ts_set = {r.timestamp for r in Record.objects.filter(device=device)}
+    
+    data_records = [
+        Record(
+            user_id=i.user_id, 
+            timestamp=i.timestamp.replace(tzinfo=UTC), 
+            status=i.status, 
+            uid=i.uid,
+            device=device
+        ) for i in data
+    ]
+    
+    missed = [r for r in data_records if r.timestamp not in existing_ts_set]
 
     print(f"Found {len(missed)} missed records.")
     return missed
