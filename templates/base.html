@@ -167,7 +167,7 @@
                 <div class="max-w-32 text-right hidden lg:block">
                     <div class="truncate text-xs font-bold text-primary dark:text-white">
                         {% if user.is_authenticated %}
-                            {{ user.username|default:user.email }}
+                            {{ user.name|default:user.email }}
                         {% else %}
                             مستخدم ضيف
                         {% endif %}
@@ -177,10 +177,8 @@
                     </div>
                 </div>
                 <div class="w-9 h-9 shrink-0 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-sm overflow-hidden border-2 border-white dark:border-slate-800 shadow-sm">
-                    {% if user.is_authenticated and user.profile_picture %}
-                        <img src="{{ user.profile_picture.url }}" class="w-full h-full object-cover">
-                    {% elif user.is_authenticated %}
-                        {{ user.username|slice:":1"|upper }}
+                    {% if user.is_authenticated %}
+                        {{ user.name|default:user.email|slice:":1"|upper }}
                     {% else %}
                         <span class="material-symbols-outlined text-[20px]">person</span>
                     {% endif %}

@@ -216,7 +216,7 @@ class EditVacationForm(forms.ModelForm):
 class FilterExceptionsForm(forms.Form):
     date = forms.DateField(initial=None, required=False)
     to_date = forms.DateField(initial=None, required=False)
-    type = forms.ChoiceField(choices=[('', '---------')] + Exception.types, initial=None, required=False)
+    type = forms.ChoiceField(choices=[('', '---------')] + AttendanceException.types, initial=None, required=False)
     employees = forms.ModelChoiceField(queryset=Employee.objects.filter(active=False), required=False)
 
     type.widget.attrs = {
@@ -243,7 +243,7 @@ class AddExceptionForm(forms.Form):
     date = forms.DateField(initial=timezone.now().date())
     # start_time = forms.DateField(initial=timezone.now().date())
     # to_date = forms.DateField(initial=timezone.now().date())
-    type = forms.ChoiceField(choices=Exception.types)
+    type = forms.ChoiceField(choices=AttendanceException.types)
     note = forms.CharField(max_length=250, required=False)
     employees = forms.ModelMultipleChoiceField(queryset=Employee.objects.filter(active=False))
 
@@ -267,7 +267,7 @@ class AddExceptionForm(forms.Form):
 
 class EditExceptionForm(forms.ModelForm):
     class Meta:
-        model = Exception
+        model = AttendanceException
         fields = '__all__'  # ['name', 'phone', 'email', 'start_date', 'expire_date']
 
         widgets = {

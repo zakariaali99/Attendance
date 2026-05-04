@@ -27,6 +27,7 @@ urlpatterns = [
 
     path('devices/', DeviceListView.as_view(), name="devices"),
     path('devices/sync', SyncDevicesView.as_view(), name="sync_devices"),
+    path('devices/test-connection', TestDeviceConnectionView.as_view(), name="test_connection"),
     path('devices/create', AddDeviceView.as_view(), name="add_devices"),
     path('devices/edit/<int:pk>', EditDeviceView.as_view(), name="edit_devices"),
     path('devices/delete/<int:pk>', DeleteDeviceView.as_view(), name="delete_devices"),
@@ -45,6 +46,7 @@ urlpatterns = [
     path('exception/view', ExceptionsView.as_view(), name="exception"),
     path('exception/<int:pk>/edit', EditExceptionView.as_view(), name="edit_exception"),
     path('exception/<int:pk>/delete', DeleteExceptionView.as_view(), name="delete_exception"),
+    path('import', ImportRecordsView.as_view(), name="import_records"),
     path('settings', SettingsView.as_view(), name="settings"),
 
 ]

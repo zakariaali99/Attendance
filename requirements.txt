@@ -5,6 +5,7 @@ django-widget-tweaks>=1.5.0
 django-filter>=24.0
 djangorestframework>=3.15.0
 whitenoise>=6.6.0
+waitress>=3.0.0
 
 # Data Processing & Reports
 xlrd>=2.0.1
@@ -15,13 +16,6 @@ pytz>=2024.1
 # Biometric Device Integration (ZKTeco)
 pyzk>=0.9
 
-# Task Queue & Cache
-celery>=5.3.0
-redis>=5.0.0
-
 # Arabic Text Support (for Reports)
 arabic-reshaper>=3.0.0
 python-bidi>=0.4.2
-
-# Database Drivers
-psycopg2-binary>=2.9.0

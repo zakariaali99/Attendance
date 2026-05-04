@@ -340,7 +340,7 @@ class ExceptionType(models.Model):
         return self.title
 
 
-class Exception(models.Model):
+class AttendanceException(models.Model):
 
     types = [
         ("early_exit", "خروج مبكر"),
@@ -354,6 +354,9 @@ class Exception(models.Model):
     def __str__(self) -> str:
         name = self.employee.name or self.employee.attendance_id
         return f"{name} - [ {self.type} ] - [{self.date}]"
+
+    class Meta:
+        db_table = 'Attendance_exception'
 
 
 class ExtraWork(models.Model):

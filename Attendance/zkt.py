@@ -17,7 +17,8 @@ def sync_attendance(device):
     """
     records = []
     ts = []
-    zk = ZK(device.ip, device.port)
+    # timeout=5: abort connection attempt after 5 seconds if device is unreachable
+    zk = ZK(device.ip, device.port, timeout=5, force_udp=False, ommit_ping=False)
     conn = None
     try:
         conn = zk.connect()
@@ -63,7 +64,7 @@ def sync_missed(device):
     that were missed in the database compared to the device.
     """
     print(f"Connecting to device {device.ip} to check for missed records...")
-    zk = ZK(device.ip, device.port)
+    zk = ZK(device.ip, device.port, timeout=5, force_udp=False, ommit_ping=False)
     conn = None
     try:
         conn = zk.connect()
@@ -98,7 +99,7 @@ def sync_users(device):
     Synchronizes users (employees) from the device to the database.
     Only adds new users that don't already exist by attendance ID.
     """
-    zk = ZK(device.ip, device.port)
+    zk = ZK(device.ip, device.port, timeout=5, force_udp=False, ommit_ping=False)
     conn = None
     try:
         conn = zk.connect()
@@ -120,7 +121,7 @@ def sync_users(device):
 
 
 def get_users_templates(host: str, port=4370):
-    zk = ZK(host, port)
+    zk = ZK(host, port, timeout=5)
     conn = None
     try:
         conn = zk.connect()
@@ -132,7 +133,7 @@ def get_users_templates(host: str, port=4370):
 
 
 def get_users(host: str, port=4370):
-    zk = ZK(host, port)
+    zk = ZK(host, port, timeout=5)
     conn = None
     try:
         conn = zk.connect()

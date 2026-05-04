@@ -22,7 +22,6 @@ from django.views.generic import ListView, CreateView, UpdateView, DetailView, T
 from Attendance.forms import *  # EditVacationForm, EmployeeForm, ProfileForm, DeviceForm, ReportFilterForm, AddVacationForm, AddVacationTypeForm, FilterVacationsForm,FilterExceptionsForm
 from Attendance.models import *
 from Attendance.sync_records import sync_all, sync_all_devices
-from Attendance.tasks import sync_all_devices_task
 from Attendance.import_records import import_records_from_xls
 from VIPAlert.models import User, SystemLog
 from VIPAlert.views import ensure_default_admin
@@ -131,7 +130,7 @@ def employee_day_rows(employee, from_date, to_date):
         for current_date in iter_dates(start_date, end_date):
             vacation_map[current_date] = vacation
 
-    for exception in employee.exception_set.all():
+    for exception in employee.attendanceexception_set.all():
         if exception.date and from_date <= exception.date <= to_date:
             exception_map[exception.date].append(exception)
 
@@ -195,7 +194,7 @@ def employee_day_rows(employee, from_date, to_date):
             status_code = "exception"
             status_label = "إذن"
             status_short = "ذ"
-            note = ", ".join(dict(Exception.types).get(exc.type, exc.type) for exc in exceptions)
+            note = ", ".join(dict(AttendanceException.types).get(exc.type, exc.type) for exc in exceptions)
 
         rows.append({
             "date": current_date,
@@ -233,7 +232,7 @@ def employee_queryset():
         'vacation_set',
         'vacation_set__vacation_type',
         'extrawork_set',
-        'exception_set',
+        'attendanceexception_set',
         'holiday_set',
     )
 
@@ -265,12 +264,114 @@ class SyncDevicesView(PermissionRequiredMixin, TemplateView):
     raise_exception = True
 
     def get(self, request, *args, **kwargs):
+        from Attendance.models import ZKTDevice
+        results = []
+        overall_success = True
+
+        for device in ZKTDevice.objects.all():
+            try:
+                sync_all(device)
+                results.append({
+                    'device': device.name,
+                    'ip': device.ip,
+                    'status': 'success',
+                    'message': 'تمت المزامنة بنجاح'
+                })
+            except Exception as e:
+                overall_success = False
+                results.append({
+                    'device': device.name,
+                    'ip': device.ip,
+                    'status': 'error',
+                    'message': str(e)
+                })
+
+        if not results:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'لا توجد أجهزة مسجلة في النظام.',
+                'results': []
+            }, status=404)
+
+        return JsonResponse({
+            'status': 'success' if overall_success else 'partial',
+            'message': 'اكتملت المزامنة' if overall_success else 'اكتملت المزامنة مع بعض الأخطاء',
+            'results': results
+        })
+
+
+class TestDeviceConnectionView(PermissionRequiredMixin, View):
+    """Diagnostic endpoint to test ZKTeco device connectivity without syncing data."""
+    permission_required = ('Attendance.can_create_employees',)
+    raise_exception = True
+
+    def get(self, request, *args, **kwargs):
+        import traceback
+
+        # Check pyzk is installed
         try:
-            # Run synchronization directly instead of using a background task
-            sync_all_devices()
-            return JsonResponse({'status': 'success', 'message': 'Device synchronization completed successfully.'})
+            from zk import ZK
+        except ImportError:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'pyzk library is not installed. Run: pip install pyzk',
+                'results': []
+            })
+
+        try:
+            from Attendance.models import ZKTDevice
+            devices = ZKTDevice.objects.all()
+
+            if not devices.exists():
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'No ZKTeco devices registered in the database. Please add a device first.',
+                    'results': []
+                })
+
+            results = []
+            for device in devices:
+                result = {
+                    'device': device.name,
+                    'ip': device.ip,
+                    'port': device.port,
+                }
+
+                # Try TCP first
+                try:
+                    zk = ZK(device.ip, device.port, timeout=5, force_udp=False, ommit_ping=False)
+                    conn = zk.connect()
+                    info = conn.get_firmware_version()
+                    conn.disconnect()
+                    result['status'] = 'success'
+                    result['protocol'] = 'TCP'
+                    result['firmware'] = str(info)
+                except Exception as tcp_err:
+                    # TCP failed — try UDP
+                    try:
+                        zk = ZK(device.ip, device.port, timeout=5, force_udp=True, ommit_ping=True)
+                        conn = zk.connect()
+                        info = conn.get_firmware_version()
+                        conn.disconnect()
+                        result['status'] = 'success'
+                        result['protocol'] = 'UDP'
+                        result['firmware'] = str(info)
+                        result['note'] = 'TCP failed, but UDP succeeded. Sync will be updated to use UDP.'
+                    except Exception as udp_err:
+                        result['status'] = 'error'
+                        result['tcp_error'] = str(tcp_err)
+                        result['udp_error'] = str(udp_err)
+
+                results.append(result)
+
+            return JsonResponse({'results': results})
+
         except Exception as e:
-            return JsonResponse({'status': 'error', 'message': f'Sync failed: {str(e)}'}, status=500)
+            return JsonResponse({
+                'status': 'error',
+                'message': f'Unexpected error: {str(e)}',
+                'traceback': traceback.format_exc()
+            })
 
 
 class EditEmployeeView(PermissionRequiredMixin, UpdateView):
@@ -855,7 +956,7 @@ class DeleteVacationTypeView(PermissionRequiredMixin, DeleteView):
 
 class ExceptionsView(ListView):
     template_name = "attendance/exceptions/exceptions_list_view.html"
-    model = Exception
+    model = AttendanceException
     paginate_by = 25
 
     def get_queryset(self):
@@ -883,7 +984,7 @@ class ExceptionsView(ListView):
 class AddExceptionsView(PermissionRequiredMixin, FormView):
     template_name = "attendance/exceptions/add_edit_exception.html"
     form_class = AddExceptionForm
-    model = Exception
+    model = AttendanceException
     success_url = reverse_lazy("Attendance:exception")
     permission_required = ('Attendance.can_create_employees',)
     raise_exception = True
@@ -894,13 +995,13 @@ class AddExceptionsView(PermissionRequiredMixin, FormView):
         employees = form.cleaned_data['employees']
         note = form.cleaned_data['note']
         for employee in employees:
-            e = Exception(employee=employee, date=date, type=exception_type, note=note)
+            e = AttendanceException(employee=employee, date=date, type=exception_type, note=note)
             e.save()
 
         SystemLog.objects.create(
             user=self.request.user,
             action="إضافة استثناءات جماعية",
-            description=f"تم إضافة استثناء {dict(Exception.types).get(exception_type)} لعدد {employees.count()} موظف بتاريخ {date}",
+            description=f"تم إضافة استثناء {dict(AttendanceException.types).get(exception_type)} لعدد {employees.count()} موظف بتاريخ {date}",
             ip_address=self.request.META.get('REMOTE_ADDR')
         )
         return super().form_valid(form)
@@ -909,7 +1010,7 @@ class AddExceptionsView(PermissionRequiredMixin, FormView):
 class DeleteExceptionView(PermissionRequiredMixin, DeleteView):
     permission_required = ('Attendance.can_create_employees',)
     raise_exception = True
-    model = Exception
+    model = AttendanceException
     success_url = reverse_lazy("Attendance:exception")
 
     def delete(self, request, *args, **kwargs):
@@ -976,7 +1077,7 @@ class DashboardView(TemplateView):
         # Simple overview metrics
         total_employees = Employee.objects.all()
         today_workdays = WorkDay.objects.filter(date=today)
-        today_exceptions = Exception.objects.filter(date=today)
+        today_exceptions = AttendanceException.objects.filter(date=today)
         
         context['count_employees'] = total_employees.count()
         context['count_presents'] = today_workdays.count()
@@ -1080,7 +1181,7 @@ class SettingsView(PermissionRequiredMixin, TemplateView):
             "devices": ZKTDevice.objects.count(),
             "profiles": Profile.objects.count(),
             "vacation_types": VacationType.objects.count(),
-            "exceptions": Exception.objects.count(),
+            "exceptions": AttendanceException.objects.count(),
             "users": User.objects.count(),
         }
         context["default_admin"] = default_admin
@@ -1272,7 +1373,7 @@ class ExportPayrollSummaryView(UserPassesTestMixin, View):
             worksheet.write(0, col, header, header_fmt)
             worksheet.set_column(col, col, 15)
 
-        employees = Employee.objects.all().prefetch_related('vacation_set', 'exception_set')
+        employees = Employee.objects.all().prefetch_related('vacation_set', 'attendanceexception_set')
         
         row_num = 1
         for emp in employees:

@@ -7,7 +7,7 @@
 <header class="mb-8 text-right animate-fade-in-up">
     <div class="flex flex-col gap-4 lg:flex-row-reverse lg:justify-between lg:items-center">
         <div class="min-w-0">
-            <h1 class="text-2xl sm:text-3xl font-black text-primary dark:text-white mb-2 font-headline leading-tight">مرحباً بك، {{ user.username|default:"مسؤول النظام" }}</h1>
+            <h1 class="text-2xl sm:text-3xl font-black text-primary dark:text-white mb-2 font-headline leading-tight">مرحباً بك، {{ user.name|default:"مسؤول النظام" }}</h1>
             <p class="text-sm sm:text-base text-on-surface-variant dark:text-slate-400 font-body flex items-center gap-2 flex-row-reverse">
                 <span class="material-symbols-outlined text-[18px]">calendar_today</span>
                 <span id="liveDateTime"></span>
@@ -258,93 +258,99 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'offline/js/chart.min.js' %}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Performance Chart
-        const perfCanvas = document.getElementById('performanceChart');
-        if (perfCanvas) {
-            const labels = JSON.parse(perfCanvas.getAttribute('data-labels'));
-            const hours = JSON.parse(perfCanvas.getAttribute('data-hours'));
-            const lates = JSON.parse(perfCanvas.getAttribute('data-lates'));
+        try {
+            const perfCanvas = document.getElementById('performanceChart');
+            if (perfCanvas && typeof Chart !== 'undefined') {
+                const labels = JSON.parse(perfCanvas.getAttribute('data-labels'));
+                const hours = JSON.parse(perfCanvas.getAttribute('data-hours'));
+                const lates = JSON.parse(perfCanvas.getAttribute('data-lates'));
 
-            const isDark = document.documentElement.classList.contains('dark');
-            const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
-            const textColor = isDark ? '#94a3b8' : '#64748b';
+                const isDark = document.documentElement.classList.contains('dark');
+                const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
+                const textColor = isDark ? '#94a3b8' : '#64748b';
 
-            new Chart(perfCanvas, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        {
-                            label: 'ساعات العمل',
-                            data: hours,
-                            backgroundColor: isDark ? 'rgba(252, 212, 0, 0.8)' : 'rgba(24, 21, 52, 0.8)',
-                            borderRadius: 6,
-                            barPercentage: 0.6,
-                            categoryPercentage: 0.8,
-                            yAxisID: 'y'
-                        },
-                        {
-                            label: 'أيام التأخير',
-                            data: lates,
-                            type: 'line',
-                            borderColor: '#ff4d4d',
-                            borderWidth: 2,
-                            pointBackgroundColor: '#ff4d4d',
-                            pointRadius: 3,
-                            tension: 0.4,
-                            yAxisID: 'y1'
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { 
-                            position: 'top', 
-                            rtl: true, 
-                            labels: { 
-                                color: textColor,
-                                font: { family: 'Tajawal', size: 11, weight: 'bold' },
-                                usePointStyle: true,
-                                padding: 15
-                            } 
-                        },
-                        tooltip: {
-                            rtl: true,
-                            backgroundColor: isDark ? '#1e293b' : '#ffffff',
-                            titleColor: isDark ? '#ffffff' : '#1e293b',
-                            bodyColor: isDark ? '#cbd5e1' : '#475569',
-                            borderColor: gridColor,
-                            borderWidth: 1,
-                            padding: 12,
-                            cornerRadius: 8
-                        }
+                new Chart(perfCanvas, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'ساعات العمل',
+                                data: hours,
+                                backgroundColor: isDark ? 'rgba(252, 212, 0, 0.8)' : 'rgba(24, 21, 52, 0.8)',
+                                borderRadius: 6,
+                                barPercentage: 0.6,
+                                categoryPercentage: 0.8,
+                                yAxisID: 'y'
+                            },
+                            {
+                                label: 'أيام التأخير',
+                                data: lates,
+                                type: 'line',
+                                borderColor: '#ff4d4d',
+                                borderWidth: 2,
+                                pointBackgroundColor: '#ff4d4d',
+                                pointRadius: 3,
+                                tension: 0.4,
+                                yAxisID: 'y1'
+                            }
+                        ]
                     },
-                    scales: {
-                        x: { 
-                            grid: { display: false }, 
-                            ticks: { color: textColor, font: { size: 10, weight: 'bold' } } 
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { 
+                                position: 'top', 
+                                rtl: true, 
+                                labels: { 
+                                    color: textColor,
+                                    font: { family: 'Tajawal', size: 11, weight: 'bold' },
+                                    usePointStyle: true,
+                                    padding: 15
+                                } 
+                            },
+                            tooltip: {
+                                rtl: true,
+                                backgroundColor: isDark ? '#1e293b' : '#ffffff',
+                                titleColor: isDark ? '#ffffff' : '#1e293b',
+                                bodyColor: isDark ? '#cbd5e1' : '#475569',
+                                borderColor: gridColor,
+                                borderWidth: 1,
+                                padding: 12,
+                                cornerRadius: 8
+                            }
                         },
-                        y: { 
-                            beginAtZero: true, 
-                            grid: { color: gridColor }, 
-                            ticks: { color: textColor, font: { size: 10 } },
-                            title: { display: true, text: 'ساعات العمل', color: textColor, font: { size: 10, weight: 'bold' } }
-                        },
-                        y1: { 
-                            position: 'right', 
-                            beginAtZero: true, 
-                            grid: { display: false }, 
-                            ticks: { color: '#ff4d4d', font: { size: 10 } },
-                            title: { display: true, text: 'التأخيرات', color: '#ff4d4d', font: { size: 10, weight: 'bold' } }
+                        scales: {
+                            x: { 
+                                grid: { display: false }, 
+                                ticks: { color: textColor, font: { size: 10, weight: 'bold' } } 
+                            },
+                            y: { 
+                                beginAtZero: true, 
+                                grid: { color: gridColor }, 
+                                ticks: { color: textColor, font: { size: 10 } },
+                                title: { display: true, text: 'ساعات العمل', color: textColor, font: { size: 10, weight: 'bold' } }
+                            },
+                            y1: { 
+                                position: 'right', 
+                                beginAtZero: true, 
+                                grid: { display: false }, 
+                                ticks: { color: '#ff4d4d', font: { size: 10 } },
+                                title: { display: true, text: 'التأخيرات', color: '#ff4d4d', font: { size: 10, weight: 'bold' } }
+                            }
                         }
                     }
-                }
-            });
+                });
+            } else if (perfCanvas) {
+                perfCanvas.parentElement.innerHTML = '<div class="flex items-center justify-center h-full text-outline text-xs">Chart.js library missing. Sync button will still work.</div>';
+            }
+        } catch (chartError) {
+            console.error("Chart initialization failed:", chartError);
         }
 
         // Live Date Time Control
@@ -412,18 +418,32 @@
         if (syncBtn) {
             syncBtn.addEventListener("click", function () {
                 const icon = this.querySelector('.material-symbols-outlined');
+                const label = this.querySelector('span:not(.material-symbols-outlined)');
                 icon.classList.add('animate-spin');
-                this.querySelector('span:not(.material-symbols-outlined)').innerText = 'جاري المزامنة...';
+                if (label) label.innerText = 'جاري المزامنة...';
                 this.classList.add('opacity-80', 'cursor-not-allowed');
                 this.disabled = true;
 
                 fetch("{% url 'Attendance:sync_devices' %}")
                     .then(response => response.json())
-                    .then(() => {
+                    .then(data => {
+                        if (data.results && data.results.length > 0) {
+                            let msg = '';
+                            data.results.forEach(r => {
+                                if (r.status === 'success') {
+                                    msg += `✅ ${r.device} (${r.ip}): ${r.message}\n`;
+                                } else {
+                                    msg += `❌ ${r.device} (${r.ip}): ${r.message}\n`;
+                                }
+                            });
+                            alert(msg);
+                        } else {
+                            alert(data.message || 'اكتملت المزامنة');
+                        }
                         location.reload();
                     })
-                    .catch(() => {
-                        alert("حدث خطأ أثناء المزامنة");
+                    .catch(err => {
+                        alert("حدث خطأ أثناء المزامنة: " + err);
                         location.reload();
                     });
             });

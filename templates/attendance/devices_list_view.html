@@ -89,18 +89,32 @@
         if (globalSyncBtn) {
             globalSyncBtn.addEventListener("click", function () {
                 const icon = this.querySelector('.material-symbols-outlined');
+                const label = this.querySelector('span:not(.material-symbols-outlined)');
                 icon.classList.add('animate-spin');
-                this.querySelector('span:not(.material-symbols-outlined)').innerText = 'جاري مزامنة القواعد...';
+                label.innerText = 'جاري مزامنة القواعد...';
                 this.classList.add('opacity-80', 'cursor-not-allowed');
                 this.disabled = true;
 
                 fetch("{% url 'Attendance:sync_devices' %}")
                     .then(response => response.json())
-                    .then(() => {
+                    .then(data => {
+                        if (data.results && data.results.length > 0) {
+                            let msg = '';
+                            data.results.forEach(r => {
+                                if (r.status === 'success') {
+                                    msg += `✅ ${r.device} (${r.ip}): ${r.message}\n`;
+                                } else {
+                                    msg += `❌ ${r.device} (${r.ip}): ${r.message}\n`;
+                                }
+                            });
+                            alert(msg);
+                        } else {
+                            alert(data.message || 'اكتملت المزامنة');
+                        }
                         location.reload();
                     })
-                    .catch(() => {
-                        alert("حدث خطأ أثناء المزامنة");
+                    .catch(err => {
+                        alert("حدث خطأ غير متوقع أثناء الاتصال بالخادم.\n" + err);
                         location.reload();
                     });
             });

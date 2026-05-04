@@ -72,7 +72,7 @@ def import_records_from_xls(file_path, user=None):
                 user_id=user_id,
                 timestamp=dt,
                 punch=punch,
-                note=f"Imported from Excel by {user.username if user else 'System'}"
+                note=f"Imported from Excel by {user.name if user else 'System'}"
             )
             records_to_create.append(record)
             success_count += 1
