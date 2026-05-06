@@ -6,12 +6,10 @@ echo.
 
 :: IMPORTANT: Update these paths according to your actual Windows server setup
 :: 1. Path to your Python executable (preferably inside your virtual environment)
-set PYTHON_PATH=C:\path\to\your\venv\Scripts\python.exe
+set PYTHON_PATH=C:\Windows\System32\Attendance\.venv\Scripts\python.exe
 
 :: 2. Path to the Django project directory (where run_server.py is located)
-set PROJECT_DIR=%~dp0
-:: Removing trailing backslash
-set PROJECT_DIR=%PROJECT_DIR:~0,-1%
+set PROJECT_DIR=C:\Windows\System32\Attendance
 
 :: 3. The name of the service
 set SERVICE_NAME=AlKhwarizmiAttendance
