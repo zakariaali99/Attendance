@@ -157,3 +157,8 @@ stitch.zip
 scratch/
 data/
 logos/
+
+# Electron
+electron/node_modules/
+electron/dist/
+electron/build/run_server/
