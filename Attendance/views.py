@@ -10,7 +10,7 @@ import xlsxwriter
 from django.conf import settings
 from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
 from django.db.models import Q, Count, Sum
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, HttpResponseNotAllowed, JsonResponse
 from django.template.response import TemplateResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
@@ -430,7 +430,9 @@ class DeleteEmployeeView(PermissionRequiredMixin, DeleteView):
         return super().delete(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        return self.delete(request, *args, **kwargs)
+        if request.method == "POST":
+            return self.delete(request, *args, **kwargs)
+        return HttpResponseNotAllowed(["POST"])
 
 
 class EmployeeView(PermissionRequiredMixin, PaginationMixin, ListView):
@@ -564,6 +566,9 @@ class DeleteProfileView(PermissionRequiredMixin, DeleteView):
         "back_url": reverse_lazy("Attendance:profiles")
     }
 
+    def get(self, request, *args, **kwargs):
+        return HttpResponseNotAllowed(["POST"])
+
     def delete(self, request, *args, **kwargs):
         obj = self.get_object()
         SystemLog.objects.create(
@@ -595,11 +600,13 @@ class ReportView(PermissionRequiredMixin, TemplateView):
         from_date, to_date = default_date_range(self)
         device = data_device(self)
         data = super().get_context_data(**kwargs)
-        em = list(employee_queryset())
-        wds = WorkDay.objects.filter(Q(date__gte=from_date) & Q(date__lte=to_date) & Q(device=device))
-        rcs = Record.objects.filter(Q(timestamp__gte=from_date) & Q(timestamp__lte=to_date) & Q(device=device))
-        wds = list(wds)
-        rcs = list(rcs)
+        em = list(employee_queryset().select_related('default_profile'))
+        wds = list(WorkDay.objects.filter(
+            Q(date__gte=from_date) & Q(date__lte=to_date) & Q(device=device)
+        ).select_related('employee', 'employee__default_profile'))
+        rcs = list(Record.objects.filter(
+            Q(timestamp__gte=from_date) & Q(timestamp__lte=to_date) & Q(device=device)
+        ).select_related('device'))
 
         _ = [(e.set_records(rcs), e.set_workdays(wds)) for e in em]
         data["object_list"] = em
@@ -632,11 +639,13 @@ class ExportReportView(PermissionRequiredMixin, View):
         from_date, to_date = default_date_range(self)
         device = data_device(self)
 
-        em = list(employee_queryset())
-        wds = WorkDay.objects.filter(Q(date__gte=from_date) & Q(date__lte=to_date) & Q(device=device))
-        rcs = Record.objects.filter(Q(timestamp__gte=from_date) & Q(timestamp__lte=to_date) & Q(device=device))
-        wds = list(wds)
-        rcs = list(rcs)
+        em = list(employee_queryset().select_related('default_profile'))
+        wds = list(WorkDay.objects.filter(
+            Q(date__gte=from_date) & Q(date__lte=to_date) & Q(device=device)
+        ).select_related('employee', 'employee__default_profile'))
+        rcs = list(Record.objects.filter(
+            Q(timestamp__gte=from_date) & Q(timestamp__lte=to_date) & Q(device=device)
+        ).select_related('device'))
 
         _ = [(e.set_records(rcs), e.set_workdays(wds)) for e in em]
 
@@ -666,7 +675,7 @@ class ExportReportView(PermissionRequiredMixin, View):
         output.seek(0)
 
         # Set up the Http response.
-        filename = 'report.xlsx'
+        filename = f"general-report-{from_date.strftime('%Y-%m-%d')}_to_{to_date.strftime('%Y-%m-%d')}.xlsx"
         response = HttpResponse(
             output,
             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -688,15 +697,16 @@ class ExportEmployeeReportView(PermissionRequiredMixin, DetailView):
     raise_exception = True
 
     def get(self, request, *args, **kwargs):
-        employee = employee_queryset().get(id=self.kwargs['pk'])
+        employee = employee_queryset().select_related('default_profile').get(id=self.kwargs['pk'])
         device = data_device(self)
         from_date, to_date = default_date_range(self)
 
-        # workdays = employee.days(from_date, to_date)
-        wds = WorkDay.objects.filter(Q(date__gte=from_date) & Q(date__lte=to_date) & Q(device=device))
-        rcs = Record.objects.filter(Q(timestamp__gte=from_date) & Q(timestamp__lte=to_date) & Q(device=device))
-        wds = list(wds)
-        rcs = list(rcs)
+        wds = list(WorkDay.objects.filter(
+            Q(date__gte=from_date) & Q(date__lte=to_date) & Q(device=device)
+        ).select_related('employee', 'employee__default_profile'))
+        rcs = list(Record.objects.filter(
+            Q(timestamp__gte=from_date) & Q(timestamp__lte=to_date) & Q(device=device)
+        ).select_related('device'))
         employee.set_records(rcs)
         employee.set_workdays(wds)
 
@@ -726,7 +736,7 @@ class ExportEmployeeReportView(PermissionRequiredMixin, DetailView):
         output.seek(0)
 
         # Set up the Http response.
-        filename = 'report.xlsx'
+        filename = f"employee-report-{employee.name}-{from_date.strftime('%Y-%m-%d')}_to_{to_date.strftime('%Y-%m-%d')}.xlsx"
         response = HttpResponse(
             output,
             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -802,9 +812,9 @@ class DeleteDeviceView(PermissionRequiredMixin, DeleteView):
         return super().delete(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        return self.delete(request, *args, **kwargs)
-
-
+        if request.method == "POST":
+            return self.delete(request, *args, **kwargs)
+        return HttpResponseNotAllowed(["POST"])
 
 
 class VacationsView(PaginationMixin, ListView):
@@ -851,7 +861,7 @@ class AddVacationsView(PermissionRequiredMixin, FormView):
         for employee in employees:
             v = Vacation(employee=employee, date=date, to_date=to_date, vacation_type=vacation_type, note=note)
             v.save()
-            new_balance = employee.current_vacations - (to_date - date).days
+            new_balance = employee.current_vacations - ((to_date - date).days + 1)
             if new_balance < 0:
                 SystemLog.objects.create(
                     user=self.request.user,
@@ -910,7 +920,9 @@ class DeleteVacationView(PermissionRequiredMixin, DeleteView):
         return super().delete(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        return self.delete(request, *args, **kwargs)
+        if request.method == "POST":
+            return self.delete(request, *args, **kwargs)
+        return HttpResponseNotAllowed(["POST"])
 
 
 class VacationTypeView(PermissionRequiredMixin, PaginationMixin, ListView):
@@ -966,6 +978,9 @@ class DeleteVacationTypeView(PermissionRequiredMixin, DeleteView):
     raise_exception = True
     model = VacationType
     success_url = reverse_lazy("Attendance:vacation_types")
+
+    def get(self, request, *args, **kwargs):
+        return HttpResponseNotAllowed(["POST"])
 
     def delete(self, request, *args, **kwargs):
         obj = self.get_object()
@@ -1037,6 +1052,9 @@ class DeleteExceptionView(PermissionRequiredMixin, DeleteView):
     model = AttendanceException
     success_url = reverse_lazy("Attendance:exception")
 
+    def get(self, request, *args, **kwargs):
+        return HttpResponseNotAllowed(["POST"])
+
     def delete(self, request, *args, **kwargs):
         obj = self.get_object()
         SystemLog.objects.create(
@@ -1053,7 +1071,7 @@ class EditExceptionView(PermissionRequiredMixin, UpdateView):
     raise_exception = True
     template_name = "attendance/exceptions/edit_exception.html"
     form_class = EditExceptionForm
-    model = Exception
+    model = AttendanceException
     success_url = reverse_lazy("Attendance:exception")
 
     def form_valid(self, form):
@@ -1097,45 +1115,34 @@ class DashboardView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         today = timezone.now().date()
-        
-        # Simple overview metrics
-        total_employees = Employee.objects.all()
-        today_workdays = WorkDay.objects.filter(date=today)
-        today_exceptions = AttendanceException.objects.filter(date=today)
-        
-        context['count_employees'] = total_employees.count()
-        context['count_presents'] = today_workdays.count()
-        context['count_permissions'] = today_exceptions.count()
-        context['count_absents'] = total_employees.count() - today_workdays.count()
-        
-        # Anomaly Detection: Employees late more than 3 times in the last 30 days
+
+        total_emp_count = Employee.objects.count()
+        present_count = WorkDay.objects.filter(date=today).values('employee').distinct().count()
+
+        context['count_employees'] = total_emp_count
+        context['count_presents'] = present_count
+        context['count_permissions'] = AttendanceException.objects.filter(date=today).count()
+        context['count_absents'] = max(0, total_emp_count - present_count)
+
         recent_date_limit = today - datetime.timedelta(days=30)
-        
-        # Anomaly Detection: Employees late more than 3 times in the last 30 days
-        # Since 'late' is a property and not a DB field, we calculate it in Python
-        # We limit the search to active employees and recent workdays for performance
-        recent_date_limit = today - datetime.timedelta(days=30)
-        anomalies = []
-        
+
         anomalies = Employee.objects.filter(
             active=True,
             workday__date__gte=recent_date_limit,
             workday__late_seconds__gt=0
         ).annotate(
-            recent_late_count=Count('workday')
+            recent_late_count=Count('workday', distinct=True)
         ).filter(
             recent_late_count__gt=3
         ).values('id', 'name', 'recent_late_count').order_by('-recent_late_count')[:5]
-        
+
         context['anomalies'] = anomalies
 
-        # Weekly Presence Trend
         weekly_trend = []
-        total_count = total_employees.count()
         for i in range(6, -1, -1):
             day = today - datetime.timedelta(days=i)
-            presents = WorkDay.objects.filter(date=day).count()
-            pct = (presents / total_count * 100) if total_count > 0 else 0
+            presents = WorkDay.objects.filter(date=day).values('employee').distinct().count()
+            pct = (presents / total_emp_count * 100) if total_emp_count > 0 else 0
             weekly_trend.append({
                 'day': day.strftime('%a'),
                 'date': day.strftime('%Y-%m-%d'),
@@ -1144,18 +1151,20 @@ class DashboardView(TemplateView):
             })
         context['weekly_trend'] = weekly_trend
 
-        # Comparative Performance (Current Month)
         month_start = today.replace(day=1)
+        import json
+        top_emps = Employee.objects.filter(active=True).select_related('default_profile')[:10]
         perf_labels = []
         perf_hours = []
         perf_lates = []
-        for emp in total_employees[:10]:
-            emp.set_workdays(WorkDay.objects.filter(employee=emp, date__gte=month_start, date__lte=today))
+        for emp in top_emps:
+            emp.set_workdays(WorkDay.objects.filter(
+                employee=emp, date__gte=month_start, date__lte=today
+            ).select_related('employee__default_profile'))
             perf_labels.append(emp.name or emp.attendance_id)
             perf_hours.append(float(emp.count_hours))
             perf_lates.append(int(emp.late_days_count))
-        
-        import json
+
         context['perf_labels'] = json.dumps(perf_labels)
         context['perf_hours'] = json.dumps(perf_hours)
         context['perf_lates'] = json.dumps(perf_lates)
@@ -1194,7 +1203,7 @@ class SettingsView(PermissionRequiredMixin, TemplateView):
         ]
         context["system_counts"] = {
             "employees": Employee.objects.count(),
-            "active_employees": Employee.objects.filter(active=False).count(),
+            "active_employees": Employee.objects.filter(active=True).count(),
             "devices": ZKTDevice.objects.count(),
             "profiles": Profile.objects.count(),
             "vacation_types": VacationType.objects.count(),
@@ -1226,9 +1235,13 @@ class MonthlyRegisterView(PermissionRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         from_date, to_date = default_date_range(self)
         device = data_device(self)
-        employees = list(employee_queryset())
-        workdays = list(WorkDay.objects.filter(Q(date__gte=from_date) & Q(date__lte=to_date) & Q(device=device)))
-        records = list(Record.objects.filter(Q(timestamp__gte=from_date) & Q(timestamp__lte=to_date) & Q(device=device)))
+        employees = list(employee_queryset().select_related('default_profile'))
+        workdays = list(WorkDay.objects.filter(
+            Q(date__gte=from_date) & Q(date__lte=to_date) & Q(device=device)
+        ).select_related('employee', 'employee__default_profile'))
+        records = list(Record.objects.filter(
+            Q(timestamp__gte=from_date) & Q(timestamp__lte=to_date) & Q(device=device)
+        ).select_related('device'))
         for employee in employees:
             employee.set_records(records)
             employee.set_workdays(workdays)
@@ -1269,9 +1282,13 @@ class ExportMonthlyRegisterView(PermissionRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         from_date, to_date = default_date_range(self)
         device = data_device(self)
-        employees = list(employee_queryset())
-        workdays = list(WorkDay.objects.filter(Q(date__gte=from_date) & Q(date__lte=to_date) & Q(device=device)))
-        records = list(Record.objects.filter(Q(timestamp__gte=from_date) & Q(timestamp__lte=to_date) & Q(device=device)))
+        employees = list(employee_queryset().select_related('default_profile'))
+        workdays = list(WorkDay.objects.filter(
+            Q(date__gte=from_date) & Q(date__lte=to_date) & Q(device=device)
+        ).select_related('employee', 'employee__default_profile'))
+        records = list(Record.objects.filter(
+            Q(timestamp__gte=from_date) & Q(timestamp__lte=to_date) & Q(device=device)
+        ).select_related('device'))
         for employee in employees:
             employee.set_records(records)
             employee.set_workdays(workdays)

@@ -82,7 +82,7 @@ class Employee(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=4096, blank=True, null=True)
     phone = models.CharField(max_length=4096, blank=True, default="")
-    attendance_id = models.CharField(max_length=256)
+    attendance_id = models.CharField(max_length=256, db_index=True)
     device = models.ForeignKey("ZKTDevice", on_delete=models.SET_NULL, null=True, default=None)
     default_profile = models.ForeignKey("Profile", on_delete=models.SET_NULL, null=True)
     active = models.BooleanField(default=False)
@@ -272,6 +272,13 @@ class Shift:
     automatic_close = False
     automatic_open = False
 
+    def __init__(self, start=None, end=None, profile=None, theme=None, shift_type="work"):
+        self.start = start
+        self.end = end
+        self.profile = profile
+        self.theme = theme
+        self.type = shift_type
+
     def name(self):
         start = "No Finger"
         if self.start is not None:
@@ -281,16 +288,29 @@ class Shift:
             end = self.end.strftime('%Y-%m-%d %H:%M')
         return f"{start} -> {end}"
 
+    def _naive(self, dt):
+        if dt is None:
+            return None
+        if timezone.is_aware(dt):
+            return dt.replace(tzinfo=None)
+        return dt
+
     @property
     def width_percent(self):
-        stime = self.start.replace(tzinfo=None)
-        etime = self.end.replace(tzinfo=None)
+        if self.start is None or self.end is None:
+            return 0
+        stime = self._naive(self.start)
+        etime = self._naive(self.end)
         profile = self.profile
         if profile is None:
             profile = Profile.objects.first()
+        if profile is None or profile.shift_start_time is None or profile.shift_end_time is None:
+            return 0
         eh, em = profile.shift_end_time.hour, profile.shift_end_time.minute
         sh, sm = profile.shift_start_time.hour, profile.shift_start_time.minute
         total_time = (datetime.datetime(2021, 1, 1, eh, em) - datetime.datetime(2021, 1, 1, sh, sm)).seconds
+        if total_time == 0:
+            return 0
         diff = etime - stime
         return int((diff.seconds / total_time) * 100)
 
@@ -298,18 +318,20 @@ class Shift:
     def seconds(self):
         if self.end is None or self.start is None:
             return 0
-        return (self.end.replace(tzinfo=None) - self.start.replace(tzinfo=None)).seconds
+        return (self._naive(self.end) - self._naive(self.start)).seconds
 
     @property
     def late(self):
-        if self.start is None or self.end is None:
+        if self.start is None or self.end is None or self.profile is None:
             return 0
-        etime = self.profile.calculate_start_time.replace(tzinfo=None)
+        if self.profile.calculate_start_time is None:
+            return 0
+        etime = self.profile.calculate_start_time.replace(tzinfo=None) if not timezone.is_aware(self.profile.calculate_start_time) else self.profile.calculate_start_time.replace(tzinfo=None)
         time = datetime.datetime(self.start.year, self.start.month, self.start.day, etime.hour, etime.minute)
 
-        if self.start.replace(tzinfo=None) <= time:
+        if self._naive(self.start) <= time:
             return 0
-        m = (self.start.replace(tzinfo=None) - time).seconds
+        m = (self._naive(self.start) - time).seconds
 
         return m
 
@@ -422,13 +444,13 @@ class WorkDay(models.Model):
             models.Index(fields=['employee', 'date']),
         ]
 
-    def update_totals(self):
-        # Calculate and cache totals
+    def update_totals(self, save=True):
         self.late_seconds = sum([s.late for s in self.shifts()])
         self.work_hours = self.calculate("work")
         self.overwork_hours = self.calculate("overwork")
         self.out_return_hours = self.calculate("out")
-        self.save(update_fields=['late_seconds', 'work_hours', 'overwork_hours', 'out_return_hours'])
+        if save:
+            self.save(update_fields=['late_seconds', 'work_hours', 'overwork_hours', 'out_return_hours'])
 
     def setdate(self, t):
         self.date = t
@@ -488,7 +510,6 @@ class WorkDay(models.Model):
         s.profile = profile
         if start_rc is not None:
             s.start = start_rc.timestamp
-        # if end_rc.timestamp.date() == s.start.date():
         if end_rc is not None:
             s.end = end_rc.timestamp
 
@@ -501,15 +522,27 @@ class WorkDay(models.Model):
         end = profile.end_time
         start = profile.start_time
 
+        if end is None or start is None:
+            s.theme = "bg-light"
+            s.type = "unknown"
+            return s, worktime, overworktime
+
         d, y, m, mn, h = ts.day, ts.year, ts.month, end.minute, end.hour
         next_day = 0
         if profile.next_day:
             next_day = 1
         smn, sh = start.minute, start.hour
+
+        def _naive(dt):
+            if timezone.is_aware(dt):
+                return dt.replace(tzinfo=None)
+            return dt
+
         if is_in:
             if profile.hourly and (
-                    s.start.replace(tzinfo=None) > datetime.datetime(y, m, d + next_day, h, mn).replace(tzinfo=None) or \
-                    s.start.replace(tzinfo=None) < datetime.datetime(y, m, d, sh, smn).replace(tzinfo=None)):
+                _naive(s.start) > datetime.datetime(y, m, d + next_day, h, mn) or
+                _naive(s.start) < datetime.datetime(y, m, d, sh, smn)
+            ):
                 s.theme = "bg-dark"
                 s.type = "overwork"
                 overworktime += s.seconds
@@ -518,16 +551,14 @@ class WorkDay(models.Model):
                 s.type = "work"
                 worktime += s.seconds
         else:
-            start = datetime.datetime(y, m, d, sh, smn).replace(tzinfo=None)
-            end = datetime.datetime(y, m, d, h, mn).replace(tzinfo=None)
-            if s.start.replace(tzinfo=None) > start and s.end.replace(tzinfo=None) < end:
+            start_dt = datetime.datetime(y, m, d, sh, smn)
+            end_dt = datetime.datetime(y, m, d, h, mn)
+            if _naive(s.start) > start_dt and _naive(s.end) < end_dt:
                 s.theme = "bg-danger"
                 s.type = "out"
             else:
-                # s.theme = "bg-secondary"
                 s.theme = "bg-light"
                 s.type = "unknown"
-                # s.theme = "bg-warning"
 
         if device:
             if device.out_during_work:
@@ -561,6 +592,9 @@ class WorkDay(models.Model):
 
         ts = rs[0].timestamp
         d, y, m = ts.day, ts.year, ts.month
+
+        if p.start_time is None or p.end_time is None or p.shift_start_time is None:
+            return []
 
         smn, sh = p.start_time.minute, p.start_time.hour
         emn, eh = p.end_time.minute, p.end_time.hour
@@ -607,9 +641,10 @@ class WorkDay(models.Model):
             d, y, m, mn, h = ts.day, ts.year, ts.month, end.minute, end.hour
 
             if shift.end is None:
-                shift.end = datetime.datetime(y, m, d, h, mn).replace(tzinfo=None)
+                shift.end = datetime.datetime(y, m, d, h, mn)
 
-            if shift.end.replace(tzinfo=None) < datetime.datetime(y, m, d, h, mn).replace(tzinfo=None):
+            _naive = lambda dt: dt.replace(tzinfo=None) if timezone.is_aware(dt) else dt
+            if _naive(shift.end) < datetime.datetime(y, m, d, h, mn):
                 er = Record(timestamp=datetime.datetime(y, m, d, h, mn))
                 s, w, ow = self.prepare_shift(rs[-1], er, p, is_in)
                 shifts.append(s)
@@ -645,18 +680,23 @@ class WorkDay(models.Model):
         if p.next_day:
             next_day = 1
 
+        if p.shift_start_time is None or p.shift_end_time is None or p.start_time is None or p.end_time is None:
+            return []
+
+        _naive = lambda dt: dt.replace(tzinfo=None) if timezone.is_aware(dt) else dt
+
         start_date = datetime.datetime(self.date.year, self.date.month, self.date.day, p.shift_start_time.hour,
-                                       p.shift_start_time.minute)
+            p.shift_start_time.minute)
         start_date_working = datetime.datetime(self.date.year, self.date.month, self.date.day, p.start_time.hour,
-                                               p.start_time.minute)
+            p.start_time.minute)
 
         end_date = datetime.datetime(self.date.year, self.date.month, self.date.day, p.shift_end_time.hour,
-                                     p.shift_end_time.minute) + datetime.timedelta(days=shift_next_day)
+            p.shift_end_time.minute) + datetime.timedelta(days=shift_next_day)
         end_date_working = datetime.datetime(self.date.year, self.date.month, self.date.day, p.end_time.hour,
-                                             p.end_time.minute) + datetime.timedelta(days=next_day)
+            p.end_time.minute) + datetime.timedelta(days=next_day)
 
         rs = list(filter(
-            lambda r: r.timestamp.replace(tzinfo=None) >= start_date and r.timestamp.replace(tzinfo=None) <= end_date,
+            lambda r: _naive(r.timestamp) >= start_date and _naive(r.timestamp) <= end_date,
             rs))
 
         rs.sort(key=lambda a: a.timestamp)
@@ -671,20 +711,27 @@ class WorkDay(models.Model):
 
         is_in = True
         for i in range(0, len(rs) - 1, 2):
-            # if rs[i].timestamp.date() != self.date:
-            # continue
-
             s, w, ow = self.prepare_shift(rs[i], rs[i + 1], p, is_in)
 
             shifts.append(s)
             worktime += w
             overworktime += ow
+
+        if len(rs) % 2 == 1:
+            last = rs[-1]
+            end_dt = datetime.datetime(self.date.year, self.date.month, self.date.day,
+                                       p.end_time.hour, p.end_time.minute) + datetime.timedelta(days=next_day)
+            s, w, ow = self.prepare_shift(last, Record(timestamp=end_dt), p, is_in)
+            shifts.append(s)
+            worktime += w
+            overworktime += ow
+
         return shifts
 
     def _calculate_single_record_shift(self, record, p, start_profile_shift, end_profile_shift, start_date_working, end_date_working):
-        """Helper to calculate shift when only one record is present."""
-        delta_start = record.timestamp.replace(tzinfo=None) - start_profile_shift.timestamp
-        delta_end = end_profile_shift.timestamp - record.timestamp.replace(tzinfo=None)
+        _naive = lambda dt: dt.replace(tzinfo=None) if timezone.is_aware(dt) else dt
+        delta_start = _naive(record.timestamp) - start_profile_shift.timestamp
+        delta_end = end_profile_shift.timestamp - _naive(record.timestamp)
 
         is_in = False
         worktime = 0

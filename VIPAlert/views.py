@@ -1,3 +1,4 @@
+from django.http import HttpResponseNotAllowed
 from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.shortcuts import redirect, get_object_or_404
@@ -120,11 +121,15 @@ class DeleteUserView(PermissionRequiredMixin, DeleteView):
     success_url = reverse_lazy("VIP:users_list")
     permission_required = ("VIPAlert.can_delete_users",)
 
+    def get(self, request, *args, **kwargs):
+        return HttpResponseNotAllowed(["POST"])
+
     def delete(self, request, *args, **kwargs):
         user_to_delete = self.get_object()
         
-        # Protection: Cannot delete superuser 'zak' or self
-        if user_to_delete.email == 'zak@system.local' or user_to_delete == request.user:
+        # Protection: Cannot delete the primary superuser or self
+        PROTECTED_EMAIL = getattr(settings, 'PROTECTED_ADMIN_EMAIL', 'admin@system.local')
+        if user_to_delete.email == PROTECTED_EMAIL or user_to_delete == request.user:
             messages.error(request, "لا يمكنك حذف هذا المستخدم.")
             return redirect("VIP:users_list")
             

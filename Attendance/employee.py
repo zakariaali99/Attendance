@@ -1,24 +1,30 @@
+# Dead code / old classes - not used anywhere, kept for reference
+# These are standalone Python classes that shadow Django models.
+# DO NOT import from this file. Use Attendance.models instead.
 from datetime import datetime, time
 from zk.attendance import Attendance
 
 
-class Profile():
+class ProfileOld:
+    """Deprecated: Use Attendance.models.Profile instead."""
 
-    start_time = time(8,30)
-    end_time = time(3,30)
+    start_time = time(8, 30)
+    end_time = time(3, 30)
 
-    start_allow = time(8,45)
-    end_allow = time(3,15)
+    start_allow = time(8, 45)
+    end_allow = time(3, 15)
 
 
-class Employee():
+class EmployeeOld:
+    """Deprecated: Use Attendance.models.Employee instead."""
+
     name = "Ahmed"
     attendance_id = "181"
     data = []
     fingered_days = dict()
 
     def get_profile(self):
-        return Profile()
+        return ProfileOld()
 
     def determine_time(self):
         return 10
@@ -28,13 +34,12 @@ class Employee():
         self.filter_per_day()
                 # self.data.append(att)
 
-
     def work_days(self):
         return {k:v for k,v in self.fingered_days.items() if self.is_work_day(k,v)}
 
     def is_work_day(self, day, fingers):
         # if fingers[0].timestamp.time() < self.get_profile().start_time:
-            
+
         # datetime.time()
 
         # for finger in fingers:

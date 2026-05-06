@@ -5,15 +5,15 @@
 {% block title %}منظومة الخوارزمي - تقرير المتابعة الشهري{% endblock %}
 
 {% block body %}
-<!-- Breadcrumb -->
-<nav class="flex flex-row-reverse items-center gap-2 mb-8 text-xs font-bold text-outline dark:text-slate-500 uppercase tracking-widest animate-fade-in-up">
+  <!-- Breadcrumb -->
+  <nav class="flex flex-row-reverse items-center gap-2 mb-8 text-xs font-bold text-outline dark:text-slate-500 uppercase tracking-widest animate-fade-in-up">
     <a href="{% url 'Attendance:dashboard' %}" class="hover:text-primary dark:hover:text-white transition-colors">الرئيسية</a>
     <span class="material-symbols-outlined text-[14px]">chevron_left</span>
     <span class="text-primary dark:text-white">تقرير المتابعة الشهري</span>
-</nav>
+  </nav>
 
-<!-- Header Section -->
-<header class="flex flex-col md:flex-row-reverse justify-between items-center gap-6 mb-10 animate-fade-in-up">
+  <!-- Header Section -->
+  <header class="flex flex-col md:flex-row-reverse justify-between items-center gap-6 mb-10 animate-fade-in-up">
     <div class="text-right">
         <h1 class="text-3xl font-black text-primary dark:text-white mb-2 font-headline">تقرير المتابعة الشهري</h1>
         <p class="text-xs font-bold text-outline dark:text-slate-500 uppercase tracking-widest">تتبع كفاءة الحضور وتحليل الانضباط العام للمنظومة</p>
@@ -154,7 +154,7 @@
 </div>
 
 {% block scripts %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'offline/js/chart.min.js' %}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const canvas = document.getElementById('attendanceChart');

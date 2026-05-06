@@ -191,6 +191,8 @@ LOGOUT_REDIRECT_URL = reverse_lazy("VIP:login")
 
 CONTRACTS_ROOT = os.path.join(BASE_DIR, 'contracts')
 
+PROTECTED_ADMIN_EMAIL = env('PROTECTED_ADMIN_EMAIL', default='admin@system.local')
+
 REST_FRAMEWORK = {
     # Default to requiring authentication for all API endpoints
     'DEFAULT_PERMISSION_CLASSES': [

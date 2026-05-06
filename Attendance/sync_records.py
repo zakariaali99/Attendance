@@ -75,23 +75,29 @@ def sync_records(device=None, records=None):
         print(f"Successfully generated {len(new_workdays)} new workdays.")
 
     # Update totals for all affected workdays (new and updated)
-    # Note: We need to re-fetch or ensure they have IDs if we want to save them individually, 
-    # but since we just bulk_created, we might need to be careful with IDs in some DBs.
-    # For SQLite, bulk_create usually sets IDs if supported, but let's re-fetch to be safe.
-    
-    # Re-fetch to ensure we have all instances with their database state
-    final_wds = WorkDay.objects.filter(
-        device=device, 
-        date__in=list(all_dates), 
-        employee__attendance_id__in=attendance_ids
-    )
-    
-    count = 0
-    for wd in final_wds:
-        wd.update_totals()
-        count += 1
-    
-    print(f"Updated totals for {count} workdays.")
+        # Note: We need to re-fetch or ensure they have IDs if we want to save them individually,
+        # but since we just bulk_created, we might need to be careful with IDs in some DBs.
+        # For SQLite, bulk_create usually sets IDs if supported, but let's re-fetch to be safe.
+
+        # Re-fetch to ensure we have all instances with their database state
+        final_wds = WorkDay.objects.filter(
+            device=device,
+            date__in=list(all_dates),
+            employee__attendance_id__in=attendance_ids
+        )
+
+        count = 0
+        for wd in final_wds:
+            wd.update_totals(save=False)
+            count += 1
+
+        if count > 0:
+            WorkDay.objects.bulk_update(
+                final_wds,
+                ['late_seconds', 'work_hours', 'overwork_hours', 'out_return_hours']
+            )
+
+        print(f"Updated totals for {count} workdays.")
     return days
 
 

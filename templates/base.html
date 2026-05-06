@@ -147,10 +147,11 @@
         
         <div class="flex min-w-0 items-center gap-2 sm:gap-3 flex-row-reverse">
             <!-- Search Bar (hidden on small screens) -->
-            <div class="relative hidden xl:flex items-center bg-surface-container dark:bg-slate-800 rounded-full px-4 py-1.5 transition-all focus-within:bg-white focus-within:ring-2 focus-within:ring-secondary-container">
+            <form method="get" action="{% url 'Attendance:list' %}" class="relative hidden xl:flex items-center bg-surface-container dark:bg-slate-800 rounded-full px-4 py-1.5 transition-all focus-within:bg-white focus-within:ring-2 focus-within:ring-secondary-container">
                 <span class="material-symbols-outlined text-outline">search</span>
-                <input class="bg-transparent border-none focus:ring-0 text-sm w-48 text-right font-headline dark:text-white" placeholder="بحث سريع..." type="text"/>
-            </div>
+                <input name="q" class="bg-transparent border-none focus:ring-0 text-sm w-48 text-right font-headline dark:text-white" placeholder="بحث سريع..." type="text"/>
+                <button type="submit" class="sr-only">بحث</button>
+            </form>
 
             <button class="relative shrink-0 p-2 rounded-full hover:bg-surface-container dark:hover:bg-slate-800 transition-colors">
                 <span class="material-symbols-outlined text-primary dark:text-slate-200">notifications</span>
@@ -220,18 +221,21 @@
             </div>
             
             <div class="space-y-1">
-                <a href="{% url 'Attendance:list' %}" class="sidebar-item flex flex-row-reverse items-center gap-3 py-2.5 px-4 rounded-xl transition-all duration-200 {% if 'list' in request.path %}bg-white/10 text-white sidebar-active-accent shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
-                    <span class="material-symbols-outlined !text-[22px]" {% if 'list' in request.path %}style="font-variation-settings: 'FILL' 1;"{% endif %}>group</span>
+{% url 'Attendance:list' as url_list %}  
+                <a href="{% url 'Attendance:list' %}" class="sidebar-item flex flex-row-reverse items-center gap-3 py-2.5 px-4 rounded-xl transition-all duration-200 {% if request.resolver_match.url_name == 'list' %}bg-white/10 text-white sidebar-active-accent shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
+                    <span class="material-symbols-outlined !text-[22px]" {% if request.resolver_match.url_name == 'list' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>group</span>
                     <span class="font-bold text-xs sidebar-text">شؤون الموظفين</span>
                 </a>
 
-                <a href="{% url 'Attendance:vacation' %}" class="sidebar-item flex flex-row-reverse items-center gap-3 py-2.5 px-4 rounded-xl transition-all duration-200 {% if 'vacation' in request.path %}bg-white/10 text-white sidebar-active-accent shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
-                    <span class="material-symbols-outlined !text-[22px]" {% if 'vacation' in request.path %}style="font-variation-settings: 'FILL' 1;"{% endif %}>event_busy</span>
+                {% url 'Attendance:vacation' as url_vacation %}
+                <a href="{% url 'Attendance:vacation' %}" class="sidebar-item flex flex-row-reverse items-center gap-3 py-2.5 px-4 rounded-xl transition-all duration-200 {% if request.resolver_match.url_name == 'vacation' %}bg-white/10 text-white sidebar-active-accent shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
+                    <span class="material-symbols-outlined !text-[22px]" {% if request.resolver_match.url_name == 'vacation' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>event_busy</span>
                     <span class="font-bold text-xs sidebar-text">إدارة الإجازات</span>
                 </a>
 
-                <a href="{% url 'Attendance:exception' %}" class="sidebar-item flex flex-row-reverse items-center gap-3 py-2.5 px-4 rounded-xl transition-all duration-200 {% if 'exception' in request.path %}bg-white/10 text-white sidebar-active-accent shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
-                    <span class="material-symbols-outlined !text-[22px]" {% if 'exception' in request.path %}style="font-variation-settings: 'FILL' 1;"{% endif %}>schedule</span>
+                {% url 'Attendance:exception' as url_exception %}
+                <a href="{% url 'Attendance:exception' %}" class="sidebar-item flex flex-row-reverse items-center gap-3 py-2.5 px-4 rounded-xl transition-all duration-200 {% if request.resolver_match.url_name == 'exception' %}bg-white/10 text-white sidebar-active-accent shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
+                    <span class="material-symbols-outlined !text-[22px]" {% if request.resolver_match.url_name == 'exception' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>schedule</span>
                     <span class="font-bold text-xs sidebar-text">أذونات الخروج</span>
                 </a>
             </div>
@@ -266,12 +270,12 @@
             </div>
 
             <div class="space-y-1">
-                <a href="{% url 'Attendance:profiles' %}" class="sidebar-item flex flex-row-reverse items-center gap-3 py-2.5 px-4 rounded-xl transition-all duration-200 {% if 'profile' in request.path %}bg-white/10 text-white sidebar-active-accent shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
+                <a href="{% url 'Attendance:profiles' %}" class="sidebar-item flex flex-row-reverse items-center gap-3 py-2.5 px-4 rounded-xl transition-all duration-200 {% if request.resolver_match.url_name == 'profiles' or request.resolver_match.url_name == 'add_profile' or request.resolver_match.url_name == 'edit_profile' %}bg-white/10 text-white sidebar-active-accent shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
                     <span class="material-symbols-outlined !text-[22px]">calendar_today</span>
                     <span class="font-bold text-xs sidebar-text">قواعد الدوام</span>
                 </a>
 
-                <a href="{% url 'Attendance:devices' %}" class="sidebar-item flex flex-row-reverse items-center gap-3 py-2.5 px-4 rounded-xl transition-all duration-200 {% if 'device' in request.path %}bg-white/10 text-white sidebar-active-accent shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
+                <a href="{% url 'Attendance:devices' %}" class="sidebar-item flex flex-row-reverse items-center gap-3 py-2.5 px-4 rounded-xl transition-all duration-200 {% if request.resolver_match.url_name == 'devices' or request.resolver_match.url_name == 'add_devices' or request.resolver_match.url_name == 'edit_devices' %}bg-white/10 text-white sidebar-active-accent shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
                     <span class="material-symbols-outlined !text-[22px]">devices</span>
                     <span class="font-bold text-xs sidebar-text">أجهزة البصمة</span>
                 </a>
@@ -290,13 +294,13 @@
             </div>
             
             <div class="space-y-1">
-                <a href="{% url 'VIP:users_list' %}" class="sidebar-item flex flex-row-reverse items-center gap-3 py-2.5 px-4 rounded-xl transition-all duration-200 {% if 'users' in request.path %}bg-error/10 text-error sidebar-active-accent shadow-sm{% else %}text-slate-400 hover:bg-red-500/10 hover:text-red-400{% endif %}">
-                    <span class="material-symbols-outlined !text-[22px]" {% if 'users' in request.path %}style="font-variation-settings: 'FILL' 1;"{% endif %}>admin_panel_settings</span>
+                <a href="{% url 'VIP:users_list' %}" class="sidebar-item flex flex-row-reverse items-center gap-3 py-2.5 px-4 rounded-xl transition-all duration-200 {% if request.resolver_match.url_name == 'users_list' or request.resolver_match.url_name == 'add_user' or request.resolver_match.url_name == 'edit_user' %}bg-error/10 text-error sidebar-active-accent shadow-sm{% else %}text-slate-400 hover:bg-red-500/10 hover:text-red-400{% endif %}">
+                    <span class="material-symbols-outlined !text-[22px]" {% if request.resolver_match.url_name == 'users_list' or request.resolver_match.url_name == 'add_user' or request.resolver_match.url_name == 'edit_user' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>admin_panel_settings</span>
                     <span class="font-bold text-xs sidebar-text">إدارة المستخدمين</span>
                 </a>
 
-                <a href="{% url 'VIP:system_logs' %}" class="sidebar-item flex flex-row-reverse items-center gap-3 py-2.5 px-4 rounded-xl transition-all duration-200 {% if 'logs' in request.path %}bg-error/10 text-error sidebar-active-accent shadow-sm{% else %}text-slate-400 hover:bg-red-500/10 hover:text-red-400{% endif %}">
-                    <span class="material-symbols-outlined !text-[22px]" {% if 'logs' in request.path %}style="font-variation-settings: 'FILL' 1;"{% endif %}>history_edu</span>
+                <a href="{% url 'VIP:system_logs' %}" class="sidebar-item flex flex-row-reverse items-center gap-3 py-2.5 px-4 rounded-xl transition-all duration-200 {% if request.resolver_match.url_name == 'system_logs' or request.resolver_match.url_name == 'trace_user' %}bg-error/10 text-error sidebar-active-accent shadow-sm{% else %}text-slate-400 hover:bg-red-500/10 hover:text-red-400{% endif %}">
+                    <span class="material-symbols-outlined !text-[22px]" {% if request.resolver_match.url_name == 'system_logs' or request.resolver_match.url_name == 'trace_user' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>history_edu</span>
                     <span class="font-bold text-xs sidebar-text">سجلات المراقبة</span>
                 </a>
             </div>
