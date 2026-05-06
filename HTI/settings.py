@@ -31,17 +31,17 @@ import environ
 env = environ.Env(
     DEBUG=(bool, False)
 )
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+# environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = 'mysecretkey123456789abcdefghijklmnopqrstuvwxyz12345678901234567890'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('DEBUG')
+DEBUG = True
 
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1', '::1', '127.0.0.1'])
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '::1', '127.0.0.1']
 
-CORS_ORIGIN_ALLOW_ALL = env.bool('CORS_ORIGIN_ALLOW_ALL', default=False)
+CORS_ORIGIN_ALLOW_ALL = False
 
 
 INSTALLED_APPS = [
