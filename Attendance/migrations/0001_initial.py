@@ -3,7 +3,8 @@
 import datetime
 from django.db import migrations, models
 import django.db.models.deletion
-from django.utils.timezone import utc
+import datetime as dt
+utc = dt.timezone.utc
 
 
 class Migration(migrations.Migration):
