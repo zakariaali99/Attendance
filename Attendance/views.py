@@ -1216,7 +1216,7 @@ class SettingsView(PermissionRequiredMixin, TemplateView):
             ("مسار العقود", getattr(settings, "CONTRACTS_ROOT", "-")),
             ("وسيط Celery", getattr(settings, "CELERY_BROKER_URL", "-")),
         ]
-context["system_counts"] = {
+        context["system_counts"] = {
             "employees": Employee.objects.count(),
             "active_employees": Employee.objects.filter(active=True).count(),
             "devices": ZKTDevice.objects.count(),
