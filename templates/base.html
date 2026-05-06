@@ -85,6 +85,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 
     <link rel="icon" href="{% static 'imgs/logo-mark.png' %}">
+    <link rel="stylesheet" href="{% static 'DataTables/datatables.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/alchemist.css' %}?v=1">
 
     <style>
@@ -439,14 +440,30 @@
             }
 
             // Global DataTables Defaults for the Alchemist Design
+            // Global DataTables Defaults for the Alchemist Design
             if ($.fn.dataTable) {
                 $.extend(true, $.fn.dataTable.defaults, {
                     language: {
-                        url: '{% static "offline/js/Arabic.json" %}'
+                        "sEmptyTable":     "ليست هناك بيانات متاحة في الجدول",
+                        "sLoadingRecords": "جارٍ التحميل...",
+                        "sProcessing":   "جارٍ التحميل...",
+                        "sLengthMenu":   "أظهر _MENU_ مدخلات",
+                        "sZeroRecords":  "لم يعثر على أية سجلات",
+                        "sInfo":         "إظهار _START_ إلى _END_ من أصل _TOTAL_ مدخل",
+                        "sInfoEmpty":    "يعرض 0 إلى 0 من أصل 0 سجل",
+                        "sInfoFiltered": "(منتقاة من مجموع _MAX_ مُدخل)",
+                        "sSearch":       "",
+                        "sSearchPlaceholder": "بحث سريع...",
+                        "oPaginate": {
+                            "sFirst":    '<span class="material-symbols-outlined">first_page</span>',
+                            "sPrevious": '<span class="material-symbols-outlined">chevron_right</span>',
+                            "sNext":     '<span class="material-symbols-outlined">chevron_left</span>',
+                            "sLast":     '<span class="material-symbols-outlined">last_page</span>'
+                        }
                     },
                     pageLength: 25,
                     responsive: true,
-                    dom: '<"flex flex-wrap justify-between items-center mb-4"<"flex items-center"l><"flex items-center"f>>rt<"flex flex-wrap justify-between items-center mt-4"ip>'
+                    dom: '<"flex flex-col md:flex-row justify-between items-center gap-4 mb-8"<"dt-search-container"f><"dt-length-container"l>>rt<"flex flex-col md:flex-row justify-between items-center gap-6 mt-10"ip>'
                 });
             }
         });

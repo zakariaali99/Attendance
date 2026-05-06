@@ -19,6 +19,7 @@ from django.utils import timezone
 from django.views import View
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, TemplateView, DeleteView, RedirectView, \
     FormView
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 from Attendance.forms import *  # EditVacationForm, EmployeeForm, ProfileForm, DeviceForm, ReportFilterForm, AddVacationForm, AddVacationTypeForm, FilterVacationsForm,FilterExceptionsForm
 from Attendance.models import *
@@ -600,6 +601,7 @@ class ReportView(PermissionRequiredMixin, TemplateView):
     model = Employee
     permission_required = ("Attendance.can_view_employees",)
     raise_exception = True
+    paginate_by = 25
 
     def get_template_names(self):
         if Profile.objects.all().count() < 1:
@@ -624,11 +626,25 @@ class ReportView(PermissionRequiredMixin, TemplateView):
         ).select_related('device'))
 
         _ = [(e.set_records(rcs), e.set_workdays(wds)) for e in em]
-        data["object_list"] = em
+
+        paginator = Paginator(em, self.paginate_by)
+        page_number = self.request.GET.get('page', 1)
+        try:
+            page_obj = paginator.page(page_number)
+        except PageNotAnInteger:
+            page_obj = paginator.page(1)
+        except EmptyPage:
+            page_obj = paginator.page(paginator.num_pages)
+
+        data["object_list"] = page_obj.object_list
+        data["paginator"] = paginator
+        data["page_obj"] = page_obj
+        data["is_paginated"] = paginator.num_pages > 1
+
         data["from_date"] = from_date.strftime("%Y-%m-%d")
         data["to_date"] = to_date.strftime("%Y-%m-%d")
         data["device"] = device
-        data["required_days"] = required_days(from_date, to_date) # Global report uses default weekends
+        data["required_days"] = required_days(from_date, to_date)
         data["register_url"] = reverse_lazy("Attendance:monthly_register")
 
         form = ReportFilterForm()

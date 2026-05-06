@@ -258,9 +258,30 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{% static 'offline/js/chart.min.js' %}"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    (function() {
+        if (typeof Chart !== 'undefined') {
+            initDashboard();
+            return;
+        }
+        var script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js';
+        script.crossOrigin = 'anonymous';
+        script.onload = function() { initDashboard(); };
+        script.onerror = function() {
+            var fallback = document.createElement('script');
+            fallback.src = 'https://unpkg.com/chart.js@4.4.1/dist/chart.umd.js';
+            fallback.onload = function() { initDashboard(); };
+            fallback.onerror = function() {
+                var el = document.getElementById('performanceChart');
+                if (el) el.parentElement.innerHTML = '<div class="flex items-center justify-center h-full text-red-500 text-sm">تعذر تحميل مكتبة الرسوم البيانية</div>';
+            };
+            document.head.appendChild(fallback);
+        };
+        document.head.appendChild(script);
+    })();
+
+    function initDashboard() {
         // Performance Chart
         try {
             const perfCanvas = document.getElementById('performanceChart');
@@ -448,7 +469,9 @@
                     });
             });
         }
-    });
+
+        initDashboard();
+    })();
 </script>
 <style>
     @keyframes spin {

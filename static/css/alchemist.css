@@ -126,7 +126,7 @@ input[type="checkbox"].form-check-input:checked {
     border-color: #fcd400;
 }
 
-/* DataTables Styling Overrides */
+/* DataTables Styling Overrides - Premium Alchemist Theme */
 table.dataTable {
     border-collapse: separate !important;
     border-spacing: 0 8px !important;
@@ -157,11 +157,147 @@ table.dataTable tbody td {
 table.dataTable tbody tr td:first-child { border-radius: 0 8px 8px 0 !important; }
 table.dataTable tbody tr td:last-child { border-radius: 8px 0 0 8px !important; }
 
+.dataTables_wrapper .dataTables_info {
+    font-size: 0.75rem !important;
+    font-weight: 800 !important;
+    color: #94a3b8 !important; /* text-slate-400 */
+    text-transform: uppercase !important;
+    letter-spacing: 0.1em !important;
+    padding-top: 0 !important;
+    float: none !important;
+    text-align: right !important;
+}
+
+.dark .dataTables_wrapper .dataTables_info {
+    color: #475569 !important; /* text-slate-600 */
+}
+
+.dataTables_wrapper .dataTables_paginate {
+    padding-top: 0 !important;
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 0.375rem !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    float: none !important;
+    margin: 0 !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 2.5rem !important;
+    height: 2.5rem !important;
+    padding: 0 0.5rem !important;
+    border-radius: 0.75rem !important;
+    font-size: 0.8125rem !important;
+    font-weight: 800 !important;
+    cursor: pointer !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    border: 1px solid rgba(0,0,0,0.05) !important;
+    background: white !important;
+    color: #1e293b !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
+    margin: 0 !important;
+    text-decoration: none !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button .material-symbols-outlined {
+    font-size: 20px !important;
+}
+
+.dark .dataTables_wrapper .dataTables_paginate .paginate_button {
+    background: #0f172a !important;
+    color: #cbd5e1 !important;
+    border-color: rgba(255,255,255,0.05) !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover:not(.current):not(.disabled) {
+    background: #f8fafc !important;
+    border-color: #fcd400 !important;
+    color: #1e293b !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+}
+
+.dark .dataTables_wrapper .dataTables_paginate .paginate_button:hover:not(.current):not(.disabled) {
+    background: #1e293b !important;
+    color: white !important;
+}
+
 .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background: #181534 !important;
+    border-color: #181534 !important;
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(24, 21, 52, 0.2) !important;
+}
+
+.dark .dataTables_wrapper .dataTables_paginate .paginate_button.current {
     background: #fcd400 !important;
     border-color: #fcd400 !important;
     color: #181534 !important;
-    border-radius: 8px !important;
+    box-shadow: 0 4px 12px rgba(252, 212, 0, 0.15) !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+    opacity: 0.3 !important;
+    cursor: not-allowed !important;
+    background: #f1f5f9 !important;
+    pointer-events: none !important;
+}
+
+.dark .dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+    background: #0f172a !important;
+}
+
+/* Fix for RTL Pagination Arrows */
+[dir="rtl"] .dataTables_wrapper .dataTables_paginate .paginate_button.previous,
+[dir="rtl"] .dataTables_wrapper .dataTables_paginate .paginate_button.next {
+    font-family: 'IBM Plex Sans Arabic', sans-serif !important;
+}
+
+/* DataTables Search and Length Styling */
+.dt-search-container .dataTables_filter {
+    margin: 0 !important;
+}
+
+.dt-search-container .dataTables_filter input {
+    width: 320px !important;
+    padding: 0.75rem 1rem 0.75rem 2.5rem !important;
+    border-radius: 1rem !important;
+    border: 1px solid rgba(0,0,0,0.05) !important;
+    background: #f1edf0 !important;
+    font-size: 0.8125rem !important;
+    transition: all 0.2s !important;
+}
+
+.dark .dt-search-container .dataTables_filter input {
+    background: rgba(30, 41, 59, 0.5) !important;
+    color: white !important;
+    border-color: rgba(255,255,255,0.05) !important;
+}
+
+.dt-search-container .dataTables_filter input:focus {
+    background: white !important;
+    border-color: #fcd400 !important;
+    box-shadow: 0 0 0 4px rgba(252, 212, 0, 0.1) !important;
+    outline: none !important;
+}
+
+.dt-length-container .dataTables_length select {
+    padding: 0.5rem 2rem 0.5rem 1rem !important;
+    border-radius: 0.75rem !important;
+    border: 1px solid rgba(0,0,0,0.05) !important;
+    background: #f1edf0 !important;
+    font-size: 0.8125rem !important;
+    font-weight: 700 !important;
+}
+
+.dark .dt-length-container .dataTables_length select {
+    background: rgba(30, 41, 59, 0.5) !important;
+    color: white !important;
+    border-color: rgba(255,255,255,0.05) !important;
 }
 
 /* Sidebar Utilities */

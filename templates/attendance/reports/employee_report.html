@@ -208,13 +208,7 @@
         if ($.fn.dataTable) {
             $('#recordsTable').DataTable({
                 "order": [[ 0, "desc" ]],
-                "pageLength": 31,
-                "dom": '<"flex justify-between items-center mb-6"f>rt<"flex justify-between items-center mt-6"ip>',
-                "language": {
-                    "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Arabic.json",
-                    "search": "",
-                    "searchPlaceholder": "ابحث في السجل الحالي..."
-                }
+                "pageLength": 31
             });
             // Restyle search input
             $('.dataTables_filter input').addClass('block w-80 py-2.5 pr-10 pl-4 bg-surface-container-low dark:bg-slate-800 border-none rounded-xl text-xs font-bold text-primary dark:text-white placeholder:text-outline focus:ring-2 focus:ring-secondary-container transition-all');
