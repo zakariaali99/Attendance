@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_DB: hti_vip
+      POSTGRES_USER: hti
+      POSTGRES_PASSWORD: Ht!V!p2021
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hti -d hti_vip"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: .
+    command: gunicorn --bind 0.0.0.0:8000 --workers 4 HTI.wsgi:application
+    volumes:
+      - .:/app
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - SECRET_KEY=change-this-in-production
+      - DEBUG=False
+      - ALLOWED_HOSTS=localhost,127.0.0.1
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=hti_vip
+      - DB_USER=hti
+      - DB_PASSWORD=Ht!V!p2021
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:

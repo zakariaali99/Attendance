@@ -19,3 +19,9 @@ pyzk>=0.9
 # Arabic Text Support (for Reports)
 arabic-reshaper>=3.0.0
 python-bidi>=0.4.2
+
+# Production Database
+psycopg[binary]>=3.2.0
+
+# Production WSGI
+gunicorn>=23.0.0

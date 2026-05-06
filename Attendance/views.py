@@ -5,6 +5,7 @@ import os
 from collections import defaultdict
 from datetime import date
 from typing import Any, Dict
+from django.core.cache import cache
 
 import xlsxwriter
 from django.conf import settings
@@ -277,40 +278,54 @@ class SyncDevicesView(PermissionRequiredMixin, TemplateView):
     raise_exception = True
 
     def get(self, request, *args, **kwargs):
+        # Rate limiting: only allow one sync per minute
+        sync_key = 'sync_in_progress'
+        if cache.get(sync_key):
+            return JsonResponse({
+                'status': 'error',
+                'message': 'المزامنة جارية بالفعل. يرجى الانتظار حتى تنتهي.',
+                'results': []
+            }, status=429)
+        
+        cache.set(sync_key, True, 60)  # 60 second lock
+        
         from Attendance.models import ZKTDevice
         results = []
         overall_success = True
 
-        for device in ZKTDevice.objects.all():
-            try:
-                sync_all(device)
-                results.append({
-                    'device': device.name,
-                    'ip': device.ip,
-                    'status': 'success',
-                    'message': 'تمت المزامنة بنجاح'
-                })
-            except Exception as e:
-                overall_success = False
-                results.append({
-                    'device': device.name,
-                    'ip': device.ip,
+        try:
+            for device in ZKTDevice.objects.all():
+                try:
+                    sync_all(device)
+                    results.append({
+                        'device': device.name,
+                        'ip': device.ip,
+                        'status': 'success',
+                        'message': 'تمت المزامنة بنجاح'
+                    })
+                except Exception as e:
+                    overall_success = False
+                    results.append({
+                        'device': device.name,
+                        'ip': device.ip,
+                        'status': 'error',
+                        'message': str(e)
+                    })
+
+            if not results:
+                return JsonResponse({
                     'status': 'error',
-                    'message': str(e)
-                })
+                    'message': 'لا توجد أجهزة مسجلة في النظام.',
+                    'results': []
+                }, status=404)
 
-        if not results:
             return JsonResponse({
-                'status': 'error',
-                'message': 'لا توجد أجهزة مسجلة في النظام.',
-                'results': []
-            }, status=404)
-
-        return JsonResponse({
-            'status': 'success' if overall_success else 'partial',
-            'message': 'اكتملت المزامنة' if overall_success else 'اكتملت المزامنة مع بعض الأخطاء',
-            'results': results
-        })
+                'status': 'success' if overall_success else 'partial',
+                'message': 'اكتملت المزامنة' if overall_success else 'اكتملت المزامنة مع بعض الأخطاء',
+                'results': results
+            })
+        finally:
+            cache.delete(sync_key)
 
 
 class TestDeviceConnectionView(PermissionRequiredMixin, View):
@@ -1201,7 +1216,7 @@ class SettingsView(PermissionRequiredMixin, TemplateView):
             ("مسار العقود", getattr(settings, "CONTRACTS_ROOT", "-")),
             ("وسيط Celery", getattr(settings, "CELERY_BROKER_URL", "-")),
         ]
-        context["system_counts"] = {
+context["system_counts"] = {
             "employees": Employee.objects.count(),
             "active_employees": Employee.objects.filter(active=True).count(),
             "devices": ZKTDevice.objects.count(),

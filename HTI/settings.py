@@ -94,19 +94,33 @@ WSGI_APPLICATION = 'HTI.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        # user -> hti
-        # password -> Ht!V!p2021
-        # db -> hti_vip
-        'ENGINE': 'django.db.backends.sqlite3',
-        # Persistent DB path for desktop mode
-        'NAME': os.path.join(os.path.dirname(sys.executable), 'db.sqlite3') if (getattr(sys, 'frozen', False) and os.environ.get('DESKTOP_MODE') == '1') else os.path.join(BASE_DIR, 'db.sqlite3'),
-        # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        # 'NAME': 'hti_vip',
-        # 'USER': 'hti',
-        # 'PASSWORD': 'Ht!V!p2021',
+# Check if we're using PostgreSQL (production)
+db_engine = env('DB_ENGINE', default='')
+if db_engine == 'django.db.backends.postgresql_psycopg2':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': env('DB_NAME', default='hti_vip'),
+            'USER': env('DB_USER', default='hti'),
+            'PASSWORD': env('DB_PASSWORD', default='Ht!V!p2021'),
+            'HOST': env('DB_HOST', default='localhost'),
+            'PORT': env('DB_PORT', default='5432'),
+        }
     }
+else:
+    DATABASES = {
+        'default': {
+            # user -> hti
+            # password -> Ht!V!p2021
+            # db -> hti_vip
+            'ENGINE': 'django.db.backends.sqlite3',
+            # Persistent DB path for desktop mode
+            'NAME': os.path.join(os.path.dirname(sys.executable), 'db.sqlite3') if (getattr(sys, 'frozen', False) and os.environ.get('DESKTOP_MODE') == '1') else os.path.join(BASE_DIR, 'db.sqlite3'),
+            # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            # 'NAME': 'hti_vip',
+            # 'USER': 'hti',
+            # 'PASSWORD': 'Ht!V!p2021',
+        }
 
         # Host:
         #   ec2-54-87-179-4.compute-1.amazonaws.com
@@ -174,6 +188,10 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "static"), ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
+# Media files (uploaded content)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
 
 # Default primary key field type
@@ -222,4 +240,12 @@ LOGGING = {
             'propagate': True,
         },
     },
+}
+
+# Cache configuration (required for rate limiting)
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'attendance-cache',
+    }
 }
