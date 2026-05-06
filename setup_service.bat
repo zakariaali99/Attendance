@@ -16,9 +16,13 @@ set PROJECT_DIR=%PROJECT_DIR:~0,-1%
 :: 3. The name of the service
 set SERVICE_NAME=AlKhwarizmiAttendance
 
+:: 4. Port for the server (8000 for NSSM, 8765 for Electron)
+set PORT=8000
+
 echo Python Path: %PYTHON_PATH%
 echo Project Dir: %PROJECT_DIR%
 echo Service Name: %SERVICE_NAME%
+echo Port: %PORT%
 echo.
 
 :: Check if NSSM is available
@@ -32,6 +36,9 @@ if %errorlevel% neq 0 (
 
 echo Installing service %SERVICE_NAME%...
 nssm install %SERVICE_NAME% "%PYTHON_PATH%" "%PROJECT_DIR%\run_server.py"
+
+echo Setting environment variables...
+nssm set %SERVICE_NAME% AppEnvironmentExtra "PORT=8000;DESKTOP_MODE=0"
 
 echo Setting service directory...
 nssm set %SERVICE_NAME% AppDirectory "%PROJECT_DIR%"
