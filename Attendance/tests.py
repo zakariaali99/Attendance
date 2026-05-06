@@ -4,7 +4,7 @@ from django.utils import timezone
 from django.contrib.auth.models import Permission
 from django.urls import reverse
 from VIPAlert.models import User
-from Attendance.models import Profile, Employee, ZKTDevice, Record, WorkDay, Exception, Holiday, Vacation, VacationType
+from Attendance.models import Profile, Employee, ZKTDevice, Record, WorkDay, AttendanceException, Holiday, Vacation, VacationType
 from Attendance.views import AddEmployeeView, employee_day_rows
 from Attendance.sync_records import sync_records
 
@@ -19,6 +19,7 @@ class AttendanceModelsTests(TestCase):
             calculate_end_time=datetime.time(16, 0),
             shift_start_time=datetime.time(7, 0),
             shift_end_time=datetime.time(17, 0),
+            full_month_work=True,
         )
         self.employee = Employee.objects.create(
             name="John Doe",
@@ -56,7 +57,7 @@ class AttendanceModelsTests(TestCase):
             device=self.device
         )
         
-        Exception.objects.create(
+        AttendanceException.objects.create(
             date=today,
             employee=self.employee,
             note="Late Exception",
@@ -156,6 +157,7 @@ class AttendanceReportsTests(TestCase):
             shift_start_time=datetime.time(7, 0),
             shift_end_time=datetime.time(17, 0),
             by_finger_print_count=False,
+            full_month_work=True,
         )
         self.employee = Employee.objects.create(
             name="Report Employee",

@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from Attendance.views import *
+from Attendance.api_views import *
 
 app_name = "Attendance"
 
@@ -49,4 +50,11 @@ urlpatterns = [
     path('import', ImportRecordsView.as_view(), name="import_records"),
     path('settings', SettingsView.as_view(), name="settings"),
 
+    # API Endpoints
+    path('api/employees/', EmployeeList.as_view(), name="api_employee_list"),
+    path('api/employees/<int:pk>/', EmployeeDetail.as_view(), name="api_employee_detail"),
+    path('api/devices/', DeviceList.as_view(), name="api_device_list"),
+    path('api/profiles/', ProfileList.as_view(), name="api_profile_list"),
+    path('api/records/', RecordList.as_view(), name="api_record_list"),
+    path('api/vacations/', VacationList.as_view(), name="api_vacation_list"),
 ]

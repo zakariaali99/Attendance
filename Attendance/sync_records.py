@@ -8,16 +8,13 @@ from django.utils import timezone
 
 
 def sync_records(device=None, records=None):
-    from Attendance.models import Record, Employee, WorkDay, ZKTDevice
-
-    days = dict()
-    work_days = []
-    
-    # Get the latest existing workday for this device to avoid re-processing old records
-    workdays_query = WorkDay.objects.filter(device=device).order_by("-date")
-    workday = workdays_query.first()
+    from Attendance.models import Record, Employee, WorkDay
+    from django.db.models import Q
 
     if records is None:
+        # Get the latest existing workday for this device to avoid re-processing old records
+        workdays_query = WorkDay.objects.filter(device=device).order_by("-date")
+        workday = workdays_query.first()
         # Avoid pulling all records into memory at once if unnecessary
         if workday:
             records = Record.objects.filter(device=device, timestamp__date__gte=workday.date)
@@ -25,43 +22,76 @@ def sync_records(device=None, records=None):
             records = Record.objects.filter(device=device)
 
     # Accumulate unique [user_id: [dates]] pairs from the provided records
+    days = {}
+    all_dates = set()
     for r in records:
         r_date = r.timestamp.date()
-        if workday is not None:
-            if r_date >= workday.date:
-                if r.user_id not in days:
-                    days[r.user_id] = {r_date}
-                else:
-                    days[r.user_id].add(r_date)
+        all_dates.add(r_date)
+        if r.user_id not in days:
+            days[r.user_id] = {r_date}
         else:
-            if r.user_id not in days:
-                days[r.user_id] = {r_date}
-            else:
-                days[r.user_id].add(r_date)
+            days[r.user_id].add(r_date)
 
-    # Batch process new workdays for each employee
-    this_year = timezone.now().year
-    for attendance_id, unique_dates in days.items():
-        try:
-            employee = Employee.objects.filter(attendance_id__iexact=attendance_id).first()
-            if not employee:
-                print(f"Skipping: Employee with ID {attendance_id} not found.")
-                continue
+    if not days:
+        return {}
 
-            for d in unique_dates:
-                # Sanity check for dates
-                if d.year < this_year + 5:
-                    # Check if workday already exists for this employee/device on this date to prevent duplicates
-                    if not WorkDay.objects.filter(employee=employee, date=d, device=device).exists():
-                        w = WorkDay(date=d, employee=employee, device=device)
-                        work_days.append(w)
-        except Exception as e:
-            print(f"Error processing workday for {attendance_id} on {d}: {e}")
-
-    if work_days:
-        WorkDay.objects.bulk_create(work_days)
-        print(f"Successfully generated {len(work_days)} new workdays for analysis.")
+    # Fetch all relevant employees at once
+    attendance_ids = list(days.keys())
+    employees = {e.attendance_id: e for e in Employee.objects.filter(attendance_id__in=attendance_ids)}
     
+    # Fetch existing workdays for these employees and dates to avoid duplicates
+    existing_wds_query = WorkDay.objects.filter(
+        device=device, 
+        date__in=list(all_dates), 
+        employee__attendance_id__in=attendance_ids
+    ).select_related('employee')
+    
+    existing_wds = {}
+    for wd in existing_wds_query:
+        existing_wds[(wd.employee.attendance_id, wd.date)] = wd
+
+    new_workdays = []
+    affected_workdays = []
+    this_year = timezone.now().year
+
+    for attendance_id, unique_dates in days.items():
+        employee = employees.get(attendance_id)
+        if not employee:
+            continue
+
+        for d in unique_dates:
+            if d.year > this_year + 5: continue # Sanity check
+            
+            wd = existing_wds.get((attendance_id, d))
+            if wd:
+                affected_workdays.append(wd)
+            else:
+                wd = WorkDay(date=d, employee=employee, device=device)
+                new_workdays.append(wd)
+                affected_workdays.append(wd)
+
+    if new_workdays:
+        WorkDay.objects.bulk_create(new_workdays)
+        print(f"Successfully generated {len(new_workdays)} new workdays.")
+
+    # Update totals for all affected workdays (new and updated)
+    # Note: We need to re-fetch or ensure they have IDs if we want to save them individually, 
+    # but since we just bulk_created, we might need to be careful with IDs in some DBs.
+    # For SQLite, bulk_create usually sets IDs if supported, but let's re-fetch to be safe.
+    
+    # Re-fetch to ensure we have all instances with their database state
+    final_wds = WorkDay.objects.filter(
+        device=device, 
+        date__in=list(all_dates), 
+        employee__attendance_id__in=attendance_ids
+    )
+    
+    count = 0
+    for wd in final_wds:
+        wd.update_totals()
+        count += 1
+    
+    print(f"Updated totals for {count} workdays.")
     return days
 
 

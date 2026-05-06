@@ -10,7 +10,7 @@ class EmployeeForm(forms.ModelForm):
     class Meta:
         model = Employee
         # fields = '__all__'  # ['name', 'phone', 'email', 'start_date', 'expire_date']
-        exclude = ["password", "device"]
+        exclude = []
 
         widgets = {
             'name': forms.TextInput(attrs={
@@ -146,7 +146,7 @@ class AddVacationForm(forms.Form):
     to_date = forms.DateField(initial=timezone.now().date())
     type = forms.ModelChoiceField(queryset=VacationType.objects.all())
     note = forms.CharField(max_length=250, required=False)
-    employees = forms.ModelMultipleChoiceField(queryset=Employee.objects.filter(active=False))
+    employees = forms.ModelMultipleChoiceField(queryset=Employee.objects.all())
 
     date.widget = forms.DateInput(attrs={
         'class': 'form-control rounded-pill',
@@ -168,7 +168,7 @@ class FilterVacationsForm(forms.Form):
     date = forms.DateField(initial=None, required=False)
     to_date = forms.DateField(initial=None, required=False)
     type = forms.ModelChoiceField(queryset=VacationType.objects.all())
-    employees = forms.ModelChoiceField(queryset=Employee.objects.filter(active=False))
+    employees = forms.ModelChoiceField(queryset=Employee.objects.all())
 
     date.widget = forms.DateInput(attrs={
         'class': 'form-control rounded-pill',
@@ -217,7 +217,7 @@ class FilterExceptionsForm(forms.Form):
     date = forms.DateField(initial=None, required=False)
     to_date = forms.DateField(initial=None, required=False)
     type = forms.ChoiceField(choices=[('', '---------')] + AttendanceException.types, initial=None, required=False)
-    employees = forms.ModelChoiceField(queryset=Employee.objects.filter(active=False), required=False)
+    employees = forms.ModelChoiceField(queryset=Employee.objects.all(), required=False)
 
     type.widget.attrs = {
         'class': 'form-control rounded-pill',
@@ -245,7 +245,7 @@ class AddExceptionForm(forms.Form):
     # to_date = forms.DateField(initial=timezone.now().date())
     type = forms.ChoiceField(choices=AttendanceException.types)
     note = forms.CharField(max_length=250, required=False)
-    employees = forms.ModelMultipleChoiceField(queryset=Employee.objects.filter(active=False))
+    employees = forms.ModelMultipleChoiceField(queryset=Employee.objects.all())
 
     date.widget = forms.DateInput(attrs={
         'class': 'form-control rounded-pill',

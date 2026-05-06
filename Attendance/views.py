@@ -9,7 +9,7 @@ from typing import Any, Dict
 import xlsxwriter
 from django.conf import settings
 from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
-from django.db.models import Q
+from django.db.models import Q, Count, Sum
 from django.http import HttpResponse, JsonResponse
 from django.template.response import TemplateResponse
 from django.shortcuts import render, redirect
@@ -33,20 +33,23 @@ def permission_denied_view(request, exception=None):
 def default_date_range(view):
     from_date = None
     to_date = None
-
     get = view.request.GET
-    if "from_date" in get.keys():
-        fromdate = get["from_date"]
-        if len(fromdate) > 2:
-            from_date = datetime.datetime.strptime(fromdate, "%Y-%m-%d").date()
 
-    if "to_date" in get.keys():
-        todate = get["to_date"]
-        if len(todate) > 2:
-            to_date = datetime.datetime.strptime(todate, "%Y-%m-%d").date()
+    try:
+        if "from_date" in get and len(get["from_date"]) > 2:
+            from_date = datetime.datetime.strptime(get["from_date"], "%Y-%m-%d").date()
+    except (ValueError, TypeError):
+        pass
 
-    this_month = timezone.now().month
-    this_year = timezone.now().year
+    try:
+        if "to_date" in get and len(get["to_date"]) > 2:
+            to_date = datetime.datetime.strptime(get["to_date"], "%Y-%m-%d").date()
+    except (ValueError, TypeError):
+        pass
+
+    now = timezone.now()
+    this_month = now.month
+    this_year = now.year
     _, last_day_in_the_month = calendar.monthrange(this_year, this_month)
 
     if from_date is None:
@@ -55,6 +58,19 @@ def default_date_range(view):
     if to_date is None:
         to_date = date(this_year, this_month, last_day_in_the_month)
     return from_date, to_date
+
+
+class PaginationMixin:
+    paginate_by = 25
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Keep track of GET parameters for pagination links
+        params = self.request.GET.copy()
+        if 'page' in params:
+            del params['page']
+        context['params'] = params.urlencode()
+        return context
 
 
 def required_days(from_date, to_date, profile=None):
@@ -69,14 +85,10 @@ def required_days(from_date, to_date, profile=None):
     for d in range(from_date.toordinal(), to_date.toordinal() + 1):
         dt = date.fromordinal(d)
         if profile:
-            # Python: 0=Mon, 4=Fri, 5=Sat, 6=Sun
-            # Our Day model: 0=Sat, 1=Sun, 2=Mon, 3=Tue, 4=Wed, 5=Thu, 6=Fri
-            python_to_our_day = {0: '2', 1: '3', 2: '4', 3: '5', 4: '6', 5: '0', 6: '1'}
-            our_day_val = python_to_our_day[dt.weekday()]
-            if our_day_val in profile_day_values:
+            if profile.is_working_day(dt):
                 count += 1
         else:
-            # Default logic: exclude Friday(4) and Saturday(5)
+            # Default fallback if no profile provided
             if dt.weekday() != 4 and dt.weekday() != 5:
                 count += 1
     return count
@@ -130,16 +142,17 @@ def employee_day_rows(employee, from_date, to_date):
         for current_date in iter_dates(start_date, end_date):
             vacation_map[current_date] = vacation
 
-    for exception in employee.attendanceexception_set.all():
+    for exception in employee.exception_set.all():
         if exception.date and from_date <= exception.date <= to_date:
             exception_map[exception.date].append(exception)
 
     rows = []
+    profile = employee.default_profile or Profile.objects.first()
     for current_date in day_range:
         workday = workday_map.get(current_date)
         vacation = vacation_map.get(current_date)
         exceptions = exception_map.get(current_date, [])
-        is_weekend = current_date.weekday() in (4, 5)
+        is_weekend = profile.is_weekend(current_date) if profile else current_date.weekday() in (4, 5)
         is_holiday = current_date in holiday_dates
 
         late_minutes = 0
@@ -228,11 +241,11 @@ def summarize_day_rows(day_rows):
 
 
 def employee_queryset():
-    return Employee.objects.filter(active=False).select_related('default_profile', 'device').prefetch_related(
+    return Employee.objects.all().select_related('default_profile', 'device').prefetch_related(
         'vacation_set',
         'vacation_set__vacation_type',
         'extrawork_set',
-        'attendanceexception_set',
+        'exception_set',
         'holiday_set',
     )
 
@@ -420,7 +433,7 @@ class DeleteEmployeeView(PermissionRequiredMixin, DeleteView):
         return self.delete(request, *args, **kwargs)
 
 
-class EmployeeView(PermissionRequiredMixin, ListView):
+class EmployeeView(PermissionRequiredMixin, PaginationMixin, ListView):
     template_name = "attendance/employee_list_view.html"
     model = Employee
     success_url = reverse_lazy("Attendance:dashboard")
@@ -489,7 +502,7 @@ class EmployeeRecordsView(PermissionRequiredMixin, DetailView):
         return obj
 
 
-class ProfileListView(ListView):
+class ProfileListView(PaginationMixin, ListView):
     template_name = "attendance/profile_list_view.html"
     model = Profile
 
@@ -624,7 +637,6 @@ class ExportReportView(PermissionRequiredMixin, View):
         rcs = Record.objects.filter(Q(timestamp__gte=from_date) & Q(timestamp__lte=to_date) & Q(device=device))
         wds = list(wds)
         rcs = list(rcs)
-        required_work_days = required_days(from_date, to_date) # Global
 
         _ = [(e.set_records(rcs), e.set_workdays(wds)) for e in em]
 
@@ -639,9 +651,10 @@ class ExportReportView(PermissionRequiredMixin, View):
         worksheet.write(0, 5, "ايام المناوبة")
         worksheet.write(0, 6, "الاجازات")
         for row_num, row in enumerate(em):
+            req_days = required_days(from_date, to_date, profile=row.default_profile)
             worksheet.write(row_num + 1, 0, row.name)
             worksheet.write(row_num + 1, 1, row.count_hours)
-            worksheet.write(row_num + 1, 2, required_work_days)
+            worksheet.write(row_num + 1, 2, req_days)
             worksheet.write(row_num + 1, 3, row.all_days_count)
             worksheet.write(row_num + 1, 4, row.late_days_count)
             worksheet.write(row_num + 1, 5, row.holidays_count)
@@ -729,7 +742,7 @@ class ExportEmployeeReportView(PermissionRequiredMixin, DetailView):
         return response
 
 
-class DeviceListView(ListView):
+class DeviceListView(PaginationMixin, ListView):
     template_name = "attendance/devices_list_view.html"
     model = ZKTDevice
 
@@ -794,7 +807,7 @@ class DeleteDeviceView(PermissionRequiredMixin, DeleteView):
 
 
 
-class VacationsView(ListView):
+class VacationsView(PaginationMixin, ListView):
     template_name = "attendance/vacations/vacations_list_view.html"
     model = Vacation
     paginate_by = 25
@@ -838,8 +851,19 @@ class AddVacationsView(PermissionRequiredMixin, FormView):
         for employee in employees:
             v = Vacation(employee=employee, date=date, to_date=to_date, vacation_type=vacation_type, note=note)
             v.save()
-            employee.current_vacations = employee.current_vacations - (to_date - date).days
-            employee.save()
+            new_balance = employee.current_vacations - (to_date - date).days
+            if new_balance < 0:
+                SystemLog.objects.create(
+                    user=self.request.user,
+                    action="تحذير: رصيد إجازات غير كافٍ",
+                    description=f"الموظف {employee.name} لا يملك رصيد كافٍ للإجازة. الرصيد الحالي: {employee.current_vacations}",
+                    ip_address=self.request.META.get('REMOTE_ADDR')
+                )
+                # We still allow the vacation record, but don't deduct if it's strictly enforced.
+                # Here we'll just not update the balance to avoid negative values.
+            else:
+                employee.current_vacations = new_balance
+                employee.save()
 
         SystemLog.objects.create(
             user=self.request.user,
@@ -889,7 +913,7 @@ class DeleteVacationView(PermissionRequiredMixin, DeleteView):
         return self.delete(request, *args, **kwargs)
 
 
-class VacationTypeView(PermissionRequiredMixin, ListView):
+class VacationTypeView(PermissionRequiredMixin, PaginationMixin, ListView):
     template_name = "attendance/vacations/vacation_type_list_view.html"
     model = VacationType
     permission_required = ('Attendance.can_create_employees',)
@@ -954,7 +978,7 @@ class DeleteVacationTypeView(PermissionRequiredMixin, DeleteView):
         return super().delete(request, *args, **kwargs)
 
 
-class ExceptionsView(ListView):
+class ExceptionsView(PaginationMixin, ListView):
     template_name = "attendance/exceptions/exceptions_list_view.html"
     model = AttendanceException
     paginate_by = 25
@@ -1093,24 +1117,17 @@ class DashboardView(TemplateView):
         recent_date_limit = today - datetime.timedelta(days=30)
         anomalies = []
         
-        # We process a subset of employees to keep dashboard responsive
-        # In a production environment with many employees, this should be a background task or cached
-        for emp in Employee.objects.filter(active=True)[:50]:
-            recent_wds = WorkDay.objects.filter(employee=emp, date__gte=recent_date_limit)
-            late_count = 0
-            for wd in recent_wds:
-                if wd.late > 0:
-                    late_count += 1
-            
-            if late_count > 3:
-                anomalies.append({
-                    'id': emp.id,
-                    'name': emp.name,
-                    'recent_late_count': late_count
-                })
+        anomalies = Employee.objects.filter(
+            active=True,
+            workday__date__gte=recent_date_limit,
+            workday__late_seconds__gt=0
+        ).annotate(
+            recent_late_count=Count('workday')
+        ).filter(
+            recent_late_count__gt=3
+        ).values('id', 'name', 'recent_late_count').order_by('-recent_late_count')[:5]
         
-        anomalies.sort(key=lambda x: x['recent_late_count'], reverse=True)
-        context['anomalies'] = anomalies[:5] # Show top 5 anomalies
+        context['anomalies'] = anomalies
 
         # Weekly Presence Trend
         weekly_trend = []
@@ -1373,7 +1390,7 @@ class ExportPayrollSummaryView(UserPassesTestMixin, View):
             worksheet.write(0, col, header, header_fmt)
             worksheet.set_column(col, col, 15)
 
-        employees = Employee.objects.all().prefetch_related('vacation_set', 'attendanceexception_set')
+        employees = Employee.objects.all().prefetch_related('vacation_set', 'exception_set')
         
         row_num = 1
         for emp in employees:

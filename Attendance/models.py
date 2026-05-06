@@ -54,6 +54,18 @@ class Profile(models.Model):
     by_finger_print_count = models.BooleanField(default=True)
     late_threshold = models.IntegerField(default=15, help_text="Number of minutes after start_time to consider the employee late.")
 
+    def is_working_day(self, date_obj):
+        if self.full_month_work:
+            return True
+        # Python: 0=Mon, 1=Tue, 2=Wed, 3=Thu, 4=Fri, 5=Sat, 6=Sun
+        # Our Day model: 0=Sat, 1=Sun, 2=Mon, 3=Tue, 4=Wed, 5=Thu, 6=Fri
+        python_to_our_day = {0: '2', 1: '3', 2: '4', 3: '5', 4: '6', 5: '0', 6: '1'}
+        our_day_val = python_to_our_day[date_obj.weekday()]
+        return self.days.filter(day=our_day_val).exists()
+
+    def is_weekend(self, date_obj):
+        return not self.is_working_day(date_obj)
+
     def __str__(self):
         return self.name
 
@@ -75,12 +87,15 @@ class Employee(models.Model):
     default_profile = models.ForeignKey("Profile", on_delete=models.SET_NULL, null=True)
     active = models.BooleanField(default=False)
     current_vacations = models.FloatField(_("Current vacations"), default=0)
-    work_time = None
-    overwork_time = None
-    out_return_time = None
-    res = None
-    workdays = None
-    holidays = None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.work_time = None
+        self.overwork_time = None
+        self.out_return_time = None
+        self.res = None
+        self.workdays = None
+        self.holidays = None
 
     class Meta:
         ordering = ("id",)
@@ -123,7 +138,9 @@ class Employee(models.Model):
 
     @property
     def holidays_count(self):
-        excluded_days = filter(lambda a: not a.is_friday and not a.is_saturday, self.all_days)
+        profile = self.default_profile or Profile.objects.first()
+        # Filter out weekends based on profile, then count holidays
+        excluded_days = filter(lambda a: not a.is_weekend(profile), self.all_days)
         return len(list(filter(lambda a: a.is_holiday, excluded_days)))
 
     @property
@@ -132,7 +149,9 @@ class Employee(models.Model):
 
     @property
     def late_days_count(self):
-        return len(self.late_days)
+        if self.workdays is not None:
+            return len([day for day in self.workdays if day.late_seconds > 0])
+        return WorkDay.objects.filter(employee=self, late_seconds__gt=0).count()
 
     @property
     def vacations_count(self):
@@ -166,13 +185,21 @@ class Employee(models.Model):
 
     @property
     def count_hours(self):
-        work_time = 0
-        overwork_time = 0
-        out_return_time = 0
-        for d in self.all_days:
-            work_time += d.work
-            overwork_time += d.overwork
-            out_return_time += d.out_return_time
+        if self.workdays is not None:
+            work_time = sum(d.work for d in self.workdays)
+            overwork_time = sum(d.overwork for d in self.workdays)
+            out_return_time = sum(d.out_return_time for d in self.workdays)
+        else:
+            from django.db.models import Sum
+            totals = WorkDay.objects.filter(employee=self).aggregate(
+                total_work=Sum('work_hours'),
+                total_overwork=Sum('overwork_hours'),
+                total_out=Sum('out_return_hours')
+            )
+            work_time = totals['total_work'] or 0
+            overwork_time = totals['total_overwork'] or 0
+            out_return_time = totals['total_out'] or 0
+
         ndigits = 2
         self.overwork_time = round(overwork_time, ndigits)
         self.work_time = round(work_time, ndigits)
@@ -193,7 +220,9 @@ class Employee(models.Model):
 
     @property
     def out_return_count(self):
-        return len([day for day in self.all_days if day.out_return_time > 0])
+        if self.workdays is not None:
+            return len([day for day in self.workdays if day.out_return_time > 0])
+        return WorkDay.objects.filter(employee=self, out_return_hours__gt=0).count()
 
 
 attendance_choices = [
@@ -303,7 +332,7 @@ class Shift:
 
 class Holiday(models.Model):
     date = models.DateField(null=True, default=None)
-    employee = models.ForeignKey('Employee', on_delete=models.CASCADE)
+    employee = models.ForeignKey('Employee', on_delete=models.CASCADE, related_name='holiday_set')
 
 
 class VacationType(models.Model):
@@ -347,7 +376,7 @@ class AttendanceException(models.Model):
         ("late", "تأخير"),
     ]
     date = models.DateField(null=True, default=None)
-    employee = models.ForeignKey('Employee', on_delete=models.CASCADE)
+    employee = models.ForeignKey('Employee', on_delete=models.CASCADE, related_name='exception_set')
     note = models.TextField()
     type = models.CharField(choices=types, default=None, null=True, max_length=50)
 
@@ -362,7 +391,7 @@ class AttendanceException(models.Model):
 class ExtraWork(models.Model):
     start = models.DateTimeField(null=False, default=timezone.now)
     end = models.DateTimeField(null=True, default=timezone.now)
-    employee = models.ForeignKey('Employee', on_delete=models.CASCADE)
+    employee = models.ForeignKey('Employee', on_delete=models.CASCADE, related_name='extrawork_set')
     note = models.TextField()
 
     def __str__(self) -> str:
@@ -377,18 +406,42 @@ class WorkDay(models.Model):
     date = models.DateField(null=True, default=None, db_index=True)
     employee = models.ForeignKey('Employee', on_delete=models.CASCADE)
     device = models.ForeignKey('Attendance.ZKTDevice', on_delete=models.SET_NULL, default=1, null=True)
-    start_percent = None
-    end_percent = None
     _records = None
     worktime = None
     overworktime = None
     out_return_time = None
+
+    # Cached totals for performance
+    late_seconds = models.IntegerField(default=0)
+    work_hours = models.FloatField(default=0)
+    overwork_hours = models.FloatField(default=0)
+    out_return_hours = models.FloatField(default=0)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['employee', 'date']),
+        ]
+
+    def update_totals(self):
+        # Calculate and cache totals
+        self.late_seconds = sum([s.late for s in self.shifts()])
+        self.work_hours = self.calculate("work")
+        self.overwork_hours = self.calculate("overwork")
+        self.out_return_hours = self.calculate("out")
+        self.save(update_fields=['late_seconds', 'work_hours', 'overwork_hours', 'out_return_hours'])
 
     def setdate(self, t):
         self.date = t
 
     def set_records(self, t):
         self._records = t
+
+    def is_weekend(self, profile=None):
+        if not profile:
+            profile = self.employee.default_profile or Profile.objects.first()
+        if not profile:
+            return self.date.weekday() in (4, 5) # Fallback to Fri/Sat
+        return profile.is_weekend(self.date)
 
     @property
     def is_friday(self):
@@ -404,6 +457,8 @@ class WorkDay(models.Model):
 
     @property
     def late(self):
+        if self.late_seconds > 0:
+            return self.late_seconds
         return sum([s.late for s in self.shifts()])
 
     @property
@@ -416,10 +471,14 @@ class WorkDay(models.Model):
 
     def records(self):
         if self._records is None:
-            print("Grap records from db work day")
+            # Use a more efficient range query to utilize database indexes
+            from datetime import datetime, time
+            start = datetime.combine(self.date, time.min)
+            end = datetime.combine(self.date, time.max)
             self._records = Record.objects.filter(
-                Q(timestamp__day=self.date.day) & Q(timestamp__year=self.date.year) & Q(
-                    timestamp__month=self.date.month)).filter(user_id=self.employee.attendance_id).order_by("timestamp")
+                timestamp__range=(start, end),
+                user_id=self.employee.attendance_id
+            ).order_by("timestamp")
         return self._records
 
     def prepare_shift(self, start_rc, end_rc, profile, is_in=False, automatic_close=False, automatic_open=False):
@@ -485,6 +544,9 @@ class WorkDay(models.Model):
         if p is None:
             p = Profile.objects.first()
 
+        if p is None:
+            return []
+
         if p.by_finger_print_count:
             return self.by_finger_print_count()
 
@@ -508,39 +570,10 @@ class WorkDay(models.Model):
         start_shift = Record(timestamp=datetime.datetime(y, m, d, h, mn))
 
         if len(rs) == 1:
-
-            delta_start = rs[0].timestamp.replace(tzinfo=None) - start_profile_shift.timestamp
-            delta_end = end_profile_shift.timestamp - rs[0].timestamp.replace(tzinfo=None)
-
-            is_in = False
-            if delta_end > delta_start:
-                is_in = True
-                # s, _, _ = self.prepare_shift(start_shift, rs[0], p, not is_in)
-                # shifts.append(s)
-                exceptions = list(filter(lambda a: a.type != "late", self.work_day_exceptions))
-                print("Early exit", exceptions)
-                end_time = None
-                if p.auto_close or len(exceptions) > 0:
-                    end_time = start_profile_shift
-                # if exceptions
-                s, w, ow = self.prepare_shift(rs[0], end_time, p, is_in, p.auto_close)
-                worktime += w
-                overworktime += ow
-            else:
-                # s, _, _ = self.prepare_shift(start_shift, start_profile_shift, p, is_in)
-                # shifts.append(s)
-                exceptions = list(filter(lambda a: a.type == "late", self.work_day_exceptions))
-                start_time = None
-                if p.auto_open or len(exceptions) > 0:
-                    start_time = start_profile_shift
-                s, w, ow = self.prepare_shift(start_time, rs[0], p, not is_in, automatic_open=p.auto_open)
-                worktime += w
-                overworktime += ow
-                # shifts.append(s)
-                # s, w, ow = self.prepare_shift(rs[0], end_profile_shift, p, not is_in)
+            s, w, ow = self._calculate_single_record_shift(rs[0], p, start_profile_shift, end_profile_shift, start_profile_shift.timestamp, end_profile_shift.timestamp)
             shifts.append(s)
-            print("-----------00000------")
-            print(shifts)
+            worktime += w
+            overworktime += ow
             return shifts
 
         # if p.shift_start_time.minute < ts.minute:
@@ -565,8 +598,6 @@ class WorkDay(models.Model):
         total = len(shifts)
 
         if is_in and total > 0:
-            print(f"Total shifts is {total}")
-            print("Word day", self.date, shifts)
             shift = shifts[total - 1]
             end = p.end_time
             ts = shift.end
@@ -594,8 +625,6 @@ class WorkDay(models.Model):
                 shifts.append(s)
         self.worktime = worktime
         self.overworktime = overworktime
-        print(shifts)
-
         return shifts
 
     def by_finger_print_count(self):
@@ -633,52 +662,14 @@ class WorkDay(models.Model):
         rs.sort(key=lambda a: a.timestamp)
 
         shifts = []
-        print("-----------")
-        print(len(rs), self.date)
-        is_in = True
         if len(rs) == 1:
-            start_profile_shift = Record(timestamp=start_date)
-            end_profile_shift = Record(timestamp=end_date)
-            start_shift = Record(
-                timestamp=datetime.datetime(self.date.year, self.date.month, self.date.day, p.start_time.hour,
-                                            p.start_time.minute))
-            delta_start = rs[0].timestamp.replace(tzinfo=None) - start_profile_shift.timestamp
-            delta_end = end_profile_shift.timestamp - rs[0].timestamp.replace(tzinfo=None)
-
-            is_in = False
-            if delta_end > delta_start:
-                is_in = True
-                # s, _, _ = self.prepare_shift(start_shift, rs[0], p, not is_in)
-                # shifts.append(s)
-                exceptions = filter(lambda a: a.type != "late", self.work_day_exceptions)
-                print("Early exit", exceptions, end_date_working)
-                print("Early exit", exceptions, end_date_working)
-                end_time = None
-                if p.auto_close or len(list(exceptions)) > 0:
-                    end_time = Record()
-                    end_time.timestamp = end_date_working
-
-                s, w, ow = self.prepare_shift(rs[0], end_time, p, is_in, p.auto_close)
-                worktime += w
-                overworktime += ow
-            else:
-                # s, _, _ = self.prepare_shift(start_shift, start_profile_shift, p, is_in)
-                # shifts.append(s)
-                exceptions = filter(lambda a: a.type == "late", self.work_day_exceptions)
-                start_time = None
-                if p.auto_open or len(list(exceptions)) > 0:
-                    start_time = Record()
-                    start_time.timestamp = start_date_working
-                s, w, ow = self.prepare_shift(start_time, rs[0], p, not is_in, automatic_open=p.auto_open)
-                worktime += w
-                overworktime += ow
-                # shifts.append(s)
-                # s, w, ow = self.prepare_shift(rs[0], end_profile_shift, p, not is_in)
+            s, w, ow = self._calculate_single_record_shift(rs[0], p, Record(timestamp=start_date), Record(timestamp=end_date), start_date_working, end_date_working)
             shifts.append(s)
-            print("-----------")
-            print(shifts)
+            worktime += w
+            overworktime += ow
             return shifts
 
+        is_in = True
         for i in range(0, len(rs) - 1, 2):
             # if rs[i].timestamp.date() != self.date:
             # continue
@@ -688,10 +679,34 @@ class WorkDay(models.Model):
             shifts.append(s)
             worktime += w
             overworktime += ow
-            # is_in = not is_in
-            print("-----------")
-            print(shifts)
         return shifts
+
+    def _calculate_single_record_shift(self, record, p, start_profile_shift, end_profile_shift, start_date_working, end_date_working):
+        """Helper to calculate shift when only one record is present."""
+        delta_start = record.timestamp.replace(tzinfo=None) - start_profile_shift.timestamp
+        delta_end = end_profile_shift.timestamp - record.timestamp.replace(tzinfo=None)
+
+        is_in = False
+        worktime = 0
+        overworktime = 0
+        if delta_end > delta_start:
+            is_in = True
+            exceptions = list(filter(lambda a: a.type != "late", self.work_day_exceptions))
+            end_time = None
+            if p.auto_close or len(exceptions) > 0:
+                end_time = Record(timestamp=end_date_working)
+            s, w, ow = self.prepare_shift(record, end_time, p, is_in, p.auto_close)
+            worktime = w
+            overworktime = ow
+        else:
+            exceptions = list(filter(lambda a: a.type == "late", self.work_day_exceptions))
+            start_time = None
+            if p.auto_open or len(exceptions) > 0:
+                start_time = Record(timestamp=start_date_working)
+            s, w, ow = self.prepare_shift(start_time, record, p, not is_in, automatic_open=p.auto_open)
+            worktime = w
+            overworktime = ow
+        return s, worktime, overworktime
 
     def calculate(self, work_type):
         t = 0
@@ -709,17 +724,20 @@ class WorkDay(models.Model):
 
     @property
     def overwork(self):
-
+        if self.overwork_hours > 0:
+            return self.overwork_hours
         return self.calculate("overwork")
 
     @property
     def work(self):
-
+        if self.work_hours > 0:
+            return self.work_hours
         return self.calculate("work")
 
     @property
     def out_return_time(self):
-
+        if self.out_return_hours > 0:
+            return self.out_return_hours
         return self.calculate("out")
 
     def get_formatted_date(self):
