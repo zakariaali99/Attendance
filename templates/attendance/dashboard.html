@@ -7,13 +7,16 @@
 <header class="mb-8 text-right animate-fade-in-up">
     <div class="flex flex-col gap-4 lg:flex-row-reverse lg:justify-between lg:items-center">
         <div class="min-w-0">
-            <h1 class="text-2xl sm:text-3xl font-black text-primary dark:text-white mb-2 font-headline leading-tight">مرحباً بك، {{ user.name|default:"مسؤول النظام" }}</h1>
-            <p class="text-sm sm:text-base text-on-surface-variant dark:text-slate-400 font-body flex items-center gap-2 flex-row-reverse">
+            <h1 class="text-2xl sm:text-3xl font-black text-primary dark:text-white mb-2 font-headline leading-tight">
+                مرحباً بك، {{ user.name|default:"مسؤول النظام" }}</h1>
+            <p
+                class="text-sm sm:text-base text-on-surface-variant dark:text-slate-400 font-body flex items-center gap-2 flex-row-reverse">
                 <span class="material-symbols-outlined text-[18px]">calendar_today</span>
                 <span id="liveDateTime"></span>
             </p>
         </div>
-        <button id="sync-btn" class="group flex w-full sm:w-auto flex-row-reverse items-center justify-center gap-3 bg-secondary-container text-on-secondary-container px-5 py-3 rounded-xl font-black shadow-lg shadow-secondary-container/20 hover:shadow-xl hover:shadow-secondary-container/30 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200">
+        <button id="sync-btn"
+            class="group flex w-full sm:w-auto flex-row-reverse items-center justify-center gap-3 bg-secondary-container text-on-secondary-container px-5 py-3 rounded-xl font-black shadow-lg shadow-secondary-container/20 hover:shadow-xl hover:shadow-secondary-container/30 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200">
             <span class="material-symbols-outlined group-hover:rotate-180 transition-transform duration-500">sync</span>
             <span>مزامنة بيانات الأجهزة</span>
         </button>
@@ -21,62 +24,78 @@
 </header>
 
 <!-- Stats Grid -->
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10 animate-fade-in-up" style="animation-delay: 0.1s;">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10 animate-fade-in-up"
+    style="animation-delay: 0.1s;">
     <!-- Total Employees -->
-    <div class="bg-white dark:bg-slate-900 rounded-[2rem] p-6 shadow-sm border border-surface-container dark:border-slate-800 flex flex-col justify-between h-44 group hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+    <div
+        class="bg-white dark:bg-slate-900 rounded-[2rem] p-6 shadow-sm border border-surface-container dark:border-slate-800 flex flex-col justify-between h-44 group hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
         <div class="flex justify-between items-start flex-row-reverse relative z-10">
             <div class="bg-primary/5 dark:bg-primary/20 p-3 rounded-2xl text-primary dark:text-primary-fixed">
                 <span class="material-symbols-outlined text-[28px]">group</span>
             </div>
-            <span class="text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest">إجمالي الموظفين</span>
+            <span class="text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest">إجمالي
+                الموظفين</span>
         </div>
         <div class="relative z-10">
-            <div class="text-4xl font-black text-primary dark:text-white mb-1 counter" data-target="{{ count_employees|default:0 }}">0</div>
+            <div class="text-4xl font-black text-primary dark:text-white mb-1 counter"
+                data-target="{{ count_employees|default:0 }}">0</div>
             <div class="text-[11px] text-on-surface-variant dark:text-slate-400 font-bold">موظف مسجل حالياً</div>
         </div>
-        <div class="absolute -bottom-6 -right-6 w-24 h-24 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors"></div>
+        <div
+            class="absolute -bottom-6 -right-6 w-24 h-24 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors">
+        </div>
     </div>
 
     <!-- Present Today -->
-    <div class="bg-white dark:bg-slate-900 rounded-[2rem] p-6 shadow-sm border border-surface-container dark:border-slate-800 flex flex-col justify-between h-44 group hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+    <div
+        class="bg-white dark:bg-slate-900 rounded-[2rem] p-6 shadow-sm border border-surface-container dark:border-slate-800 flex flex-col justify-between h-44 group hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
         <div class="flex justify-between items-start flex-row-reverse relative z-10">
             <div class="bg-green-500/10 p-3 rounded-2xl text-green-600 dark:text-green-400">
-                <span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                <span class="material-symbols-outlined text-[28px]"
+                    style="font-variation-settings: 'FILL' 1;">check_circle</span>
             </div>
-            <span class="text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest">حضور اليوم</span>
+            <span class="text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest">حضور
+                اليوم</span>
         </div>
         <div class="relative z-10">
-            <div class="text-4xl font-black text-green-600 dark:text-green-400 mb-1 counter" data-target="{{ count_presents|default:0 }}">0</div>
+            <div class="text-4xl font-black text-green-600 dark:text-green-400 mb-1 counter"
+                data-target="{{ count_presents|default:0 }}">0</div>
             <div class="text-[11px] text-on-surface-variant dark:text-slate-400 font-bold">سجلوا دخول اليوم</div>
         </div>
         <div class="absolute -bottom-6 -right-6 w-24 h-24 bg-green-500/5 rounded-full blur-2xl"></div>
     </div>
 
     <!-- Absent Today -->
-    <div class="bg-white dark:bg-slate-900 rounded-[2rem] p-6 shadow-sm border border-surface-container dark:border-slate-800 flex flex-col justify-between h-44 group hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+    <div
+        class="bg-white dark:bg-slate-900 rounded-[2rem] p-6 shadow-sm border border-surface-container dark:border-slate-800 flex flex-col justify-between h-44 group hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
         <div class="flex justify-between items-start flex-row-reverse relative z-10">
             <div class="bg-red-500/10 p-3 rounded-2xl text-red-600 dark:text-red-400">
                 <span class="material-symbols-outlined text-[28px]">person_off</span>
             </div>
-            <span class="text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest">غياب اليوم</span>
+            <span class="text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest">غياب
+                اليوم</span>
         </div>
         <div class="relative z-10">
-            <div class="text-4xl font-black text-red-600 dark:text-red-400 mb-1 counter" data-target="{{ count_absents|default:0 }}">0</div>
+            <div class="text-4xl font-black text-red-600 dark:text-red-400 mb-1 counter"
+                data-target="{{ count_absents|default:0 }}">0</div>
             <div class="text-[11px] text-on-surface-variant dark:text-slate-400 font-bold">لم يسجلوا حضور اليوم</div>
         </div>
         <div class="absolute -bottom-6 -right-6 w-24 h-24 bg-red-500/5 rounded-full blur-2xl"></div>
     </div>
 
     <!-- Permissions Today -->
-    <div class="bg-white dark:bg-slate-900 rounded-[2rem] p-6 shadow-sm border border-surface-container dark:border-slate-800 flex flex-col justify-between h-44 group hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+    <div
+        class="bg-white dark:bg-slate-900 rounded-[2rem] p-6 shadow-sm border border-surface-container dark:border-slate-800 flex flex-col justify-between h-44 group hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
         <div class="flex justify-between items-start flex-row-reverse relative z-10">
             <div class="bg-amber-500/10 p-3 rounded-2xl text-amber-600 dark:text-amber-400">
                 <span class="material-symbols-outlined text-[28px]">schedule</span>
             </div>
-            <span class="text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest">أذونات اليوم</span>
+            <span class="text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest">أذونات
+                اليوم</span>
         </div>
         <div class="relative z-10">
-            <div class="text-4xl font-black text-amber-600 dark:text-amber-400 mb-1 counter" data-target="{{ count_permissions|default:0 }}">0</div>
+            <div class="text-4xl font-black text-amber-600 dark:text-amber-400 mb-1 counter"
+                data-target="{{ count_permissions|default:0 }}">0</div>
             <div class="text-[11px] text-on-surface-variant dark:text-slate-400 font-bold">حالات استثناء مسجلة</div>
         </div>
         <div class="absolute -bottom-6 -right-6 w-24 h-24 bg-amber-500/5 rounded-full blur-2xl"></div>
@@ -86,63 +105,82 @@
 <!-- Analytics Visualization -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
     <!-- Comparative Performance Chart -->
-    <div class="lg:col-span-2 bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-surface-container dark:border-slate-800 animate-fade-in-up" style="animation-delay: 0.15s;">
+    <div class="lg:col-span-2 bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-surface-container dark:border-slate-800 animate-fade-in-up"
+        style="animation-delay: 0.15s;">
         <div class="flex justify-between items-center flex-row-reverse mb-8">
-            <h2 class="text-xl font-black text-primary dark:text-white font-headline flex items-center gap-2 flex-row-reverse">
+            <h2
+                class="text-xl font-black text-primary dark:text-white font-headline flex items-center gap-2 flex-row-reverse">
                 <span class="material-symbols-outlined text-secondary">monitoring</span>
                 مخطط الأداء المقارن
             </h2>
-            <div class="text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest">الشهر الحالي</div>
+            <div class="text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest">الشهر الحالي
+            </div>
         </div>
         <div class="h-[300px] w-full">
-            <canvas id="performanceChart" 
-                data-labels='{{ perf_labels|safe }}'
-                data-hours='{{ perf_hours|safe }}'
+            <canvas id="performanceChart" data-labels='{{ perf_labels|safe }}' data-hours='{{ perf_hours|safe }}'
                 data-lates='{{ perf_lates|safe }}'>
             </canvas>
         </div>
     </div>
 
     <!-- Weekly Presence Trend -->
-    <div class="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-surface-container dark:border-slate-800 animate-fade-in-up" style="animation-delay: 0.2s;">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-surface-container dark:border-slate-800 animate-fade-in-up"
+        style="animation-delay: 0.2s;">
         <div class="flex justify-between items-center flex-row-reverse mb-8">
-            <h2 class="text-lg font-black text-primary dark:text-white font-headline flex items-center gap-2 flex-row-reverse">
+            <h2
+                class="text-lg font-black text-primary dark:text-white font-headline flex items-center gap-2 flex-row-reverse">
                 <span class="material-symbols-outlined text-secondary">bar_chart</span>
                 مؤشر الحضور
             </h2>
             <div class="text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest">7 أيام</div>
         </div>
-        
+
         <div class="flex items-end justify-between gap-2 h-48 px-2" dir="ltr">
-            {% for day in weekly_trend %}
-            <div class="flex-grow flex flex-col items-center gap-3 group h-full">
-                <div class="relative w-full flex flex-col justify-end items-center flex-grow">
-                    <div class="absolute -top-8 bg-primary text-white text-[9px] px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">
-                        {{ day.count }}
+            {% if weekly_trend %}
+                {% for day in weekly_trend %}
+                <div class="flex-grow flex flex-col items-center gap-3 group h-full">
+                    <div class="relative w-full flex flex-col justify-end items-center flex-grow">
+                        <div
+                            class="absolute -top-8 bg-primary text-white text-[9px] px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">
+                            {{ day.count }}
+                        </div>
+                        <div
+                            class="w-full bg-surface-container-low dark:bg-slate-800 rounded-lg overflow-hidden h-full flex flex-col justify-end">
+                            <div class="bg-secondary-container rounded-t-lg transition-all duration-1000 ease-out group-hover:bg-secondary"
+                                style="--h: {{ day.pct }}%; height: var(--h);"></div>
+                        </div>
                     </div>
-                    <div class="w-full bg-surface-container-low dark:bg-slate-800 rounded-lg overflow-hidden h-full flex flex-col justify-end">
-                        <div class="bg-secondary-container rounded-t-lg transition-all duration-1000 ease-out group-hover:bg-secondary" 
-                             style="--h: {{ day.pct }}%; height: var(--h);"></div>
+                    <div class="text-[9px] font-black text-outline dark:text-slate-500 uppercase tracking-tighter">{{ day.day }}</div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="flex-grow flex flex-col items-center gap-3 group h-full w-full">
+                    <div class="flex flex-col items-center justify-center h-full text-center opacity-50">
+                        <span class="material-symbols-outlined text-2xl mb-1">group</span>
+                        <span class="text-[8px]">لا توجد بيانات</span>
                     </div>
                 </div>
-                <div class="text-[9px] font-black text-outline dark:text-slate-500 uppercase tracking-tighter">{{ day.day }}</div>
-            </div>
-            {% endfor %}
+            {% endif %}
         </div>
     </div>
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10 animate-fade-in-up" style="animation-delay: 0.2s;">
     <!-- Recent Alerts Table -->
-    <div class="lg:col-span-2 bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-surface-container dark:border-slate-800 overflow-hidden">
-        <div class="p-6 border-b border-surface-container dark:border-slate-800 flex justify-between items-center flex-row-reverse">
-            <h2 class="text-xl font-black text-primary dark:text-white font-headline flex items-center gap-2 flex-row-reverse">
+    <div
+        class="lg:col-span-2 bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-surface-container dark:border-slate-800 overflow-hidden">
+        <div
+            class="p-6 border-b border-surface-container dark:border-slate-800 flex justify-between items-center flex-row-reverse">
+            <h2
+                class="text-xl font-black text-primary dark:text-white font-headline flex items-center gap-2 flex-row-reverse">
                 <span class="material-symbols-outlined text-amber-500">warning</span>
                 تنبيهات النظام الأخيرة
             </h2>
-            <div class="text-[10px] font-black bg-surface-container dark:bg-slate-800 text-outline dark:text-slate-400 px-3 py-1 rounded-full uppercase tracking-widest">آخر 30 يوم</div>
+            <div
+                class="text-[10px] font-black bg-surface-container dark:bg-slate-800 text-outline dark:text-slate-400 px-3 py-1 rounded-full uppercase tracking-widest">
+                آخر 30 يوم</div>
         </div>
-        
+
         <div class="overflow-x-auto">
             <table class="w-full text-right border-collapse">
                 <thead>
@@ -163,33 +201,37 @@
                         </td>
                     </tr>
                     {% else %}
-                        {% for anomaly in anomalies %}
-                        <tr class="hover:bg-surface-container-lowest dark:hover:bg-slate-800/30 transition-colors">
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-3 flex-row-reverse">
-                                    <div class="w-10 h-10 rounded-full bg-primary-container/20 dark:bg-slate-800 text-primary dark:text-white flex items-center justify-center font-black text-xs border border-white dark:border-slate-700 shadow-sm">
-                                        {{ anomaly.name|slice:":1"|upper }}
-                                    </div>
-                                    <div>
-                                        <div class="font-black text-primary dark:text-white text-sm">{{ anomaly.name }}</div>
-                                        <div class="text-[10px] text-outline font-bold">موظف مسجل</div>
-                                    </div>
+                    {% for anomaly in anomalies %}
+                    <tr class="hover:bg-surface-container-lowest dark:hover:bg-slate-800/30 transition-colors">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3 flex-row-reverse">
+                                <div
+                                    class="w-10 h-10 rounded-full bg-primary-container/20 dark:bg-slate-800 text-primary dark:text-white flex items-center justify-center font-black text-xs border border-white dark:border-slate-700 shadow-sm">
+                                    {{ anomaly.name|slice:":1"|upper }}
                                 </div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <span class="inline-flex items-center gap-1.5 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider">
-                                    <span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span>
-                                    متأخر {{ anomaly.recent_late_count }} مرات
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 text-center">
-                                <a href="{% url 'Attendance:records' anomaly.id %}" class="inline-flex items-center gap-1 text-xs font-black text-secondary hover:underline">
-                                    <span>عرض التفاصيل</span>
-                                    <span class="material-symbols-outlined text-[16px]">chevron_left</span>
-                                </a>
-                            </td>
-                        </tr>
-                        {% endfor %}
+                                <div>
+                                    <div class="font-black text-primary dark:text-white text-sm">{{ anomaly.name }}
+                                    </div>
+                                    <div class="text-[10px] text-outline font-bold">موظف مسجل</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span
+                                class="inline-flex items-center gap-1.5 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider">
+                                <span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span>
+                                متأخر {{ anomaly.recent_late_count }} مرات
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-center">
+                            <a href="{% url 'Attendance:records' anomaly.id %}"
+                                class="inline-flex items-center gap-1 text-xs font-black text-secondary hover:underline">
+                                <span>عرض التفاصيل</span>
+                                <span class="material-symbols-outlined text-[16px]">chevron_left</span>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
                     {% endif %}
                 </tbody>
             </table>
@@ -199,50 +241,73 @@
     <!-- Discipline Widget -->
     <div class="flex flex-col gap-6">
         <!-- Discipline Rate Card -->
-        <div class="bg-primary dark:bg-black rounded-3xl p-8 text-center text-white relative overflow-hidden shadow-2xl">
+        <div
+            class="bg-primary dark:bg-black rounded-3xl p-8 text-center text-white relative overflow-hidden shadow-2xl">
             <div class="relative z-10">
-                <h3 class="text-sm font-black mb-8 opacity-80 uppercase tracking-widest font-headline">معدل الانضباط العام</h3>
+                <h3 class="text-sm font-black mb-8 opacity-80 uppercase tracking-widest font-headline">معدل الانضباط
+                    العام</h3>
                 <div class="relative w-44 h-44 mx-auto flex items-center justify-center">
                     <svg class="w-full h-full transform -rotate-90">
-                        <circle cx="88" cy="88" r="78" fill="transparent" stroke="rgba(255,255,255,0.05)" stroke-width="12"></circle>
-                        <circle id="discipline-circle" cx="88" cy="88" r="78" fill="transparent" stroke="#fcd400" stroke-width="12" 
-                                stroke-dasharray="490" stroke-dashoffset="490" stroke-linecap="round" class="transition-all duration-1000 ease-out"></circle>
+                        <circle cx="88" cy="88" r="78" fill="transparent" stroke="rgba(255,255,255,0.05)"
+                            stroke-width="12"></circle>
+                        <circle id="discipline-circle" cx="88" cy="88" r="78" fill="transparent" stroke="#fcd400"
+                            stroke-width="12" stroke-dasharray="490" stroke-dashoffset="490" stroke-linecap="round"
+                            class="transition-all duration-1000 ease-out"></circle>
                     </svg>
                     <div class="absolute flex flex-col items-center">
                         <span id="discipline-rate" class="text-5xl font-black">0%</span>
                         <span class="text-[10px] font-bold opacity-50 uppercase tracking-widest mt-1">لهذا اليوم</span>
                     </div>
                 </div>
-                <p class="mt-8 text-xs opacity-60 leading-relaxed font-body">يتم احتساب المعدل بناءً على حضور الموظفين مقارنة بالعدد الكلي المستهدف.</p>
+                <p class="mt-8 text-xs opacity-60 leading-relaxed font-body">يتم احتساب المعدل بناءً على حضور الموظفين
+                    مقارنة بالعدد الكلي المستهدف.</p>
             </div>
             <!-- Decorative circle -->
             <div class="absolute -bottom-12 -right-12 w-48 h-48 bg-secondary-container/5 rounded-full blur-3xl"></div>
         </div>
 
         <!-- Quick Actions Card -->
-        <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border border-surface-container dark:border-slate-800">
-            <h3 class="text-xs font-black text-outline dark:text-slate-500 uppercase tracking-widest mb-6 text-right font-headline">إجراءات سريعة</h3>
+        <div
+            class="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border border-surface-container dark:border-slate-800">
+            <h3
+                class="text-xs font-black text-outline dark:text-slate-500 uppercase tracking-widest mb-6 text-right font-headline">
+                إجراءات سريعة</h3>
             <div class="grid grid-cols-1 gap-3">
-                <a href="{% url 'Attendance:add' %}" class="flex flex-row-reverse items-center justify-between p-4 bg-surface-container-low dark:bg-slate-800/50 rounded-2xl hover:bg-primary-container hover:text-secondary-container transition-all group">
+                <a href="{% url 'Attendance:add' %}"
+                    class="flex flex-row-reverse items-center justify-between p-4 bg-surface-container-low dark:bg-slate-800/50 rounded-2xl hover:bg-primary-container hover:text-secondary-container transition-all group">
                     <div class="flex items-center gap-3 flex-row-reverse">
-                        <span class="material-symbols-outlined text-primary dark:text-white group-hover:text-secondary-container">person_add</span>
-                        <span class="text-sm font-black text-primary dark:text-white group-hover:text-secondary-container">إضافة موظف جديد</span>
+                        <span
+                            class="material-symbols-outlined text-primary dark:text-white group-hover:text-secondary-container">person_add</span>
+                        <span
+                            class="text-sm font-black text-primary dark:text-white group-hover:text-secondary-container">إضافة
+                            موظف جديد</span>
                     </div>
-                    <span class="material-symbols-outlined text-[16px] text-outline group-hover:text-secondary-container">chevron_left</span>
+                    <span
+                        class="material-symbols-outlined text-[16px] text-outline group-hover:text-secondary-container">chevron_left</span>
                 </a>
-                <a href="{% url 'Attendance:add_vacation' %}" class="flex flex-row-reverse items-center justify-between p-4 bg-surface-container-low dark:bg-slate-800/50 rounded-2xl hover:bg-primary-container hover:text-secondary-container transition-all group">
+                <a href="{% url 'Attendance:add_vacation' %}"
+                    class="flex flex-row-reverse items-center justify-between p-4 bg-surface-container-low dark:bg-slate-800/50 rounded-2xl hover:bg-primary-container hover:text-secondary-container transition-all group">
                     <div class="flex items-center gap-3 flex-row-reverse">
-                        <span class="material-symbols-outlined text-primary dark:text-white group-hover:text-secondary-container">event_available</span>
-                        <span class="text-sm font-black text-primary dark:text-white group-hover:text-secondary-container">تسجيل إجازة</span>
+                        <span
+                            class="material-symbols-outlined text-primary dark:text-white group-hover:text-secondary-container">event_available</span>
+                        <span
+                            class="text-sm font-black text-primary dark:text-white group-hover:text-secondary-container">تسجيل
+                            إجازة</span>
                     </div>
-                    <span class="material-symbols-outlined text-[16px] text-outline group-hover:text-secondary-container">chevron_left</span>
+                    <span
+                        class="material-symbols-outlined text-[16px] text-outline group-hover:text-secondary-container">chevron_left</span>
                 </a>
-                <a href="{% url 'Attendance:add_exception' %}" class="flex flex-row-reverse items-center justify-between p-4 bg-surface-container-low dark:bg-slate-800/50 rounded-2xl hover:bg-primary-container hover:text-secondary-container transition-all group">
+                <a href="{% url 'Attendance:add_exception' %}"
+                    class="flex flex-row-reverse items-center justify-between p-4 bg-surface-container-low dark:bg-slate-800/50 rounded-2xl hover:bg-primary-container hover:text-secondary-container transition-all group">
                     <div class="flex items-center gap-3 flex-row-reverse">
-                        <span class="material-symbols-outlined text-primary dark:text-white group-hover:text-secondary-container">more_time</span>
-                        <span class="text-sm font-black text-primary dark:text-white group-hover:text-secondary-container">إذن حضور</span>
+                        <span
+                            class="material-symbols-outlined text-primary dark:text-white group-hover:text-secondary-container">more_time</span>
+                        <span
+                            class="text-sm font-black text-primary dark:text-white group-hover:text-secondary-container">إذن
+                            حضور</span>
                     </div>
-                    <span class="material-symbols-outlined text-[16px] text-outline group-hover:text-secondary-container">chevron_left</span>
+                    <span
+                        class="material-symbols-outlined text-[16px] text-outline group-hover:text-secondary-container">chevron_left</span>
                 </a>
             </div>
         </div>
@@ -250,148 +315,88 @@
 </div>
 
 <!-- Raw data for JS -->
-<div id="stats-data" 
-    data-present="{{ count_presents|default:0 }}" 
-    data-total="{{ count_employees|default:0 }}"
+<div id="stats-data" data-present="{{ count_presents|default:0 }}" data-total="{{ count_employees|default:0 }}"
     style="display:none;"></div>
 
 {% endblock %}
 
 {% block scripts %}
 <script>
-    (function() {
-        if (typeof Chart !== 'undefined') {
-            initDashboard();
-            return;
-        }
-        var script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js';
-        script.crossOrigin = 'anonymous';
-        script.onload = function() { initDashboard(); };
-        script.onerror = function() {
-            var fallback = document.createElement('script');
-            fallback.src = 'https://unpkg.com/chart.js@4.4.1/dist/chart.umd.js';
-            fallback.onload = function() { initDashboard(); };
-            fallback.onerror = function() {
-                var el = document.getElementById('performanceChart');
-                if (el) el.parentElement.innerHTML = '<div class="flex items-center justify-center h-full text-red-500 text-sm">تعذر تحميل مكتبة الرسوم البيانية</div>';
-            };
-            document.head.appendChild(fallback);
-        };
-        document.head.appendChild(script);
-    })();
+    document.addEventListener('DOMContentLoaded', function () {
+        initSyncButton();
+        initDashboard();
+    });
 
-    function initDashboard() {
-        // Performance Chart
-        try {
-            const perfCanvas = document.getElementById('performanceChart');
-            if (perfCanvas && typeof Chart !== 'undefined') {
-                const labels = JSON.parse(perfCanvas.getAttribute('data-labels'));
-                const hours = JSON.parse(perfCanvas.getAttribute('data-hours'));
-                const lates = JSON.parse(perfCanvas.getAttribute('data-lates'));
+    function initSyncButton() {
+        var syncBtn = document.getElementById("sync-btn");
+        if (syncBtn) {
+            syncBtn.addEventListener("click", function () {
+                var icon = this.querySelector('.material-symbols-outlined');
+                var label = this.querySelector('span:not(.material-symbols-outlined)');
+                if (icon) icon.classList.add('animate-spin');
+                if (label) label.textContent = 'جاري المزامنة...';
+                this.classList.add('opacity-80', 'cursor-not-allowed');
+                this.disabled = true;
 
-                const isDark = document.documentElement.classList.contains('dark');
-                const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
-                const textColor = isDark ? '#94a3b8' : '#64748b';
-
-                new Chart(perfCanvas, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [
-                            {
-                                label: 'ساعات العمل',
-                                data: hours,
-                                backgroundColor: isDark ? 'rgba(252, 212, 0, 0.8)' : 'rgba(24, 21, 52, 0.8)',
-                                borderRadius: 6,
-                                barPercentage: 0.6,
-                                categoryPercentage: 0.8,
-                                yAxisID: 'y'
-                            },
-                            {
-                                label: 'أيام التأخير',
-                                data: lates,
-                                type: 'line',
-                                borderColor: '#ff4d4d',
-                                borderWidth: 2,
-                                pointBackgroundColor: '#ff4d4d',
-                                pointRadius: 3,
-                                tension: 0.4,
-                                yAxisID: 'y1'
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { 
-                                position: 'top', 
-                                rtl: true, 
-                                labels: { 
-                                    color: textColor,
-                                    font: { family: 'Tajawal', size: 11, weight: 'bold' },
-                                    usePointStyle: true,
-                                    padding: 15
-                                } 
-                            },
-                            tooltip: {
-                                rtl: true,
-                                backgroundColor: isDark ? '#1e293b' : '#ffffff',
-                                titleColor: isDark ? '#ffffff' : '#1e293b',
-                                bodyColor: isDark ? '#cbd5e1' : '#475569',
-                                borderColor: gridColor,
-                                borderWidth: 1,
-                                padding: 12,
-                                cornerRadius: 8
-                            }
-                        },
-                        scales: {
-                            x: { 
-                                grid: { display: false }, 
-                                ticks: { color: textColor, font: { size: 10, weight: 'bold' } } 
-                            },
-                            y: { 
-                                beginAtZero: true, 
-                                grid: { color: gridColor }, 
-                                ticks: { color: textColor, font: { size: 10 } },
-                                title: { display: true, text: 'ساعات العمل', color: textColor, font: { size: 10, weight: 'bold' } }
-                            },
-                            y1: { 
-                                position: 'right', 
-                                beginAtZero: true, 
-                                grid: { display: false }, 
-                                ticks: { color: '#ff4d4d', font: { size: 10 } },
-                                title: { display: true, text: 'التأخيرات', color: '#ff4d4d', font: { size: 10, weight: 'bold' } }
-                            }
+                fetch("{% url 'Attendance:sync_devices' %}")
+                    .then(function (response) { return response.json(); })
+                    .then(function (data) {
+                        if (data.results && data.results.length > 0) {
+                            var msg = '';
+                            data.results.forEach(function (r) {
+                                if (r.status === 'success') {
+                                    msg += '✅ ' + r.device + ' (' + r.ip + '): ' + r.message + '\n';
+                                } else {
+                                    msg += '❌ ' + r.device + ' (' + r.ip + '): ' + r.message + '\n';
+                                }
+                            });
+                            alert(msg);
+                        } else {
+                            alert(data.message || 'اكتملت المزامنة');
                         }
-                    }
-                });
-            } else if (perfCanvas) {
-                perfCanvas.parentElement.innerHTML = '<div class="flex items-center justify-center h-full text-outline text-xs">Chart.js library missing. Sync button will still work.</div>';
-            }
-        } catch (chartError) {
-            console.error("Chart initialization failed:", chartError);
+                        location.reload();
+                    })
+                    .catch(function (err) {
+                        alert("حدث خطأ أثناء المزامنة: " + err);
+                        location.reload();
+                    });
+            });
+        }
+    }
+
+function initDashboard() {
+    // Simple placeholder since Chart.js unavailable
+    var perfCanvas = document.getElementById("performanceChart");
+    if (perfCanvas) {
+        perfCanvas.parentElement.innerHTML = '<div class="flex items-center justify-center h-full text-outline text-xs p-4 text-center">\n\
+            <div>\n\
+                <span class="material-symbols-outlined text-4xl mb-2 opacity-50">bar_chart</span>\n\
+                <p>بيان الأداء الشهرى</p>\n\
+                <p class="text-[10px] opacity-60 mt-2">سيتم عرض البيانات تلقائيا عند توفر المكتبة</p>\n\
+            </div>\n\
+        </div>';
+    }
+
+    // Live Date Time
+        var clockEl = document.getElementById('liveDateTime');
+        if (clockEl) {
+            var updateClock = function () {
+                var now = new Date();
+                var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+                clockEl.textContent = now.toLocaleDateString('ar-LY', options);
+            };
+            setInterval(updateClock, 60000);
+            updateClock();
         }
 
-        // Live Date Time Control
-        function updateClock() {
-            const now = new Date();
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-            const clockEl = document.getElementById('liveDateTime');
-            if (clockEl) clockEl.textContent = now.toLocaleDateString('ar-LY', options);
-        }
-        setInterval(updateClock, 60000);
-        updateClock();
+        // Counters
+        var counters = document.querySelectorAll('.counter');
+        counters.forEach(function (counter) {
+            var target = +counter.getAttribute('data-target');
+            var inc = target / 100;
+            var current = 0;
 
-        // Animated Counters
-        const counters = document.querySelectorAll('.counter');
-        counters.forEach(counter => {
-            const target = +counter.getAttribute('data-target');
-            const inc = target / 100;
-            let current = 0;
-            
-            const update = () => {
+            var update = function () {
                 if (current < target) {
                     current += inc;
                     counter.innerText = Math.ceil(current);
@@ -403,20 +408,19 @@
             update();
         });
 
-        // Discipline Rate Calculation & Animation
-        const statsEl = document.getElementById('stats-data');
+        // Discipline Rate
+        var statsEl = document.getElementById('stats-data');
         if (statsEl) {
-            const present = +statsEl.getAttribute('data-present');
-            const total = +statsEl.getAttribute('data-total');
-            const rate = total > 0 ? Math.round((present / total) * 100) : 0;
-            
-            const rateEl = document.getElementById('discipline-rate');
-            const circle = document.getElementById('discipline-circle');
-            
+            var present = +statsEl.getAttribute('data-present');
+            var total = +statsEl.getAttribute('data-total');
+            var rate = total > 0 ? Math.round((present / total) * 100) : 0;
+
+            var rateEl = document.getElementById('discipline-rate');
+            var circle = document.getElementById('discipline-circle');
+
             if (rateEl && circle) {
-                // Number Counter
-                let currentRate = 0;
-                const rateInt = setInterval(() => {
+                var currentRate = 0;
+                var rateInt = setInterval(function () {
                     if (currentRate < rate) {
                         currentRate++;
                         rateEl.innerText = currentRate + '%';
@@ -425,59 +429,26 @@
                     }
                 }, 20);
 
-                // Circle Animation
-                const circumference = 490;
-                const offset = circumference - (rate / 100) * circumference;
-                setTimeout(() => {
+                var circumference = 490;
+                var offset = circumference - (rate / 100) * circumference;
+                setTimeout(function () {
                     circle.style.strokeDashoffset = offset;
                 }, 300);
             }
         }
-
-        // Sync Button Logic
-        const syncBtn = document.getElementById("sync-btn");
-        if (syncBtn) {
-            syncBtn.addEventListener("click", function () {
-                const icon = this.querySelector('.material-symbols-outlined');
-                const label = this.querySelector('span:not(.material-symbols-outlined)');
-                icon.classList.add('animate-spin');
-                if (label) label.innerText = 'جاري المزامنة...';
-                this.classList.add('opacity-80', 'cursor-not-allowed');
-                this.disabled = true;
-
-                fetch("{% url 'Attendance:sync_devices' %}")
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.results && data.results.length > 0) {
-                            let msg = '';
-                            data.results.forEach(r => {
-                                if (r.status === 'success') {
-                                    msg += `✅ ${r.device} (${r.ip}): ${r.message}\n`;
-                                } else {
-                                    msg += `❌ ${r.device} (${r.ip}): ${r.message}\n`;
-                                }
-                            });
-                            alert(msg);
-                        } else {
-                            alert(data.message || 'اكتملت المزامنة');
-                        }
-                        location.reload();
-                    })
-                    .catch(err => {
-                        alert("حدث خطأ أثناء المزامنة: " + err);
-                        location.reload();
-                    });
-            });
-        }
-
-        initDashboard();
-    })();
+    }
 </script>
 <style>
     @keyframes spin {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
+        from {
+            transform: rotate(0deg);
+        }
+
+        to {
+            transform: rotate(360deg);
+        }
     }
+
     .animate-spin {
         animation: spin 1s linear infinite;
     }

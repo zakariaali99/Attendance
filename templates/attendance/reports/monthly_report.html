@@ -12,6 +12,26 @@
     <span class="text-primary dark:text-white">تقرير المتابعة الشهري</span>
   </nav>
 
+  <!-- Report Type Links -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 animate-fade-in-up">
+    <a href="{% url 'Attendance:report' %}" class="bg-primary dark:bg-white text-white dark:text-primary p-6 rounded-3xl text-center shadow-lg hover:scale-[1.02] transition-all">
+        <span class="material-symbols-outlined text-3xl mb-2">analytics</span>
+        <div class="font-black text-sm">تقرير الحضور</div>
+    </a>
+    <a href="{% url 'Attendance:monthly_register' %}" class="bg-secondary-container dark:bg-slate-800 text-on-secondary-container dark:text-white p-6 rounded-3xl text-center shadow-lg hover:scale-[1.02] transition-all">
+        <span class="material-symbols-outlined text-3xl mb-2">calendar_view_month</span>
+        <div class="font-black text-sm">سجل الشهر</div>
+    </a>
+    <a href="{% url 'Attendance:list' %}" class="bg-green-600 text-white p-6 rounded-3xl text-center shadow-lg hover:scale-[1.02] transition-all">
+        <span class="material-symbols-outlined text-3xl mb-2">group</span>
+        <div class="font-black text-sm">الموظفين</div>
+    </a>
+    <a href="{% url 'Attendance:vacation' %}" class="bg-red-500 text-white p-6 rounded-3xl text-center shadow-lg hover:scale-[1.02] transition-all">
+        <span class="material-symbols-outlined text-3xl mb-2">event_busy</span>
+        <div class="font-black text-sm">الإجازات</div>
+    </a>
+  </div>
+
   <!-- Header Section -->
   <header class="flex flex-col md:flex-row-reverse justify-between items-center gap-6 mb-10 animate-fade-in-up">
     <div class="text-right">
@@ -28,10 +48,10 @@
             <span>تصدير التقرير الكامل (Excel)</span>
         </a>
     </div>
-</header>
+  </header>
 
-<!-- Filter Section -->
-<div class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-surface-container dark:border-slate-800 p-6 mb-10 animate-fade-in-up" style="animation-delay: 0.1s;">
+  <!-- Filter Section -->
+  <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-surface-container dark:border-slate-800 p-6 mb-10 animate-fade-in-up" style="animation-delay: 0.1s;">
     <form method="get" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
         <div class="space-y-2">
             <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">من تاريخ</label>
@@ -52,16 +72,48 @@
             </button>
         </div>
     </form>
-</div>
+  </div>
 
-<!-- Analytics Visualization -->
-<div class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-surface-container dark:border-slate-800 p-8 mb-10 animate-fade-in-up" style="animation-delay: 0.2s;">
+  <!-- Quick Stats Cards -->
+  {% with total_hours=object_list|length|add:0 %}
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10 animate-fade-in-up" style="animation-delay: 0.15s;">
+    <div class="bg-primary dark:bg-white rounded-3xl p-6 text-center shadow-lg">
+        <span class="material-symbols-outlined text-4xl text-white dark:text-primary mb-2">group</span>
+        <div class="text-3xl font-black text-white dark:text-primary">{{ object_list|length }}</div>
+        <div class="text-xs font-bold text-white/70 dark:text-slate-500 uppercase">إجمالي الموظفين</div>
+    </div>
+    <div class="bg-green-500 rounded-3xl p-6 text-center shadow-lg">
+        <span class="material-symbols-outlined text-4xl text-white mb-2">schedule</span>
+        <div class="text-3xl font-black text-white">
+            {% with total=0 %}{% for emp in object_list %}{% with total=total|add:emp.count_hours|default:0 %}{% endfor %}{{ total|floatformat:0 }}{% endwith %}{% endwith %}
+        </div>
+        <div class="text-xs font-bold text-white/70 uppercase">ساعات العمل</div>
+    </div>
+    <div class="bg-red-500 rounded-3xl p-6 text-center shadow-lg">
+        <span class="material-symbols-outlined text-4xl text-white mb-2">warning</span>
+        <div class="text-3xl font-black text-white">
+            {% with total=0 %}{% for emp in object_list %}{% with total=total|add:emp.late_days_count|default:0 %}{% endfor %}{{ total|floatformat:0 }}{% endwith %}{% endwith %}
+        </div>
+        <div class="text-xs font-bold text-white/70 uppercase">تأخيرات</div>
+    </div>
+    <div class="bg-blue-500 rounded-3xl p-6 text-center shadow-lg">
+        <span class="material-symbols-outlined text-4xl text-white mb-2">event_busy</span>
+        <div class="text-3xl font-black text-white">
+            {% with total=0 %}{% for emp in object_list %}{% with total=total|add:emp.vacations_count|default:0 %}{% endfor %}{{ total }}{% endwith %}{% endwith %}
+        </div>
+        <div class="text-xs font-bold text-white/70 uppercase">إجازات</div>
+    </div>
+  </div>
+  {% endwith %}
+
+  <!-- Analytics Visualization -->
+  <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-surface-container dark:border-slate-800 p-8 mb-10 animate-fade-in-up" style="animation-delay: 0.2s;">
     <div class="flex items-center gap-3 flex-row-reverse mb-8">
         <span class="material-symbols-outlined text-secondary">monitoring</span>
         <h2 class="text-sm font-black text-primary dark:text-white uppercase tracking-widest font-headline">مخطط الأداء المقارن</h2>
     </div>
     <div class="h-[400px] w-full">
-        <canvas id="attendanceChart" 
+        <canvas id="attendanceChart"
             data-labels='[{% for emp in object_list %}"{{ emp.name|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}]'
             data-hours='[{% for emp in object_list %}{{ emp.count_hours|default:0 }}{% if not forloop.last %},{% endif %}{% endfor %}]'
             data-lates='[{% for emp in object_list %}{{ emp.late_days_count|default:0 }}{% if not forloop.last %},{% endif %}{% endfor %}]'>
@@ -152,6 +204,8 @@
         </table>
     </div>
 </div>
+
+{% endblock %}
 
 {% block scripts %}
 <script>
@@ -270,6 +324,4 @@
 
     initChart();
 </script>
-{% endblock %}
-
 {% endblock %}

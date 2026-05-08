@@ -337,9 +337,23 @@ class Shift:
 
     @property
     def early(self):
-        # m=(self.profile.end_time.replace(tzinfo=None) - self.end.replace(tzinfo=None)).seconds
-        # if m < 0:
-        return 0
+        if self.start is None or self.end is None or self.profile is None:
+            return 0
+        if self.profile.calculate_end_time is None:
+            return 0
+        
+        # Get naive end time from profile
+        p_end = self.profile.calculate_end_time
+        p_end_naive = p_end.replace(tzinfo=None) if hasattr(p_end, 'replace') else p_end
+        
+        # Combine with the date of the record
+        # Note: if it's a next-day shift, self.end should already be on the next day
+        calc_end = datetime.datetime.combine(self.end.date(), p_end_naive)
+        
+        if self._naive(self.end) >= calc_end:
+            return 0
+            
+        return (calc_end - self._naive(self.end)).seconds
 
     # return m
 
@@ -435,6 +449,7 @@ class WorkDay(models.Model):
 
     # Cached totals for performance
     late_seconds = models.IntegerField(default=0)
+    early_exit_seconds = models.IntegerField(default=0)
     work_hours = models.FloatField(default=0)
     overwork_hours = models.FloatField(default=0)
     out_return_hours = models.FloatField(default=0)
@@ -446,11 +461,12 @@ class WorkDay(models.Model):
 
     def update_totals(self, save=True):
         self.late_seconds = sum([s.late for s in self.shifts()])
+        self.early_exit_seconds = sum([s.early for s in self.shifts()])
         self.work_hours = self.calculate("work")
         self.overwork_hours = self.calculate("overwork")
         self.out_return_hours = self.calculate("out")
         if save:
-            self.save(update_fields=['late_seconds', 'work_hours', 'overwork_hours', 'out_return_hours'])
+            self.save(update_fields=['late_seconds', 'early_exit_seconds', 'work_hours', 'overwork_hours', 'out_return_hours'])
 
     def setdate(self, t):
         self.date = t
@@ -486,6 +502,16 @@ class WorkDay(models.Model):
     @property
     def late_min(self):
         return self.late / 60
+
+    @property
+    def early_exit(self):
+        if self.early_exit_seconds > 0:
+            return self.early_exit_seconds
+        return sum([s.early for s in self.shifts()])
+
+    @property
+    def early_exit_min(self):
+        return self.early_exit / 60
 
     @property
     def work_day_exceptions(self):
