@@ -10,7 +10,7 @@ from django.core.cache import cache
 import xlsxwriter
 from django.conf import settings
 from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
-from django.db.models import Q, Count, Sum
+from django.db.models import Q, Count, Sum, Avg
 from django.http import HttpResponse, HttpResponseNotAllowed, JsonResponse
 from django.template.response import TemplateResponse
 from django.shortcuts import render, redirect
@@ -161,11 +161,13 @@ def employee_day_rows(employee, from_date, to_date):
         work_hours = 0
         overwork_hours = 0
         out_hours = 0
+        early_exit_minutes = 0
         if workday is not None:
             late_minutes = round(workday.late / 60)
             work_hours = workday.work
             overwork_hours = workday.overwork
             out_hours = workday.out_return_time
+            early_exit_minutes = round(workday.early_exit / 60)
 
         status_code = "absent"
         status_label = "غياب"
@@ -222,6 +224,7 @@ def employee_day_rows(employee, from_date, to_date):
             "overwork": overwork_hours,
             "out_return_time": out_hours,
             "late_minutes": late_minutes,
+            "early_exit_minutes": early_exit_minutes,
         })
     return rows
 
@@ -229,6 +232,7 @@ def employee_day_rows(employee, from_date, to_date):
 def summarize_day_rows(day_rows):
     attended_statuses = {"present", "late", "excused_late", "out"}
     late_statuses = {"late", "excused_late"}
+    early_exit_statuses = {"present", "late", "excused_late", "out"}  # Early exit can occur during any workday
     return {
         "present_days": sum(1 for row in day_rows if row["status_code"] in attended_statuses),
         "late_days": sum(1 for row in day_rows if row["status_code"] in late_statuses),
@@ -237,8 +241,10 @@ def summarize_day_rows(day_rows):
         "holiday_days": sum(1 for row in day_rows if row["status_code"] in {"holiday", "weekend"}),
         "exception_days": sum(1 for row in day_rows if row["status_code"] in {"exception", "excused_late"}),
         "out_days": sum(1 for row in day_rows if row["status_code"] == "out"),
+        "early_exit_days": sum(1 for row in day_rows if row["early_exit_minutes"] > 0),
         "total_work_hours": round(sum(row["work"] for row in day_rows), 2),
         "total_overwork_hours": round(sum(row["overwork"] for row in day_rows), 2),
+        "total_early_exit_minutes": round(sum(row["early_exit_minutes"] for row in day_rows)),
     }
 
 
@@ -690,6 +696,7 @@ class ExportReportView(PermissionRequiredMixin, View):
         worksheet.write(0, 4, "ايام التآخير")
         worksheet.write(0, 5, "ايام المناوبة")
         worksheet.write(0, 6, "الاجازات")
+        worksheet.write(0, 7, "دقائق الخروج المبكر")
         for row_num, row in enumerate(em):
             req_days = required_days(from_date, to_date, profile=row.default_profile)
             worksheet.write(row_num + 1, 0, row.name)
@@ -699,6 +706,7 @@ class ExportReportView(PermissionRequiredMixin, View):
             worksheet.write(row_num + 1, 4, row.late_days_count)
             worksheet.write(row_num + 1, 5, row.holidays_count)
             worksheet.write(row_num + 1, 6, row.vacations_count)
+            worksheet.write(row_num + 1, 7, row.early_exit_min)
 
         workbook.close()
 
@@ -750,7 +758,8 @@ class ExportEmployeeReportView(PermissionRequiredMixin, DetailView):
         worksheet.write(0, 3, "العمل الإضافي")
         worksheet.write(0, 4, "الخروج والعودة")
         worksheet.write(0, 5, "دقائق التأخير")
-        worksheet.write(0, 6, "ملاحظات")
+        worksheet.write(0, 6, "دقائق الخروج المبكر")
+        worksheet.write(0, 7, "ملاحظات")
         day_rows = employee_day_rows(employee, from_date, to_date)
         for row_num, row in enumerate(day_rows):
             worksheet.write(row_num + 1, 0, row["date"].strftime("%Y-%m-%d"))
@@ -759,7 +768,8 @@ class ExportEmployeeReportView(PermissionRequiredMixin, DetailView):
             worksheet.write(row_num + 1, 3, row["overwork"])
             worksheet.write(row_num + 1, 4, row["out_return_time"])
             worksheet.write(row_num + 1, 5, row["late_minutes"])
-            worksheet.write(row_num + 1, 6, row["note"])
+            worksheet.write(row_num + 1, 6, row["early_exit_minutes"])
+            worksheet.write(row_num + 1, 7, row["note"])
 
         workbook.close()
 
@@ -1157,7 +1167,8 @@ class DashboardView(TemplateView):
 
         recent_date_limit = today - datetime.timedelta(days=30)
 
-        anomalies = Employee.objects.filter(
+        # Late anomalies
+        late_anomalies = Employee.objects.filter(
             active=True,
             workday__date__gte=recent_date_limit,
             workday__late_seconds__gt=0
@@ -1167,18 +1178,41 @@ class DashboardView(TemplateView):
             recent_late_count__gt=3
         ).values('id', 'name', 'recent_late_count').order_by('-recent_late_count')[:5]
 
-        context['anomalies'] = anomalies
+        # Early exit anomalies
+        early_exit_anomalies = Employee.objects.filter(
+            active=True,
+            workday__date__gte=recent_date_limit,
+            workday__early_exit_seconds__gt=0
+        ).annotate(
+            recent_early_exit_count=Count('workday', distinct=True)
+        ).filter(
+            recent_early_exit_count__gt=3
+        ).values('id', 'name', 'recent_early_exit_count').order_by('-recent_early_exit_count')[:5]
 
+        context['late_anomalies'] = late_anomalies
+        context['early_exit_anomalies'] = early_exit_anomalies
+
+        # Enhanced weekly trend with work hours and early exit data
         weekly_trend = []
         for i in range(6, -1, -1):
             day = today - datetime.timedelta(days=i)
             presents = WorkDay.objects.filter(date=day).values('employee').distinct().count()
             pct = (presents / total_emp_count * 100) if total_emp_count > 0 else 0
+            
+            # Average work hours for present employees
+            work_days = WorkDay.objects.filter(date=day)
+            avg_work_hours = work_days.aggregate(avg_work=Avg('work_hours'))['avg_work'] or 0
+            
+            # Early exit count for the day
+            early_exit_count = work_days.filter(early_exit_seconds__gt=0).count()
+            
             weekly_trend.append({
                 'day': day.strftime('%a'),
                 'date': day.strftime('%Y-%m-%d'),
                 'count': presents,
-                'pct': pct
+                'pct': round(pct, 1),
+                'avg_work_hours': round(avg_work_hours, 1),
+                'early_exit_count': early_exit_count
             })
         context['weekly_trend'] = weekly_trend
 
@@ -1188,6 +1222,7 @@ class DashboardView(TemplateView):
         perf_labels = []
         perf_hours = []
         perf_lates = []
+        perf_early_exit = []  # New series for early exit
         for emp in top_emps:
             emp.set_workdays(WorkDay.objects.filter(
                 employee=emp, date__gte=month_start, date__lte=today
@@ -1195,10 +1230,17 @@ class DashboardView(TemplateView):
             perf_labels.append(emp.name or emp.attendance_id)
             perf_hours.append(float(emp.count_hours))
             perf_lates.append(int(emp.late_days_count))
+            perf_early_exit.append(int(emp.early_exit_min))  # Use the property we added
 
         context['perf_labels'] = json.dumps(perf_labels)
         context['perf_hours'] = json.dumps(perf_hours)
         context['perf_lates'] = json.dumps(perf_lates)
+        context['perf_early_exit'] = json.dumps(perf_early_exit)
+
+        # Today's early exit count
+        context['count_early_exits'] = WorkDay.objects.filter(
+            date=today, early_exit_seconds__gt=0
+        ).values('employee').distinct().count()
 
         return context
 
@@ -1506,6 +1548,182 @@ class ExportPayrollSummaryView(UserPassesTestMixin, View):
             user=request.user,
             action="تحميل تقرير الرواتب",
             description=f"تم تحميل ملخص الرواتب للفترة من {from_date} إلى {to_date}",
+            ip_address=request.META.get('REMOTE_ADDR')
+        )
+        return response
+
+
+class UnifiedReportView(PermissionRequiredMixin, ListView):
+    model = Employee
+    template_name = "attendance/reports/unified_report.html"
+    permission_required = ("Attendance.can_view_employees",)
+    raise_exception = True
+    paginate_by = 25
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        from_date, to_date = default_date_range(self)
+        device = data_device(self)
+        
+        # Get employees with their workdays for the date range
+        em = list(employee_queryset().select_related('default_profile'))
+        wds = list(WorkDay.objects.filter(
+            Q(date__gte=from_date) & Q(date__lte=to_date) & Q(device=device)
+        ).select_related('employee', 'employee__default_profile'))
+        rcs = list(Record.objects.filter(
+            Q(timestamp__gte=from_date) & Q(timestamp__lte=to_date) & Q(device=device)
+        ).select_related('device'))
+
+        # Set records and workdays for each employee
+        for e in em:
+            e.set_records(rcs)
+            e.set_workdays(wds)
+
+        # Prepare employee data for the unified report
+        employees_data = []
+        total_presence = 0
+        total_work_hours = 0
+        total_overtime = 0
+        total_late = 0
+        total_early_exit = 0
+        total_out_return = 0
+
+        for emp in em:
+            work_days = [wd for wd in emp.workdays if wd.date and from_date <= wd.date <= to_date]
+            presence_days = len([wd for wd in work_days if wd.work > 0 or wd.overwork > 0 or wd.out_return_time > 0])
+            
+            emp_work_hours = sum(wd.work for wd in work_days)
+            emp_overtime = sum(wd.overwork for wd in work_days)
+            emp_late = sum(wd.late for wd in work_days) / 60  # Convert to minutes
+            emp_early_exit = sum(wd.early_exit for wd in work_days) / 60  # Convert to minutes
+            emp_out_return = sum(wd.out_return_time for wd in work_days)
+            
+            employees_data.append({
+                'employee': emp,
+                'presence_days': presence_days,
+                'work_hours': round(emp_work_hours, 2),
+                'overtime': round(emp_overtime, 2),
+                'late_minutes': round(emp_late),
+                'early_exit_minutes': round(emp_early_exit),
+                'out_return_hours': round(emp_out_return, 2)
+            })
+            
+            # Update totals
+            total_presence += presence_days
+            total_work_hours += emp_work_hours
+            total_overtime += emp_overtime
+            total_late += emp_late
+            total_early_exit += emp_early_exit
+            total_out_return += emp_out_return
+
+        context['employees_data'] = employees_data
+        context['date_from'] = from_date.strftime("%Y-%m-%d")
+        context['date_to'] = to_date.strftime("%Y-%m-%d")
+        context['device'] = device
+        context['summary_totals'] = {
+            'total_presence': total_presence,
+            'total_work_hours': round(total_work_hours, 2),
+            'total_overtime': round(total_overtime, 2),
+            'total_late_minutes': round(total_late),
+            'total_early_exit_minutes': round(total_early_exit),
+            'total_out_return_hours': round(total_out_return, 2)
+        }
+        
+        form = ReportFilterForm()
+        form.initial['from_date'] = from_date.strftime("%Y-%m-%d")
+        form.initial['to_date'] = to_date.strftime("%Y-%m-%d")
+        context['form'] = form
+        
+        old_q = "&".join([f"{k}={v}" for k, v in self.request.GET.items() if k != "page"])
+        context['old_q'] = old_q
+        
+        return context
+
+
+class ExportUnifiedReportView(PermissionRequiredMixin, View):
+    permission_required = ("Attendance.can_view_employees",)
+    raise_exception = True
+
+    def get(self, request, *args, **kwargs):
+        from_date, to_date = default_date_range(self)
+        device = data_device(self)
+
+        em = list(employee_queryset().select_related('default_profile'))
+        wds = list(WorkDay.objects.filter(
+            Q(date__gte=from_date) & Q(date__lte=to_date) & Q(device=device)
+        ).select_related('employee', 'employee__default_profile'))
+        rcs = list(Record.objects.filter(
+            Q(timestamp__gte=from_date) & Q(timestamp__lte=to_date) & Q(device=device)
+        ).select_related('device'))
+
+        for e in em:
+            e.set_records(rcs)
+            e.set_workdays(wds)
+
+        output = io.BytesIO()
+        workbook = xlsxwriter.Workbook(output)
+        worksheet = workbook.add_worksheet()
+        
+        # Header format
+        header_format = workbook.add_format({
+            'bold': True,
+            'bg_color': '#1e293b',
+            'font_color': 'white',
+            'border': 1,
+            'align': 'center',
+            'valign': 'vcenter'
+        })
+        
+        # Cell format
+        cell_format = workbook.add_format({
+            'border': 1,
+            'align': 'center'
+        })
+
+        # Write headers
+        headers = [
+            "الاسم", "الرقم الوظيفي", "ايام الحضور", "ساعات العمل", 
+            "ساعات الإضافي", "دقائق التأخير", "دقائق الخروج المبكر", "ساعات الخرج والعودة"
+        ]
+        
+        for col, header in enumerate(headers):
+            worksheet.write(0, col, header, header_format)
+            worksheet.set_column(col, col, 18)
+
+        # Write data
+        for row_num, emp in enumerate(em, start=1):
+            work_days = [wd for wd in emp.workdays if wd.date and from_date <= wd.date <= to_date]
+            presence_days = len([wd for wd in work_days if wd.work > 0 or wd.overwork > 0 or wd.out_return_time > 0])
+            
+            emp_work_hours = sum(wd.work for wd in work_days)
+            emp_overtime = sum(wd.overwork for wd in work_days)
+            emp_late = sum(wd.late for wd in work_days) / 60  # Convert to minutes
+            emp_early_exit = sum(wd.early_exit for wd in work_days) / 60  # Convert to minutes
+            emp_out_return = sum(wd.out_return_time for wd in work_days)
+            
+            worksheet.write(row_num, 0, emp.name, cell_format)
+            worksheet.write(row_num, 1, emp.attendance_id, cell_format)
+            worksheet.write(row_num, 2, presence_days, cell_format)
+            worksheet.write(row_num, 3, round(emp_work_hours, 2), cell_format)
+            worksheet.write(row_num, 4, round(emp_overtime, 2), cell_format)
+            worksheet.write(row_num, 5, round(emp_late), cell_format)
+            worksheet.write(row_num, 6, round(emp_early_exit), cell_format)
+            worksheet.write(row_num, 7, round(emp_out_return, 2), cell_format)
+
+        workbook.close()
+        output.seek(0)
+        
+        filename = f"unified-report-{from_date.strftime('%Y-%m-%d')}_to_{to_date.strftime('%Y-%m-%d')}.xlsx"
+        response = HttpResponse(
+            output,
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        response['Content-Disposition'] = f'attachment; filename={filename}'
+        
+        SystemLog.objects.create(
+            user=request.user,
+            action="تحميل التقرير الموحد",
+            description=f"تم تحميل التقرير الموحد للفترة من {from_date} إلى {to_date}",
             ip_address=request.META.get('REMOTE_ADDR')
         )
         return response

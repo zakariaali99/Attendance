@@ -113,14 +113,15 @@
     
     <div class="overflow-x-auto">
         <table class="w-full text-right border-collapse" id="recordsTable">
-            <thead>
-                <tr class="bg-surface-container-low dark:bg-slate-800/50 text-outline dark:text-slate-500">
-                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest">التاريخ واليوم</th>
-                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">ساعات العمل</th>
-                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">إضافي / استئذان</th>
-                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">حالة الحضور</th>
-                </tr>
-            </thead>
+             <thead>
+                 <tr class="bg-surface-container-low dark:bg-slate-800/50 text-outline dark:text-slate-500">
+                     <th class="px-6 py-4 font-black text-xs uppercase tracking-widest">التاريخ واليوم</th>
+                     <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">ساعات العمل</th>
+                     <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">إضافي / استئذان</th>
+                     <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">حالة الحضور</th>
+                     <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">دقائق الخروج المبكر</th>
+                 </tr>
+             </thead>
             <tbody class="divide-y divide-surface-container dark:divide-slate-800">
                 {% for day in days %}
                 <tr class="hover:bg-surface-container-lowest dark:hover:bg-slate-800/30 transition-all duration-200">
@@ -128,63 +129,72 @@
                         <div class="font-black text-primary dark:text-white text-sm font-headline">{{ day.date|date:"Y-m-d" }}</div>
                         <div class="text-[10px] text-outline font-bold">{{ day.date|date:"l" }}</div>
                     </td>
-                    <td class="px-6 py-5 text-center">
-                        <span class="text-lg font-black text-primary dark:text-white">{{ day.work }}</span>
-                        <span class="text-[9px] font-bold text-outline dark:text-slate-500 uppercase tracking-widest mr-1">ساعة</span>
-                    </td>
-                    <td class="px-6 py-5 text-center">
-                        <div class="flex items-center justify-center gap-2 flex-row-reverse">
-                            {% if day.overwork > 0 %}
-                            <span class="bg-green-50 dark:bg-green-950/20 text-green-600 dark:text-green-400 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border border-green-100 dark:border-green-900/50">
-                                + {{ day.overwork }} إضافي
-                            </span>
-                            {% endif %}
-                            {% if day.out_return_time > 0 %}
-                            <span class="bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border border-red-100 dark:border-red-900/50">
-                                - {{ day.out_return_time }} خروج
-                            </span>
-                            {% endif %}
-                            {% if not day.overwork and not day.out_return_time %}
-                            <span class="text-outline dark:text-slate-600 opacity-30">—</span>
-                            {% endif %}
-                        </div>
-                    </td>
-                    <td class="px-6 py-5 text-center">
-                        {% if day.status_code == "late" or day.status_code == "excused_late" %}
-                        <span class="inline-flex items-center gap-1.5 bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border border-amber-100 dark:border-amber-900/50">
-                            <span class="w-1.5 h-1.5 bg-amber-500 rounded-full"></span>
-                            {{ day.status_label }} {{ day.late_minutes }} دقيقة
-                        </span>
-                        {% elif day.status_code == "vacation" %}
-                        <span class="inline-flex items-center gap-1.5 bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border border-blue-100 dark:border-blue-900/50">
-                            <span class="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
-                            {{ day.status_label }}
-                        </span>
-                        {% elif day.status_code == "holiday" or day.status_code == "weekend" %}
-                        <span class="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border border-slate-200 dark:border-slate-700">
-                            <span class="w-1.5 h-1.5 bg-slate-500 rounded-full"></span>
-                            {{ day.status_label }}
-                        </span>
-                        {% elif day.status_code == "exception" %}
-                        <span class="inline-flex items-center gap-1.5 bg-purple-50 dark:bg-purple-950/20 text-purple-700 dark:text-purple-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border border-purple-100 dark:border-purple-900/50">
-                            <span class="w-1.5 h-1.5 bg-purple-500 rounded-full"></span>
-                            {{ day.status_label }}
-                        </span>
-                        {% elif day.status_code == "absent" %}
-                        <span class="inline-flex items-center gap-1.5 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border border-red-100 dark:border-red-900/50">
-                            <span class="w-1.5 h-1.5 bg-red-500 rounded-full"></span>
-                            غياب
-                        </span>
-                        {% else %}
-                        <span class="inline-flex items-center gap-1.5 bg-green-50 dark:bg-green-950/20 text-green-600 dark:text-green-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border border-green-100 dark:border-green-900/50">
-                            <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
-                            {{ day.status_label }}
-                        </span>
-                        {% endif %}
-                        {% if day.note %}
-                        <div class="text-[10px] font-bold text-outline dark:text-slate-400 mt-2">{{ day.note }}</div>
-                        {% endif %}
-                    </td>
+                 <td class="px-6 py-5 text-center">
+                     <span class="text-lg font-black text-primary dark:text-white">{{ day.work }}</span>
+                     <span class="text-[9px] font-bold text-outline dark:text-slate-500 uppercase tracking-widest mr-1">ساعة</span>
+                 </td>
+                 <td class="px-6 py-5 text-center">
+                     <div class="flex items-center justify-center gap-2 flex-row-reverse">
+                         {% if day.overwork > 0 %}
+                         <span class="bg-green-50 dark:bg-green-950/20 text-green-600 dark:text-green-400 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border border-green-100 dark:border-green-900/50">
+                             + {{ day.overwork }} إضافي
+                         </span>
+                         {% endif %}
+                         {% if day.out_return_time > 0 %}
+                         <span class="bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border border-red-100 dark:border-red-900/50">
+                             - {{ day.out_return_time }} خروج
+                         </span>
+                         {% endif %}
+                         {% if not day.overwork and not day.out_return_time %}
+                         <span class="text-outline dark:text-slate-600 opacity-30">—</span>
+                         {% endif %}
+                     </div>
+                 </td>
+                 <td class="px-6 py-5 text-center">
+                     {% if day.status_code == "late" or day.status_code == "excused_late" %}
+                     <span class="inline-flex items-center gap-1.5 bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border border-amber-100 dark:border-amber-900/50">
+                         <span class="w-1.5 h-1.5 bg-amber-500 rounded-full"></span>
+                         {{ day.status_label }} {{ day.late_minutes }} دقيقة
+                     </span>
+                     {% elif day.status_code == "vacation" %}
+                     <span class="inline-flex items-center gap-1.5 bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border border-blue-100 dark:border-blue-900/50">
+                         <span class="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
+                         {{ day.status_label }}
+                     </span>
+                     {% elif day.status_code == "holiday" or day.status_code == "weekend" %}
+                     <span class="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border border-slate-200 dark:border-slate-700">
+                         <span class="w-1.5 h-1.5 bg-slate-500 rounded-full"></span>
+                         {{ day.status_label }}
+                     </span>
+                     {% elif day.status_code == "exception" %}
+                     <span class="inline-flex items-center gap-1.5 bg-purple-50 dark:bg-purple-950/20 text-purple-700 dark:text-purple-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border border-purple-100 dark:border-purple-900/50">
+                         <span class="w-1.5 h-1.5 bg-purple-500 rounded-full"></span>
+                         {{ day.status_label }}
+                     </span>
+                     {% elif day.status_code == "absent" %}
+                     <span class="inline-flex items-center gap-1.5 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border border-red-100 dark:border-red-900/50">
+                         <span class="w-1.5 h-1.5 bg-red-500 rounded-full"></span>
+                         غياب
+                     </span>
+                     {% else %}
+                     <span class="inline-flex items-center gap-1.5 bg-green-50 dark:bg-green-950/20 text-green-600 dark:text-green-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border border-green-100 dark:border-green-900/50">
+                         <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+                         {{ day.status_label }}
+                     </span>
+                     {% endif %}
+                     {% if day.note %}
+                     <div class="text-[10px] font-bold text-outline dark:text-slate-400 mt-2">{{ day.note }}</div>
+                     {% endif %}
+                 </td>
+                 <td class="px-6 py-5 text-center">
+                     {% if day.early_exit_minutes > 0 %}
+                     <span class="bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border border-indigo-100 dark:border-indigo-900/50">
+                         {{ day.early_exit_minutes }} دقيقة
+                     </span>
+                     {% else %}
+                     <span class="text-outline/30">—</span>
+                     {% endif %}
+                 </td>
                 </tr>
                 {% empty %}
                 <tr>

@@ -24,7 +24,7 @@
 </header>
 
 <!-- Stats Grid -->
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10 animate-fade-in-up"
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-10 animate-fade-in-up"
     style="animation-delay: 0.1s;">
     <!-- Total Employees -->
     <div
@@ -100,6 +100,24 @@
         </div>
         <div class="absolute -bottom-6 -right-6 w-24 h-24 bg-amber-500/5 rounded-full blur-2xl"></div>
     </div>
+
+    <!-- Early Exit Today -->
+    <div
+        class="bg-white dark:bg-slate-900 rounded-[2rem] p-6 shadow-sm border border-surface-container dark:border-slate-800 flex flex-col justify-between h-44 group hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+        <div class="flex justify-between items-start flex-row-reverse relative z-10">
+            <div class="bg-indigo-500/10 p-3 rounded-2xl text-indigo-600 dark:text-indigo-400">
+                <span class="material-symbols-outlined text-[28px]">timelapse</span>
+            </div>
+            <span class="text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest">خروج مبكر
+                اليوم</span>
+        </div>
+        <div class="relative z-10">
+            <div class="text-4xl font-black text-indigo-600 dark:text-indigo-400 mb-1 counter"
+                data-target="{{ count_early_exits|default:0 }}">0</div>
+            <div class="text-[11px] text-on-surface-variant dark:text-slate-400 font-bold">خالفوا وقت الخروج</div>
+        </div>
+        <div class="absolute -bottom-6 -right-6 w-24 h-24 bg-indigo-500/5 rounded-full blur-2xl"></div>
+    </div>
 </div>
 
 <!-- Analytics Visualization -->
@@ -118,7 +136,7 @@
         </div>
         <div class="h-[300px] w-full">
             <canvas id="performanceChart" data-labels='{{ perf_labels|safe }}' data-hours='{{ perf_hours|safe }}'
-                data-lates='{{ perf_lates|safe }}'>
+                data-lates='{{ perf_lates|safe }}' data-early-exit='{{ perf_early_exit|safe }}'>
             </canvas>
         </div>
     </div>
@@ -141,8 +159,8 @@
                 <div class="flex-grow flex flex-col items-center gap-3 group h-full">
                     <div class="relative w-full flex flex-col justify-end items-center flex-grow">
                         <div
-                            class="absolute -top-8 bg-primary text-white text-[9px] px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">
-                            {{ day.count }}
+                            class="absolute -top-12 bg-primary text-white text-[9px] px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">
+                            ح:{{ day.count }} | خ.م:{{ day.early_exit_count|default:0 }}
                         </div>
                         <div
                             class="w-full bg-surface-container-low dark:bg-slate-800 rounded-lg overflow-hidden h-full flex flex-col justify-end">
@@ -365,16 +383,114 @@
     }
 
 function initDashboard() {
-    // Simple placeholder since Chart.js unavailable
+    // Initialize Chart.js performance chart
     var perfCanvas = document.getElementById("performanceChart");
-    if (perfCanvas) {
-        perfCanvas.parentElement.innerHTML = '<div class="flex items-center justify-center h-full text-outline text-xs p-4 text-center">\n\
-            <div>\n\
-                <span class="material-symbols-outlined text-4xl mb-2 opacity-50">bar_chart</span>\n\
-                <p>بيان الأداء الشهرى</p>\n\
-                <p class="text-[10px] opacity-60 mt-2">سيتم عرض البيانات تلقائيا عند توفر المكتبة</p>\n\
-            </div>\n\
-        </div>';
+    if (perfCanvas && typeof Chart !== 'undefined') {
+        var labels = JSON.parse(perfCanvas.getAttribute('data-labels') || '[]');
+        var hours = JSON.parse(perfCanvas.getAttribute('data-hours') || '[]');
+        var lates = JSON.parse(perfCanvas.getAttribute('data-lates') || '[]');
+        var earlyExit = JSON.parse(perfCanvas.getAttribute('data-early-exit') || '[]');
+
+        var isDark = document.documentElement.classList.contains('dark');
+        var textColor = isDark ? '#94a3b8' : '#64748b';
+        var gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
+
+        // Create gradient for bars
+        var ctx = perfCanvas.getContext('2d');
+        var gradient = ctx.createLinearGradient(0, 0, 0, 300);
+        gradient.addColorStop(0, 'rgba(252, 211, 77, 0.8)');
+        gradient.addColorStop(1, 'rgba(251, 191, 36, 0.4)');
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'ساعات العمل',
+                        data: hours,
+                        backgroundColor: gradient,
+                        borderColor: '#fcd400',
+                        borderWidth: 0,
+                        borderRadius: 8,
+                        barThickness: 28,
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'أيام التأخير',
+                        data: lates,
+                        type: 'line',
+                        borderColor: '#ef4444',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#ef4444',
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        tension: 0.4,
+                        yAxisID: 'y1'
+                    },
+                    {
+                        label: 'دقائق الخروج المبكر',
+                        data: earlyExit,
+                        type: 'line',
+                        borderColor: '#6366f1',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#6366f1',
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        tension: 0.4,
+                        yAxisID: 'y1'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        rtl: true,
+                        labels: {
+                            font: { family: '"IBM Plex Sans Arabic", sans-serif', size: 11, weight: '900' },
+                            color: isDark ? '#ffffff' : '#181534',
+                            usePointStyle: true,
+                            padding: 15
+                        }
+                    },
+                    tooltip: {
+                        rtl: true,
+                        backgroundColor: isDark ? '#0f172a' : '#ffffff',
+                        titleColor: '#181534',
+                        bodyColor: isDark ? '#94a3b8' : '#64748b',
+                        padding: 12,
+                        cornerRadius: 8,
+                        borderColor: gridColor,
+                        borderWidth: 1
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: { color: textColor, font: { family: '"IBM Plex Sans Arabic", sans-serif', size: 10, weight: '700' } },
+                        grid: { display: false }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: { color: textColor, font: { family: '"IBM Plex Sans Arabic", sans-serif', size: 10, weight: '700' } },
+                        grid: { color: gridColor },
+                        title: { display: true, text: 'ساعات العمل', font: { weight: '900', color: textColor } }
+                    },
+                    y1: {
+                        beginAtZero: true,
+                        position: 'right',
+                        ticks: { color: '#ef4444', font: { family: '"IBM Plex Sans Arabic", sans-serif', size: 10, weight: '700' } },
+                        grid: { display: false },
+                        title: { display: true, text: 'الأيام/الدقائق', font: { weight: '900', color: '#ef4444' } }
+                    }
+                }
+            }
+        });
+    } else if (perfCanvas) {
+        // Fallback if Chart.js not loaded
+        perfCanvas.parentElement.innerHTML = '<div class="flex items-center justify-center h-full text-outline text-xs p-4 text-center"><div><span class="material-symbols-outlined text-4xl mb-2 opacity-50">bar_chart</span><p>بيان الأداء الشهرى</p><p class="text-[10px] opacity-60 mt-2">جاري تحميل المكتبة...</p></div></div>';
     }
 
     // Live Date Time

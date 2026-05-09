@@ -25,6 +25,8 @@ urlpatterns = [
     path('report/payroll-summary', ExportPayrollSummaryView.as_view(), name="export_payroll_summary"),
     path('report/register', MonthlyRegisterView.as_view(), name="monthly_register"),
     path('report/register/export', ExportMonthlyRegisterView.as_view(), name="export_monthly_register"),
+    path('report/unified', UnifiedReportView.as_view(), name="unified_report"),
+    path('report/unified/export', ExportUnifiedReportView.as_view(), name="export_unified_report"),
 
     path('devices/', DeviceListView.as_view(), name="devices"),
     path('devices/sync', SyncDevicesView.as_view(), name="sync_devices"),

@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}منظومة الخوارزمي - التقرير الموحد{% endblock %}
+
+{% block body %}
+  <!-- Breadcrumb -->
+  <nav class="flex flex-row-reverse items-center gap-2 mb-8 text-xs font-bold text-outline dark:text-slate-500 uppercase tracking-widest animate-fade-in-up">
+    <a href="{% url 'Attendance:dashboard' %}" class="hover:text-primary dark:hover:text-white transition-colors">الرئيسية</a>
+    <span class="material-symbols-outlined text-[14px]">chevron_left</span>
+    <span class="text-primary dark:text-white">التقرير الموحد</span>
+  </nav>
+
+  <!-- Report Type Links -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 animate-fade-in-up">
+    <a href="{% url 'Attendance:report' %}" class="bg-primary dark:bg-white text-white dark:text-primary p-6 rounded-3xl text-center shadow-lg hover:scale-[1.02] transition-all">
+        <span class="material-symbols-outlined text-3xl mb-2">analytics</span>
+        <div class="font-black text-sm">تقرير الحضور</div>
+    </a>
+    <a href="{% url 'Attendance:unified_report' %}" class="bg-secondary-container dark:bg-slate-800 text-on-secondary-container dark:text-white p-6 rounded-3xl text-center shadow-lg hover:scale-[1.02] transition-all">
+        <span class="material-symbols-outlined text-3xl mb-2">bar_chart_4_bars</span>
+        <div class="font-black text-sm">التقرير الموحد</div>
+    </a>
+    <a href="{% url 'Attendance:monthly_register' %}" class="bg-secondary dark:bg-slate-800 text-on-secondary dark:text-white p-6 rounded-3xl text-center shadow-lg hover:scale-[1.02] transition-all">
+        <span class="material-symbols-outlined text-3xl mb-2">calendar_view_month</span>
+        <div class="font-black text-sm">سجل الشهر</div>
+    </a>
+    <a href="{% url 'Attendance:list' %}" class="bg-green-600 text-white p-6 rounded-3xl text-center shadow-lg hover:scale-[1.02] transition-all">
+        <span class="material-symbols-outlined text-3xl mb-2">group</span>
+        <div class="font-black text-sm">الموظفين</div>
+    </a>
+  </div>
+
+  <!-- Header Section -->
+  <header class="flex flex-col md:flex-row-reverse justify-between items-center gap-6 mb-10 animate-fade-in-up">
+    <div class="text-right">
+        <h1 class="text-3xl font-black text-primary dark:text-white mb-2 font-headline">التقرير الموحد الشامل</h1>
+        <p class="text-xs font-bold text-outline dark:text-slate-500 uppercase tracking-widest">عرض جميع مؤشرات الحضور والانضباط في تقرير واحد</p>
+    </div>
+    <div class="flex items-center gap-3 flex-row-reverse">
+        <a href="{% url 'Attendance:export_unified_report' %}?{{ old_q }}" class="flex flex-row-reverse items-center gap-3 bg-green-600 text-white px-8 py-4 rounded-2xl font-black shadow-xl hover:bg-green-700 transition-all group">
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">download</span>
+            <span>تصدير إلى Excel</span>
+        </a>
+    </div>
+  </header>
+
+  <!-- Filter Section -->
+  <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-surface-container dark:border-slate-800 p-6 mb-10 animate-fade-in-up" style="animation-delay: 0.1s;">
+    <form method="get" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+        <div class="space-y-2">
+            <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">من تاريخ</label>
+            {{ form.from_date|add_class:"form-control" }}
+        </div>
+        <div class="space-y-2">
+            <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">إلى تاريخ</label>
+            {{ form.to_date|add_class:"form-control" }}
+        </div>
+        <div class="space-y-2">
+            <label class="block text-[10px] font-black text-outline dark:text-slate-500 uppercase tracking-widest pr-2 font-headline">الجهاز المستهدف</label>
+            {{ form.device|add_class:"form-select" }}
+        </div>
+        <div>
+            <button type="submit" class="w-full py-4 bg-primary dark:bg-white text-white dark:text-primary font-black rounded-2xl shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined">analytics</span>
+                <span>تحديث البيانات</span>
+            </button>
+        </div>
+    </form>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-10 animate-fade-in-up" style="animation-delay: 0.15s;">
+    <div class="bg-green-500 rounded-3xl p-6 text-center shadow-lg">
+        <span class="material-symbols-outlined text-3xl text-white mb-2">check_circle</span>
+        <div class="text-2xl font-black text-white">{{ summary_totals.total_presence }}</div>
+        <div class="text-[10px] font-bold text-white/70 uppercase">إجمالي الحضور</div>
+    </div>
+    <div class="bg-primary dark:bg-white rounded-3xl p-6 text-center shadow-lg">
+        <span class="material-symbols-outlined text-3xl text-white dark:text-primary mb-2">schedule</span>
+        <div class="text-2xl font-black text-white dark:text-primary">{{ summary_totals.total_work_hours }}</div>
+        <div class="text-[10px] font-bold text-white/70 dark:text-slate-500 uppercase">ساعات العمل</div>
+    </div>
+    <div class="bg-blue-500 rounded-3xl p-6 text-center shadow-lg">
+        <span class="material-symbols-outlined text-3xl text-white mb-2">trending_up</span>
+        <div class="text-2xl font-black text-white">{{ summary_totals.total_overtime }}</div>
+        <div class="text-[10px] font-bold text-white/70 uppercase">ساعات إضافي</div>
+    </div>
+    <div class="bg-red-500 rounded-3xl p-6 text-center shadow-lg">
+        <span class="material-symbols-outlined text-3xl text-white mb-2">warning</span>
+        <div class="text-2xl font-black text-white">{{ summary_totals.total_late_minutes }}</div>
+        <div class="text-[10px] font-bold text-white/70 uppercase">دقائق التأخير</div>
+    </div>
+    <div class="bg-indigo-500 rounded-3xl p-6 text-center shadow-lg">
+        <span class="material-symbols-outlined text-3xl text-white mb-2">timelapse</span>
+        <div class="text-2xl font-black text-white">{{ summary_totals.total_early_exit_minutes }}</div>
+        <div class="text-[10px] font-bold text-white/70 uppercase">دقائق الخروج المبكر</div>
+    </div>
+    <div class="bg-amber-500 rounded-3xl p-6 text-center shadow-lg">
+        <span class="material-symbols-outlined text-3xl text-white mb-2">exit_to_app</span>
+        <div class="text-2xl font-black text-white">{{ summary_totals.total_out_return_hours }}</div>
+        <div class="text-[10px] font-bold text-white/70 uppercase">ساعات الخروج</div>
+    </div>
+  </div>
+
+  <!-- Detailed Data Table -->
+  <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-surface-container dark:border-slate-800 overflow-hidden animate-fade-in-up" style="animation-delay: 0.3s;">
+    <div class="p-6 border-b border-surface-container dark:border-slate-800">
+        <h2 class="text-xl font-black text-primary dark:text-white font-headline text-right flex items-center gap-2 flex-row-reverse">
+            <span class="material-symbols-outlined text-secondary">table_chart</span>
+            التقرير الموحد للفترة من {{ date_from }} إلى {{ date_to }}
+        </h2>
+    </div>
+    
+    <div class="overflow-x-auto">
+        <table class="w-full text-right border-collapse" id="unifiedTable">
+            <thead>
+                <tr class="bg-surface-container-low dark:bg-slate-800/50 text-outline dark:text-slate-500">
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest">الموظف</th>
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">أيام الحضور</th>
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">ساعات العمل</th>
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">إضافي</th>
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">التأخير (د)</th>
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">الخروج المبكر (د)</th>
+                    <th class="px-6 py-4 font-black text-xs uppercase tracking-widest text-center">الخروج والعودة (س)</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-surface-container dark:divide-slate-800">
+                {% for emp_data in employees_data %}
+                <tr class="hover:bg-surface-container-lowest dark:hover:bg-slate-800/30 transition-all duration-200">
+                    <td class="px-6 py-5">
+                        <div class="flex items-center gap-4 flex-row-reverse">
+                            <div class="w-10 h-10 rounded-xl bg-primary-container/10 text-primary dark:text-white flex items-center justify-center font-black text-xs border border-white dark:border-slate-700">
+                                {{ emp_data.employee.name|slice:":1"|upper }}
+                            </div>
+                            <div>
+                                <div class="font-black text-primary dark:text-white text-sm font-headline">{{ emp_data.employee.name }}</div>
+                                <div class="text-[9px] text-outline font-bold">ID: {{ emp_data.employee.attendance_id }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-5 text-center">
+                        <span class="text-lg font-black text-green-600 dark:text-green-400">{{ emp_data.presence_days }}</span>
+                    </td>
+                    <td class="px-6 py-5 text-center">
+                        <span class="text-lg font-black text-primary dark:text-white">{{ emp_data.work_hours }}</span>
+                    </td>
+                    <td class="px-6 py-5 text-center">
+                        {% if emp_data.overtime > 0 %}
+                        <span class="bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-full text-[10px] font-black">
+                            {{ emp_data.overtime }}
+                        </span>
+                        {% else %}
+                        <span class="text-outline/30">—</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-5 text-center">
+                        {% if emp_data.late_minutes > 0 %}
+                        <span class="bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 px-3 py-1 rounded-full text-[10px] font-black">
+                            {{ emp_data.late_minutes }}
+                        </span>
+                        {% else %}
+                        <span class="text-outline/30">—</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-5 text-center">
+                        {% if emp_data.early_exit_minutes > 0 %}
+                        <span class="bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400 px-3 py-1 rounded-full text-[10px] font-black">
+                            {{ emp_data.early_exit_minutes }}
+                        </span>
+                        {% else %}
+                        <span class="text-outline/30">—</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-5 text-center">
+                        {% if emp_data.out_return_hours > 0 %}
+                        <span class="bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 px-3 py-1 rounded-full text-[10px] font-black">
+                            {{ emp_data.out_return_hours }}
+                        </span>
+                        {% else %}
+                        <span class="text-outline/30">—</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="px-6 py-16 text-center">
+                        <div class="flex flex-col items-center gap-4 opacity-30 dark:opacity-50">
+                            <span class="material-symbols-outlined text-[64px]">bar_chart_4_bars</span>
+                            <p class="text-base font-bold font-headline">لا توجد بيانات متاحة لهذا النطاق الزمني.</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        if ($.fn.dataTable) {
+            $('#unifiedTable').DataTable({
+                "order": [[ 0, "asc" ]],
+                "pageLength": 25
+            });
+            // Restyle search input
+            $('.dataTables_filter input').addClass('block w-80 py-2.5 pr-10 pl-4 bg-surface-container-low dark:bg-slate-800 border-none rounded-xl text-xs font-bold text-primary dark:text-white placeholder:text-outline focus:ring-2 focus:ring-secondary-container transition-all');
+        }
+    });
+</script>
+{% endblock %}

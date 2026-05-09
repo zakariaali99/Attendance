@@ -224,6 +224,14 @@ class Employee(models.Model):
             return len([day for day in self.workdays if day.out_return_time > 0])
         return WorkDay.objects.filter(employee=self, out_return_hours__gt=0).count()
 
+    @property
+    def early_exit_min(self):
+        if self.workdays is not None:
+            return sum(int(day.early_exit_min) for day in self.workdays if day.early_exit_seconds > 0)
+        from django.db.models import Sum
+        total = WorkDay.objects.filter(employee=self).aggregate(total_early_exit=Sum('early_exit_seconds'))
+        return round((total['total_early_exit'] or 0) / 60)
+
 
 attendance_choices = [
     ("early_exit", "خروج مبكر"),

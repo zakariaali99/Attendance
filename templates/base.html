@@ -241,28 +241,33 @@
                 </a>
             </div>
 
-            <!-- Analysis Section -->
-            <div class="mt-7 mb-3 px-4 flex flex-row-reverse items-center gap-2">
-                <span class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] sidebar-text whitespace-nowrap">التقارير والتحليل</span>
-            </div>
+             <!-- Analysis Section -->
+             <div class="mt-7 mb-3 px-4 flex flex-row-reverse items-center gap-2">
+                 <span class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] sidebar-text whitespace-nowrap">التقارير والتحليل</span>
+             </div>
 
-            <div class="space-y-1">
-                <a href="{% url 'Attendance:report' %}" class="sidebar-item flex flex-row-reverse items-center gap-3 py-2.5 px-4 rounded-xl transition-all duration-200 {% if request.resolver_match.url_name == 'report' %}bg-white/10 text-white sidebar-active-accent shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
-                    <span class="material-symbols-outlined !text-[22px]" {% if request.resolver_match.url_name == 'report' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>assessment</span>
-                    <span class="font-bold text-xs sidebar-text">التقرير الإحصائي</span>
-                </a>
+             <div class="space-y-1">
+                 <a href="{% url 'Attendance:report' %}" class="sidebar-item flex flex-row-reverse items-center gap-3 py-2.5 px-4 rounded-xl transition-all duration-200 {% if request.resolver_match.url_name == 'report' %}bg-white/10 text-white sidebar-active-accent shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
+                     <span class="material-symbols-outlined !text-[22px]" {% if request.resolver_match.url_name == 'report' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>assessment</span>
+                     <span class="font-bold text-xs sidebar-text">التقرير الإحصائي</span>
+                 </a>
 
-                <a href="{% url 'Attendance:monthly_register' %}" class="sidebar-item flex flex-row-reverse items-center gap-3 py-2.5 px-4 rounded-xl transition-all duration-200 {% if request.resolver_match.url_name == 'monthly_register' %}bg-white/10 text-white sidebar-active-accent shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
-                    <span class="material-symbols-outlined !text-[22px]" {% if request.resolver_match.url_name == 'monthly_register' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>calendar_view_month</span>
-                    <span class="font-bold text-xs sidebar-text">سجل الدوام الشهري</span>
-                </a>
+                 <a href="{% url 'Attendance:unified_report' %}" class="sidebar-item flex flex-row-reverse items-center gap-3 py-2.5 px-4 rounded-xl transition-all duration-200 {% if request.resolver_match.url_name == 'unified_report' %}bg-white/10 text-white sidebar-active-accent shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
+                     <span class="material-symbols-outlined !text-[22px]" {% if request.resolver_match.url_name == 'unified_report' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>bar_chart_4_bars</span>
+                     <span class="font-bold text-xs sidebar-text">التقرير الموحد</span>
+                 </a>
 
-                {% if user.is_superuser %}
-                <a href="{% url 'Attendance:export_payroll_summary' %}" class="sidebar-item flex flex-row-reverse items-center gap-3 py-2.5 px-4 rounded-xl transition-all duration-200 {% if request.resolver_match.url_name == 'export_payroll_summary' %}bg-white/10 text-white sidebar-active-accent shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
-                    <span class="material-symbols-outlined !text-[22px]">payments</span>
-                    <span class="font-bold text-xs sidebar-text">ملخص الرواتب</span>
-                </a>
-                {% endif %}
+                 <a href="{% url 'Attendance:monthly_register' %}" class="sidebar-item flex flex-row-reverse items-center gap-3 py-2.5 px-4 rounded-xl transition-all duration-200 {% if request.resolver_match.url_name == 'monthly_register' %}bg-white/10 text-white sidebar-active-accent shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
+                     <span class="material-symbols-outlined !text-[22px]" {% if request.resolver_match.url_name == 'monthly_register' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>calendar_view_month</span>
+                     <span class="font-bold text-xs sidebar-text">سجل الدوام الشهري</span>
+                 </a>
+
+                 {% if user.is_superuser %}
+                 <a href="{% url 'Attendance:export_payroll_summary' %}" class="sidebar-item flex flex-row-reverse items-center gap-3 py-2.5 px-4 rounded-xl transition-all duration-200 {% if request.resolver_match.url_name == 'export_payroll_summary' %}bg-white/10 text-white sidebar-active-accent shadow-sm{% else %}text-slate-400 hover:bg-white/5 hover:text-white{% endif %}">
+                     <span class="material-symbols-outlined !text-[22px]">payments</span>
+                     <span class="font-bold text-xs sidebar-text">ملخص الرواتب</span>
+                 </a>
+                 {% endif %}
             </div>
 
             <!-- System Section -->
@@ -326,14 +331,16 @@
     </main>
 {% endblock %}
 
-    <!-- Global Scripts -->
-    <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
-    <!-- Popper.js and Bootstrap JS (only for modals/dropdowns if needed, though we moved to Tailwind/Vanilla) -->
-    <script src="{% static 'js/bootstrap.bundle.js' %}"></script>
-    <script src="{% static 'offline/js/datatables.min.js' %}"></script>
+     <!-- Global Scripts -->
+     <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+     <!-- Popper.js and Bootstrap JS (only for modals/dropdowns if needed, though we moved to Tailwind/Vanilla) -->
+     <script src="{% static 'js/bootstrap.bundle.js' %}"></script>
+     <script src="{% static 'offline/js/datatables.min.js' %}"></script>
+     <!-- Chart.js for dashboard and reports (offline copy) -->
+     <script src="{% static 'offline/js/chart.min.js' %}"></script>
 
-    <script>
-        $(document).ready(function () {
+     <script>
+         $(document).ready(function () {
             // Sidebar Toggle Control
             const sidebar = document.getElementById('sidebar');
             const mainContent = document.getElementById('main-content');
