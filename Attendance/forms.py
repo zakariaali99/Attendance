@@ -29,8 +29,11 @@ class EmployeeForm(forms.ModelForm):
             'default_profile': forms.Select(attrs={
                 'class': 'form-control rounded-pill',
 
-            })
-            , 'current_vacations': forms.NumberInput(attrs={
+            }),
+            'device': forms.Select(attrs={
+                'class': 'form-control rounded-pill',
+            }),
+            'current_vacations': forms.NumberInput(attrs={
                 'class': 'form-control rounded-pill',
 
             }),

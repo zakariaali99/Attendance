@@ -41,7 +41,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '::1', '127.0.0.1']
 
-CORS_ORIGIN_ALLOW_ALL = False
+
 
 
 INSTALLED_APPS = [
@@ -170,16 +170,7 @@ USE_L10N = True
 
 USE_TZ = True
 
-# Celery Configuration (Disabled for Windows Desktop Mode)
-if os.environ.get('DESKTOP_MODE') != '1':
-    CELERY_BROKER_URL = env('CELERY_BROKER_URL', default='redis://localhost:6379/0')
-    CELERY_RESULT_BACKEND = env('CELERY_RESULT_BACKEND', default='redis://localhost:6379/1')
-    CELERY_ACCEPT_CONTENT = ['application/json']
-    CELERY_TASK_SERIALIZER = 'json'
-    CELERY_RESULT_SERIALIZER = 'json'
-    CELERY_TIMEZONE = 'Africa/Cairo'
-else:
-    CELERY_BROKER_URL = None
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
